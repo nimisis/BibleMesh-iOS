@@ -63,13 +63,6 @@
 		3462FBBD16BC3C43003C79E1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3462FBBB16BC3C43003C79E1 /* AppDelegate.m */; };
 		3462FBBE16BC3C43003C79E1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3462FBBC16BC3C43003C79E1 /* main.m */; };
 		3462FBC816BC3C8F003C79E1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3462FBC316BC3C8F003C79E1 /* Localizable.strings */; };
-		3462FBE616BC40F9003C79E1 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3462FBDF16BC40F9003C79E1 /* Default-568h@2x.png */; };
-		3462FBE716BC40F9003C79E1 /* Default-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 3462FBE016BC40F9003C79E1 /* Default-Landscape.png */; };
-		3462FBE816BC40F9003C79E1 /* Default-Landscape@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3462FBE116BC40F9003C79E1 /* Default-Landscape@2x.png */; };
-		3462FBE916BC40F9003C79E1 /* Default-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 3462FBE216BC40F9003C79E1 /* Default-Portrait.png */; };
-		3462FBEA16BC40F9003C79E1 /* Default-Portrait@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3462FBE316BC40F9003C79E1 /* Default-Portrait@2x.png */; };
-		3462FBEB16BC40F9003C79E1 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 3462FBE416BC40F9003C79E1 /* Default.png */; };
-		3462FBEC16BC40F9003C79E1 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3462FBE516BC40F9003C79E1 /* Default@2x.png */; };
 		347C58C016BC879400A647B0 /* libePub3-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 347C58BB16BC873700A647B0 /* libePub3-iOS.a */; };
 		348200FC183A9D2D007E72E6 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 348200FB183A9D2D007E72E6 /* MobileCoreServices.framework */; };
 		34B5457C16BCB07800D14838 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B5457B16BCB07800D14838 /* libxml2.dylib */; };
@@ -85,19 +78,6 @@
 		34CE0B1F1720D8FE00F55192 /* NavigationElementController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34CE0B1E1720D8FE00F55192 /* NavigationElementController.m */; };
 		34D73601186E729400AA361E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34D73600186E729400AA361E /* AVFoundation.framework */; };
 		34DAC6F018D4BD22004F926A /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34DAC6EF18D4BD22004F926A /* Security.framework */; };
-		34E12B9F180301A2004DCB68 /* Icon-29.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E12B92180301A2004DCB68 /* Icon-29.png */; };
-		34E12BA0180301A2004DCB68 /* Icon-29@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E12B93180301A2004DCB68 /* Icon-29@2x.png */; };
-		34E12BA1180301A2004DCB68 /* Icon-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E12B94180301A2004DCB68 /* Icon-40.png */; };
-		34E12BA2180301A2004DCB68 /* Icon-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E12B95180301A2004DCB68 /* Icon-40@2x.png */; };
-		34E12BA3180301A2004DCB68 /* Icon-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E12B96180301A2004DCB68 /* Icon-50.png */; };
-		34E12BA4180301A2004DCB68 /* Icon-50@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E12B97180301A2004DCB68 /* Icon-50@2x.png */; };
-		34E12BA5180301A2004DCB68 /* Icon-57.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E12B98180301A2004DCB68 /* Icon-57.png */; };
-		34E12BA6180301A2004DCB68 /* Icon-57@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E12B99180301A2004DCB68 /* Icon-57@2x.png */; };
-		34E12BA7180301A2004DCB68 /* Icon-60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E12B9A180301A2004DCB68 /* Icon-60@2x.png */; };
-		34E12BA8180301A2004DCB68 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E12B9B180301A2004DCB68 /* Icon-72.png */; };
-		34E12BA9180301A2004DCB68 /* Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E12B9C180301A2004DCB68 /* Icon-72@2x.png */; };
-		34E12BAA180301A2004DCB68 /* Icon-76.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E12B9D180301A2004DCB68 /* Icon-76.png */; };
-		34E12BAB180301A2004DCB68 /* Icon-76@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E12B9E180301A2004DCB68 /* Icon-76@2x.png */; };
 		34EB839C1ABA479A00C86B67 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34EB839B1ABA479A00C86B67 /* WebKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		80382A081CD3F222004541FF /* NSDate+RDDateAsString.m in Sources */ = {isa = PBXBuildFile; fileRef = 80382A071CD3F222004541FF /* NSDate+RDDateAsString.m */; };
 		8307EC6919E3DE4A00B00468 /* mathjax in Resources */ = {isa = PBXBuildFile; fileRef = 8307EC6719E3DDEC00B00468 /* mathjax */; };
@@ -124,6 +104,7 @@
 		8358471E1B42E789002DA99D /* readium-shared-js_all.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 835846FA1B42DAF6002DA99D /* readium-shared-js_all.js.map */; };
 		83919F161A1E074200FC8118 /* epubReadingSystem.js in Resources */ = {isa = PBXBuildFile; fileRef = A250D199754564056CB0267E /* epubReadingSystem.js */; };
 		83EBB4A419F56C1C0083E8F1 /* annotations.css in Resources */ = {isa = PBXBuildFile; fileRef = 83EBB4A319F56C1C0083E8F1 /* annotations.css */; };
+		84BAD0341DFEA3A80087B00B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84BAD0331DFEA3A80087B00B /* Images.xcassets */; };
 		85DE51A117FDDCAC00F55130 /* page-blanche-20130322.epub in Resources */ = {isa = PBXBuildFile; fileRef = 85DE51A017FDDCAC00F55130 /* page-blanche-20130322.epub */; };
 		A250D5118ECA530997C6E72B /* epubReadingSystem.js in Sources */ = {isa = PBXBuildFile; fileRef = A250D199754564056CB0267E /* epubReadingSystem.js */; };
 		A250D5FFC597F4E5EB74D3AC /* epub30-test-0120-20131022.epub in Resources */ = {isa = PBXBuildFile; fileRef = A250D58D34D67FC218608A1F /* epub30-test-0120-20131022.epub */; };
@@ -175,7 +156,7 @@
 		340535B516BC669C00D4A802 /* ContainerList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContainerList.m; sourceTree = "<group>"; };
 		340535B816BC729200D4A802 /* moby-dick-20120118.epub */ = {isa = PBXFileReference; lastKnownFileType = file; path = "moby-dick-20120118.epub"; sourceTree = "<group>"; };
 		340535BA16BC793700D4A802 /* wasteland-20120118.epub */ = {isa = PBXFileReference; lastKnownFileType = file; path = "wasteland-20120118.epub"; sourceTree = "<group>"; };
-		340FC15916BC3B4600346A59 /* SDKLauncher-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SDKLauncher-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		340FC15916BC3B4600346A59 /* BibleMesh.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BibleMesh.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		340FC15C16BC3B4600346A59 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		340FC15E16BC3B4600346A59 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		340FC16016BC3B4600346A59 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -268,15 +249,8 @@
 		3462FBBB16BC3C43003C79E1 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		3462FBBC16BC3C43003C79E1 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		3462FBC416BC3C8F003C79E1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		3462FBCA16BC3CD8003C79E1 /* SDKLauncher-iOS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SDKLauncher-iOS-Info.plist"; sourceTree = "<group>"; };
+		3462FBCA16BC3CD8003C79E1 /* BibleMesh-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "BibleMesh-Info.plist"; sourceTree = "<group>"; };
 		3462FBCB16BC3CD8003C79E1 /* SDKLauncher-iOS-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SDKLauncher-iOS-Prefix.pch"; sourceTree = "<group>"; };
-		3462FBDF16BC40F9003C79E1 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		3462FBE016BC40F9003C79E1 /* Default-Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape.png"; sourceTree = "<group>"; };
-		3462FBE116BC40F9003C79E1 /* Default-Landscape@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape@2x.png"; sourceTree = "<group>"; };
-		3462FBE216BC40F9003C79E1 /* Default-Portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait.png"; sourceTree = "<group>"; };
-		3462FBE316BC40F9003C79E1 /* Default-Portrait@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait@2x.png"; sourceTree = "<group>"; };
-		3462FBE416BC40F9003C79E1 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		3462FBE516BC40F9003C79E1 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		347C58B216BC873700A647B0 /* ePub3.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ePub3.xcodeproj; path = "readium-sdk/Platform/Apple/ePub3.xcodeproj"; sourceTree = "<group>"; };
 		348200FB183A9D2D007E72E6 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		34B53527170B3E60000D384F /* readium-shared-js */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "readium-shared-js"; sourceTree = "<group>"; };
@@ -300,19 +274,6 @@
 		34CE0B1E1720D8FE00F55192 /* NavigationElementController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationElementController.m; sourceTree = "<group>"; };
 		34D73600186E729400AA361E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		34DAC6EF18D4BD22004F926A /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		34E12B92180301A2004DCB68 /* Icon-29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-29.png"; sourceTree = "<group>"; };
-		34E12B93180301A2004DCB68 /* Icon-29@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-29@2x.png"; sourceTree = "<group>"; };
-		34E12B94180301A2004DCB68 /* Icon-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-40.png"; sourceTree = "<group>"; };
-		34E12B95180301A2004DCB68 /* Icon-40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-40@2x.png"; sourceTree = "<group>"; };
-		34E12B96180301A2004DCB68 /* Icon-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-50.png"; sourceTree = "<group>"; };
-		34E12B97180301A2004DCB68 /* Icon-50@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-50@2x.png"; sourceTree = "<group>"; };
-		34E12B98180301A2004DCB68 /* Icon-57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-57.png"; sourceTree = "<group>"; };
-		34E12B99180301A2004DCB68 /* Icon-57@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-57@2x.png"; sourceTree = "<group>"; };
-		34E12B9A180301A2004DCB68 /* Icon-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60@2x.png"; sourceTree = "<group>"; };
-		34E12B9B180301A2004DCB68 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
-		34E12B9C180301A2004DCB68 /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72@2x.png"; sourceTree = "<group>"; };
-		34E12B9D180301A2004DCB68 /* Icon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-76.png"; sourceTree = "<group>"; };
-		34E12B9E180301A2004DCB68 /* Icon-76@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-76@2x.png"; sourceTree = "<group>"; };
 		34EB839B1ABA479A00C86B67 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		80382A061CD3F222004541FF /* NSDate+RDDateAsString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+RDDateAsString.h"; sourceTree = "<group>"; };
 		80382A071CD3F222004541FF /* NSDate+RDDateAsString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+RDDateAsString.m"; sourceTree = "<group>"; };
@@ -335,6 +296,7 @@
 		835847091B42DB09002DA99D /* readium-shared-js.js.map */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; name = "readium-shared-js.js.map"; path = "readium-shared-js/build-output/_multiple-bundles/readium-shared-js.js.map"; sourceTree = "<group>"; };
 		8358470A1B42DB09002DA99D /* RequireJS.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = RequireJS.js; path = "readium-shared-js/build-output/_multiple-bundles/RequireJS.js"; sourceTree = "<group>"; };
 		83EBB4A319F56C1C0083E8F1 /* annotations.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = annotations.css; sourceTree = "<group>"; };
+		84BAD0331DFEA3A80087B00B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = BibleMesh/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		85DE51A017FDDCAC00F55130 /* page-blanche-20130322.epub */ = {isa = PBXFileReference; lastKnownFileType = file; path = "page-blanche-20130322.epub"; sourceTree = "<group>"; };
 		A250D199754564056CB0267E /* epubReadingSystem.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = epubReadingSystem.js; sourceTree = "<group>"; };
 		A250D54A5C423A86C6099037 /* epub30-test-0220-20131022.epub */ = {isa = PBXFileReference; lastKnownFileType = file.epub; path = "epub30-test-0220-20131022.epub"; sourceTree = "<group>"; };
@@ -423,7 +385,7 @@
 		340FC15A16BC3B4600346A59 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				340FC15916BC3B4600346A59 /* SDKLauncher-iOS.app */,
+				340FC15916BC3B4600346A59 /* BibleMesh.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -671,9 +633,8 @@
 		3462FBBF16BC3C8F003C79E1 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3462FBDE16BC4037003C79E1 /* Default */,
+				84BAD0331DFEA3A80087B00B /* Images.xcassets */,
 				340535B716BC728800D4A802 /* EPub */,
-				3462FBDD16BC4031003C79E1 /* Icon */,
 				3403515F16CE9362009E3B88 /* Injection */,
 				34B53527170B3E60000D384F /* readium-shared-js */,
 				3462FBC316BC3C8F003C79E1 /* Localizable.strings */,
@@ -684,44 +645,10 @@
 		3462FBC916BC3CBA003C79E1 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				3462FBCA16BC3CD8003C79E1 /* SDKLauncher-iOS-Info.plist */,
+				3462FBCA16BC3CD8003C79E1 /* BibleMesh-Info.plist */,
 				3462FBCB16BC3CD8003C79E1 /* SDKLauncher-iOS-Prefix.pch */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		3462FBDD16BC4031003C79E1 /* Icon */ = {
-			isa = PBXGroup;
-			children = (
-				34E12B92180301A2004DCB68 /* Icon-29.png */,
-				34E12B93180301A2004DCB68 /* Icon-29@2x.png */,
-				34E12B94180301A2004DCB68 /* Icon-40.png */,
-				34E12B95180301A2004DCB68 /* Icon-40@2x.png */,
-				34E12B96180301A2004DCB68 /* Icon-50.png */,
-				34E12B97180301A2004DCB68 /* Icon-50@2x.png */,
-				34E12B98180301A2004DCB68 /* Icon-57.png */,
-				34E12B99180301A2004DCB68 /* Icon-57@2x.png */,
-				34E12B9A180301A2004DCB68 /* Icon-60@2x.png */,
-				34E12B9B180301A2004DCB68 /* Icon-72.png */,
-				34E12B9C180301A2004DCB68 /* Icon-72@2x.png */,
-				34E12B9D180301A2004DCB68 /* Icon-76.png */,
-				34E12B9E180301A2004DCB68 /* Icon-76@2x.png */,
-			);
-			name = Icon;
-			sourceTree = "<group>";
-		};
-		3462FBDE16BC4037003C79E1 /* Default */ = {
-			isa = PBXGroup;
-			children = (
-				3462FBDF16BC40F9003C79E1 /* Default-568h@2x.png */,
-				3462FBE016BC40F9003C79E1 /* Default-Landscape.png */,
-				3462FBE116BC40F9003C79E1 /* Default-Landscape@2x.png */,
-				3462FBE216BC40F9003C79E1 /* Default-Portrait.png */,
-				3462FBE316BC40F9003C79E1 /* Default-Portrait@2x.png */,
-				3462FBE416BC40F9003C79E1 /* Default.png */,
-				3462FBE516BC40F9003C79E1 /* Default@2x.png */,
-			);
-			name = Default;
 			sourceTree = "<group>";
 		};
 		347C58B316BC873700A647B0 /* Products */ = {
@@ -737,9 +664,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		340FC15816BC3B4600346A59 /* SDKLauncher-iOS */ = {
+		340FC15816BC3B4600346A59 /* BibleMesh */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 340FC17616BC3B4600346A59 /* Build configuration list for PBXNativeTarget "SDKLauncher-iOS" */;
+			buildConfigurationList = 340FC17616BC3B4600346A59 /* Build configuration list for PBXNativeTarget "BibleMesh" */;
 			buildPhases = (
 				340FC15516BC3B4600346A59 /* Sources */,
 				340FC15616BC3B4600346A59 /* Frameworks */,
@@ -751,9 +678,9 @@
 			dependencies = (
 				347C58BF16BC878A00A647B0 /* PBXTargetDependency */,
 			);
-			name = "SDKLauncher-iOS";
+			name = BibleMesh;
 			productName = "SDKLauncher-iOS";
-			productReference = 340FC15916BC3B4600346A59 /* SDKLauncher-iOS.app */;
+			productReference = 340FC15916BC3B4600346A59 /* BibleMesh.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -766,11 +693,11 @@
 				ORGANIZATIONNAME = "The Readium Foundation";
 				TargetAttributes = {
 					340FC15816BC3B4600346A59 = {
-						DevelopmentTeam = NB74F5L25E;
+						DevelopmentTeam = JUZJ695LJ6;
 					};
 				};
 			};
-			buildConfigurationList = 340FC15416BC3B4600346A59 /* Build configuration list for PBXProject "SDKLauncher-iOS" */;
+			buildConfigurationList = 340FC15416BC3B4600346A59 /* Build configuration list for PBXProject "BibleMesh" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -788,7 +715,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				340FC15816BC3B4600346A59 /* SDKLauncher-iOS */,
+				340FC15816BC3B4600346A59 /* BibleMesh */,
 			);
 		};
 /* End PBXProject section */
@@ -823,6 +750,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8358471A1B42E789002DA99D /* readium-cfi-js.js.map in Resources */,
+				84BAD0341DFEA3A80087B00B /* Images.xcassets in Resources */,
 				8358471B1B42E789002DA99D /* readium-external-libs.js.map in Resources */,
 				8358471D1B42E789002DA99D /* readium-shared-js.js.map in Resources */,
 				8358471E1B42E789002DA99D /* readium-shared-js_all.js.map in Resources */,
@@ -831,33 +759,15 @@
 				8307EC6919E3DE4A00B00468 /* mathjax in Resources */,
 				835847181B42DB0A002DA99D /* RequireJS.js in Resources */,
 				34B56B5E1723158E00A5A4B8 /* childrens-literature-20130206.epub in Resources */,
-				3462FBEB16BC40F9003C79E1 /* Default.png in Resources */,
-				34E12BA9180301A2004DCB68 /* Icon-72@2x.png in Resources */,
-				3462FBEC16BC40F9003C79E1 /* Default@2x.png in Resources */,
-				3462FBE616BC40F9003C79E1 /* Default-568h@2x.png in Resources */,
 				8358470C1B42DB09002DA99D /* readium-cfi-js.js in Resources */,
-				3462FBE716BC40F9003C79E1 /* Default-Landscape.png in Resources */,
 				835847101B42DB09002DA99D /* readium-external-libs.js.bundles.js in Resources */,
-				3462FBE816BC40F9003C79E1 /* Default-Landscape@2x.png in Resources */,
-				34E12BA7180301A2004DCB68 /* Icon-60@2x.png in Resources */,
-				3462FBE916BC40F9003C79E1 /* Default-Portrait.png in Resources */,
-				34E12B9F180301A2004DCB68 /* Icon-29.png in Resources */,
 				835846F71B42DA05002DA99D /* sdk.css in Resources */,
-				34E12BAB180301A2004DCB68 /* Icon-76@2x.png in Resources */,
-				34E12BA8180301A2004DCB68 /* Icon-72.png in Resources */,
-				34E12BA5180301A2004DCB68 /* Icon-57.png in Resources */,
-				3462FBEA16BC40F9003C79E1 /* Default-Portrait@2x.png in Resources */,
 				835847161B42DB09002DA99D /* readium-shared-js.js.bundles.js in Resources */,
 				835846FC1B42DAF6002DA99D /* readium-shared-js_all.js.bundles.js in Resources */,
-				34E12BA2180301A2004DCB68 /* Icon-40@2x.png in Resources */,
 				3436EB2A1790C3F300246925 /* host_app_feedback.js in Resources */,
 				835846F31B42D997002DA99D /* reader_RequireJS-multiple-bundles.html in Resources */,
-				34E12BA3180301A2004DCB68 /* Icon-50.png in Resources */,
-				34E12BA6180301A2004DCB68 /* Icon-57@2x.png in Resources */,
 				835847151B42DB09002DA99D /* readium-shared-js.js in Resources */,
 				835846F51B42D997002DA99D /* reader_RequireJS-single-bundle.html in Resources */,
-				34E12BAA180301A2004DCB68 /* Icon-76.png in Resources */,
-				34E12BA0180301A2004DCB68 /* Icon-29@2x.png in Resources */,
 				3462FBC816BC3C8F003C79E1 /* Localizable.strings in Resources */,
 				835846F41B42D997002DA99D /* reader_RequireJS-no-optimize.html in Resources */,
 				83EBB4A419F56C1C0083E8F1 /* annotations.css in Resources */,
@@ -866,9 +776,7 @@
 				3403516616CE93F2009E3B88 /* reader.html in Resources */,
 				8358470D1B42DB09002DA99D /* readium-cfi-js.js.bundles.js in Resources */,
 				85DE51A117FDDCAC00F55130 /* page-blanche-20130322.epub in Resources */,
-				34E12BA4180301A2004DCB68 /* Icon-50@2x.png in Resources */,
 				340535BB16BC793700D4A802 /* wasteland-20120118.epub in Resources */,
-				34E12BA1180301A2004DCB68 /* Icon-40.png in Resources */,
 				A250D5FFC597F4E5EB74D3AC /* epub30-test-0120-20131022.epub in Resources */,
 				A250D8E19073D0C5B921BA5F /* epub30-test-0220-20131022.epub in Resources */,
 				A250DD9ED6B68B6BD9F73160 /* epubReadingSystem.epub in Resources */,
@@ -1076,14 +984,18 @@
 		340FC17716BC3B4600346A59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = JUZJ695LJ6;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				HEADER_SEARCH_PATHS = (
 					"${SDKROOT}/usr/include/libxml2",
 					"${SRCROOT}/readium-sdk/Platform/Apple/include",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.readium.SDKLauncher.iOS;
+				INFOPLIST_FILE = "BibleMesh-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.nimisis.biblemesh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -1093,14 +1005,18 @@
 		340FC17816BC3B4600346A59 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = JUZJ695LJ6;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				HEADER_SEARCH_PATHS = (
 					"${SDKROOT}/usr/include/libxml2",
 					"${SRCROOT}/readium-sdk/Platform/Apple/include",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.readium.SDKLauncher.iOS;
+				INFOPLIST_FILE = "BibleMesh-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.nimisis.biblemesh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -1110,7 +1026,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		340FC15416BC3B4600346A59 /* Build configuration list for PBXProject "SDKLauncher-iOS" */ = {
+		340FC15416BC3B4600346A59 /* Build configuration list for PBXProject "BibleMesh" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				340FC17416BC3B4600346A59 /* Debug */,
@@ -1119,7 +1035,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		340FC17616BC3B4600346A59 /* Build configuration list for PBXNativeTarget "SDKLauncher-iOS" */ = {
+		340FC17616BC3B4600346A59 /* Build configuration list for PBXNativeTarget "BibleMesh" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				340FC17716BC3B4600346A59 /* Debug */,
