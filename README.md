@@ -2,7 +2,7 @@ _Note:  Please don't use the zip download feature on this repo as this repo uses
  
 ## BibleMesh-iOS
 
-An iOS application based on the Readium SDK for reading ePub files.
+An iOS application based on the Readium iOS app https://github.com/readium/SDKLauncher-iOS used for reading ePub files.
 
 ## How to get source from github
 
