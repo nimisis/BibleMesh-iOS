@@ -105,6 +105,8 @@
 		83919F161A1E074200FC8118 /* epubReadingSystem.js in Resources */ = {isa = PBXBuildFile; fileRef = A250D199754564056CB0267E /* epubReadingSystem.js */; };
 		83EBB4A419F56C1C0083E8F1 /* annotations.css in Resources */ = {isa = PBXBuildFile; fileRef = 83EBB4A319F56C1C0083E8F1 /* annotations.css */; };
 		84BAD0341DFEA3A80087B00B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84BAD0331DFEA3A80087B00B /* Images.xcassets */; };
+		84BAD03D1DFF5A020087B00B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BAD03C1DFF5A020087B00B /* Reachability.m */; };
+		84BAD0401DFF5C630087B00B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BAD03F1DFF5C620087B00B /* SystemConfiguration.framework */; };
 		85DE51A117FDDCAC00F55130 /* page-blanche-20130322.epub in Resources */ = {isa = PBXBuildFile; fileRef = 85DE51A017FDDCAC00F55130 /* page-blanche-20130322.epub */; };
 		A250D5118ECA530997C6E72B /* epubReadingSystem.js in Sources */ = {isa = PBXBuildFile; fileRef = A250D199754564056CB0267E /* epubReadingSystem.js */; };
 		A250D5FFC597F4E5EB74D3AC /* epub30-test-0120-20131022.epub in Resources */ = {isa = PBXBuildFile; fileRef = A250D58D34D67FC218608A1F /* epub30-test-0120-20131022.epub */; };
@@ -297,6 +299,9 @@
 		8358470A1B42DB09002DA99D /* RequireJS.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = RequireJS.js; path = "readium-shared-js/build-output/_multiple-bundles/RequireJS.js"; sourceTree = "<group>"; };
 		83EBB4A319F56C1C0083E8F1 /* annotations.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = annotations.css; sourceTree = "<group>"; };
 		84BAD0331DFEA3A80087B00B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = BibleMesh/Images.xcassets; sourceTree = SOURCE_ROOT; };
+		84BAD03B1DFF5A020087B00B /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		84BAD03C1DFF5A020087B00B /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		84BAD03F1DFF5C620087B00B /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		85DE51A017FDDCAC00F55130 /* page-blanche-20130322.epub */ = {isa = PBXFileReference; lastKnownFileType = file; path = "page-blanche-20130322.epub"; sourceTree = "<group>"; };
 		A250D199754564056CB0267E /* epubReadingSystem.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = epubReadingSystem.js; sourceTree = "<group>"; };
 		A250D54A5C423A86C6099037 /* epub30-test-0220-20131022.epub */ = {isa = PBXFileReference; lastKnownFileType = file.epub; path = "epub30-test-0220-20131022.epub"; sourceTree = "<group>"; };
@@ -309,6 +314,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84BAD0401DFF5C630087B00B /* SystemConfiguration.framework in Frameworks */,
 				34D73601186E729400AA361E /* AVFoundation.framework in Frameworks */,
 				34C5534116E15D08003A7C23 /* CFNetwork.framework in Frameworks */,
 				340FC16116BC3B4600346A59 /* CoreGraphics.framework in Frameworks */,
@@ -373,6 +379,7 @@
 		340FC15016BC3B4600346A59 = {
 			isa = PBXGroup;
 			children = (
+				84BAD03A1DFF5A020087B00B /* Reachability2 */,
 				3462FBB916BC3C43003C79E1 /* Classes */,
 				340FC15B16BC3B4600346A59 /* Frameworks */,
 				340FC15A16BC3B4600346A59 /* Products */,
@@ -393,6 +400,7 @@
 		340FC15B16BC3B4600346A59 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				84BAD03F1DFF5C620087B00B /* SystemConfiguration.framework */,
 				34D73600186E729400AA361E /* AVFoundation.framework */,
 				34C5534016E15D08003A7C23 /* CFNetwork.framework */,
 				340FC16016BC3B4600346A59 /* CoreGraphics.framework */,
@@ -661,6 +669,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		84BAD03A1DFF5A020087B00B /* Reachability2 */ = {
+			isa = PBXGroup;
+			children = (
+				84BAD03B1DFF5A020087B00B /* Reachability.h */,
+				84BAD03C1DFF5A020087B00B /* Reachability.m */,
+			);
+			path = Reachability2;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -856,6 +873,7 @@
 				341652A316C2F85700AFDB8B /* PackageMetadataController.m in Sources */,
 				34212FD218F0649500A9109F /* DDASLLogger.m in Sources */,
 				34212FB918F0649500A9109F /* RDPackageResourceResponse.m in Sources */,
+				84BAD03D1DFF5A020087B00B /* Reachability.m in Sources */,
 				34212FC518F0649500A9109F /* MultipartMessageHeader.m in Sources */,
 				34212FD518F0649500A9109F /* DDTTYLogger.m in Sources */,
 				34212FB618F0649500A9109F /* RDPackage.mm in Sources */,

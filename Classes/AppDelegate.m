@@ -41,11 +41,24 @@
 
 @implementation AppDelegate
 
+@synthesize hostReachability;
 
 - (BOOL)
 	application:(UIApplication *)application
 	didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
+    
+    //Change the host name here to change the server you want to monitor.
+    NSString *remoteHostName = @"www.biblemesh.com";
+    //NSString *remoteHostLabelFormatString = NSLocalizedString(@"Remote Host: %@", @"Remote host label format string");
+    //self.remoteHostLabel.text = [NSString stringWithFormat:remoteHostLabelFormatString, remoteHostName];
+    
+    self.hostReachability = [Reachability reachabilityWithHostName:remoteHostName];
+    [self.hostReachability startNotifier];
+    
+    
 	[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
 
 	self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
@@ -58,6 +71,16 @@
 	return YES;
 }
 
+- (void)reachabilityChanged:(NSNotification *)note {
+    Reachability* curReach = [note object];
+    NSParameterAssert([curReach isKindOfClass: [Reachability class]]);
+    NetworkStatus status = [curReach currentReachabilityStatus];
+    if (status == NotReachable) {
+        NSLog(@"NotReachable.");
+    } else {
+        NSLog(@"IsReachable.");
+    }
+}
 
 - (BOOL)
 	application:(UIApplication *)application
