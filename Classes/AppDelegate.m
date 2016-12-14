@@ -41,6 +41,7 @@
 
 @implementation AppDelegate
 
+@synthesize downloadQueue;
 @synthesize hostReachability;
 
 - (BOOL)
@@ -58,14 +59,15 @@
     self.hostReachability = [Reachability reachabilityWithHostName:remoteHostName];
     [self.hostReachability startNotifier];
     
+    downloadQueue = [[NSOperationQueue alloc] init];
     
 	[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
 
 	self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 	[self configureAppearance];
 
-	ContainerListController *c = [[ContainerListController alloc] init];
-	self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
+    ContainerListController *c = [[ContainerListController alloc] init];
+    self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
 	[self.window makeKeyAndVisible];
 
 	return YES;

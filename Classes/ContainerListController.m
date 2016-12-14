@@ -30,15 +30,14 @@
 #import "ContainerListController.h"
 #import "ContainerController.h"
 #import "ContainerList.h"
-
+#import "BooksTableViewCell.h"
+#import "Book.h"
 
 @implementation ContainerListController
-
 
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
-
 
 - (id)init {
 	if (self = [super initWithTitle:LocStr(@"CONTAINER_LIST_TITLE") navBarHidden:NO]) {
@@ -52,7 +51,6 @@
 	return self;
 }
 
-
 - (void)loadView {
 	self.view = [[UIView alloc] init];
 
@@ -63,25 +61,92 @@
 	[self.view addSubview:table];
 }
 
+#pragma mark -
+#pragma mark UIScrollViewDelegate Methods
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    /*if (scrollView == churchBooksTableView) {
+        [_refreshHeaderView egoRefreshScrollViewDidScroll:scrollView];
+    }*/
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
+    /*if (scrollView == churchBooksTableView) {
+        [_refreshHeaderView egoRefreshScrollViewDidEndDragging:scrollView];
+    }*/
+    if (!decelerate)
+    {
+        [self loadContentForVisibleCells];
+    }
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
+{
+    [self loadContentForVisibleCells];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [m_table reloadData];
+    [self loadContentForVisibleCells];
+}
+
+- (void)loadContentForVisibleCells
+{
+    if ([m_paths count] == 0) {
+        return;
+    }
+    
+    NSArray *visiblePaths = [m_table indexPathsForVisibleRows];
+    for (NSIndexPath *indexPath in visiblePaths)
+    {
+        switch (indexPath.section) {
+            case 0:
+            {
+                BooksTableViewCell *cell = (BooksTableViewCell *)[m_table cellForRowAtIndexPath:indexPath];
+                [cell loadImage];
+            }
+                break;
+            default:
+                break;
+        };
+    }
+}
 
 - (void)onContainerListDidChange {
 	m_paths = [ContainerList shared].paths;
 	[m_table reloadData];
 }
 
-
 - (UITableViewCell *)
 	tableView:(UITableView *)tableView
 	cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
-		reuseIdentifier:nil];
-	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-	NSString *path = [m_paths objectAtIndex:indexPath.row];
-	NSArray *components = path.pathComponents;
-	cell.textLabel.text = (components == nil || components.count == 0) ?
-		@"" : components.lastObject;
-	return cell;
+    static NSString *identifier = @"BookCell";
+    BooksTableViewCell *cell = (BooksTableViewCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
+    if (cell == nil)
+    {
+        //CGRect rect = CGRectMake(0.0, 0.0, 320.0, 100.0);
+        //cell = [[[ItemTableViewCell alloc] initWithFrame:rect reuseIdentifier:identifier] autorelease];
+        cell = [[BooksTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+    }
+    
+    Book *book = [[Book alloc] init];
+    NSString *path = [m_paths objectAtIndex:indexPath.row];
+    NSArray *components = path.pathComponents;
+    book.title = (components == nil || components.count == 0) ?
+    @"" : components.lastObject;
+    book.author = @"Some author";
+    
+    //temporary images
+    NSArray *imgs = [NSArray arrayWithObjects:@"51Tg3M9XR0L", @"41ZG-FMn8BL",
+                    @"41O76wsT0VL", @"51rmu8wfj1L",
+                    @"51AtdDrV9bL", @"51ZvxGrNoYL",
+                    @"51myLZoxXnL", nil];
+    book.img = [imgs objectAtIndex:(indexPath.row % 8)];
+    
+    [cell setBook:book therow:indexPath.row];
+    return cell;
 }
 
 
@@ -98,7 +163,6 @@
 	}
 }
 
-
 - (NSInteger)
 	tableView:(UITableView *)tableView
 	numberOfRowsInSection:(NSInteger)section
@@ -111,5 +175,8 @@
 	m_table.frame = self.view.bounds;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 75.0;
+}
 
 @end

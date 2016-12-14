@@ -32,8 +32,10 @@
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate> {
     Reachability  *hostReachability;
+    NSOperationQueue *downloadQueue;
 }
 
+@property (nonatomic, retain) NSOperationQueue *downloadQueue;
 @property (nonatomic, retain) Reachability *hostReachability;
 
 @property (nonatomic, strong) UIWindow *window;
