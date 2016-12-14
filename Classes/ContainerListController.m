@@ -28,12 +28,28 @@
 //  OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "ContainerListController.h"
-#import "ContainerController.h"
+//#import "ContainerController.h"
 #import "ContainerList.h"
 #import "BooksTableViewCell.h"
 #import "Book.h"
+#import "RDContainer.h"
+#import "RDPackage.h"
+#import "EPubViewController.h"
 
 @implementation ContainerListController
+
+
+- (BOOL)container:(RDContainer *)container handleSdkError:(NSString *)message isSevereEpubError:(BOOL)isSevereEpubError {
+    
+    NSLog(@"READIUM SDK: %@\n", message);
+    
+    if (isSevereEpubError == YES) {
+        //fix! [m_sdkErrorMessages addObject:message];
+    }
+    
+    // never throws an exception
+    return YES;
+}
 
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -156,11 +172,39 @@
 {
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	NSString *path = [m_paths objectAtIndex:indexPath.row];
-	ContainerController *c = [[ContainerController alloc] initWithPath:path];
+	/*ContainerController *c = [[ContainerController alloc] initWithPath:path];
 
 	if (c != nil) {
 		[self.navigationController pushViewController:c animated:YES];
-	}
+	}*/
+    
+    RDContainer * m_container = [[RDContainer alloc] initWithDelegate:self path:path];
+    
+    RDPackage *m_package = m_container.firstPackage;
+    
+    //[self popErrorMessage];
+    
+    if (m_package == nil) {
+        //return nil;
+    }
+    
+    EPubViewController *c = [[EPubViewController alloc]
+                             initWithContainer:m_container
+                             package:m_package];
+    
+    //fix or if we have the progress location, use
+    /*
+     EPubViewController *c = [[EPubViewController alloc]
+                            initWithContainer:m_container
+                            package:m_package
+                            spineItem:(RDSpineItem *)spineItem
+                            cfi:(NSString *)cfi*/
+    
+    if (c != nil) {
+        [self.navigationController pushViewController:c animated:YES];
+    } else {
+        //fix error
+    }
 }
 
 - (NSInteger)

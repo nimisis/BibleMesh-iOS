@@ -28,8 +28,10 @@
 //  OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "BaseViewController.h"
+#import "RDContainer.h"
 
 @interface ContainerListController : BaseViewController <
+    RDContainerDelegate,
 	UITableViewDataSource,
 	UITableViewDelegate>
 {
