@@ -92,6 +92,18 @@
 {
     if ([[url scheme] isEqualToString:@"biblemesh"]) {
         NSLog(@"handle biblemesh url scheme");
+        
+        NSString* reducedUrl = [NSString stringWithFormat:
+                                @"%@",
+                                url.pathComponents[2]];
+        
+        UIAlertView *urlscheme = [[UIAlertView alloc]
+                              initWithTitle:@"TODO"
+                                  message:[NSString stringWithFormat:@"URL scheme link clicked. Book ID: %@", reducedUrl]
+                              delegate:nil
+                              cancelButtonTitle:LocStr(@"GENERIC_CANCEL")
+                              otherButtonTitles:nil];
+        [urlscheme show];
     }
     return YES;
     
