@@ -66,7 +66,18 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
+    </array>
     <key>ITSAppUsesNonExemptEncryption</key><false/>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>com.nimisis.biblemesh</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>biblemesh</string>
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>

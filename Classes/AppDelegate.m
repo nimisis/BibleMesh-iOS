@@ -90,7 +90,12 @@
 	sourceApplication:(NSString *)sourceApplication
 	annotation:(id)annotation
 {
-	if (!url.isFileURL) {
+    if ([[url scheme] isEqualToString:@"biblemesh"]) {
+        NSLog(@"handle biblemesh url scheme");
+    }
+    return YES;
+    
+	/*if (!url.isFileURL) {
 		return NO;
 	}
 
@@ -111,7 +116,7 @@
 	}
 
 	[fm copyItemAtPath:pathSrc toPath:pathDst error:nil];
-	return YES;
+	return YES;*/
 }
 
 
