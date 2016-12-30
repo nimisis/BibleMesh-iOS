@@ -38,6 +38,9 @@
 #import "RDPackageResourceServer.h"
 #import "RDSpineItem.h"
 #import <WebKit/WebKit.h>
+#import "GAI.h"
+#import "GAIDictionaryBuilder.h"
+#import "GAIFields.h"
 
 
 @interface EPubViewController () <
@@ -171,7 +174,6 @@
     [self updateNavigationItems];
 	return YES;
 }
-
 
 - (void)
 	executeJavaScript:(NSString *)javaScript
@@ -404,6 +406,11 @@
 
 
 - (void)loadView {
+    
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:kGAIScreenName value:@"EPubView"];
+    [tracker send:[[GAIDictionaryBuilder createAppView]  build]];
+    
 	self.view = [[UIView alloc] init];
 	self.view.backgroundColor = [UIColor whiteColor];
 

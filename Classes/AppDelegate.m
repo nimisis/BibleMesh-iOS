@@ -31,6 +31,9 @@
 #import <AVFoundation/AVFoundation.h>
 #import "ContainerListController.h"
 
+#import "GAI.h"
+#import "GAIDictionaryBuilder.h"
+#import "GAIFields.h"
 
 @interface AppDelegate()
 
@@ -48,19 +51,18 @@
 	application:(UIApplication *)application
 	didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [[GAI sharedInstance] trackerWithTrackingId:@"UA-67167622-8"];
     
+    //callback for connectivity
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
-    
-    //Change the host name here to change the server you want to monitor.
     NSString *remoteHostName = @"www.biblemesh.com";
-    //NSString *remoteHostLabelFormatString = NSLocalizedString(@"Remote Host: %@", @"Remote host label format string");
-    //self.remoteHostLabel.text = [NSString stringWithFormat:remoteHostLabelFormatString, remoteHostName];
-    
     self.hostReachability = [Reachability reachabilityWithHostName:remoteHostName];
     [self.hostReachability startNotifier];
     
+    //store for thumbnail images
     downloadQueue = [[NSOperationQueue alloc] init];
-    
+
+    //for media elements
 	[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
 
 	self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
@@ -73,6 +75,7 @@
 	return YES;
 }
 
+//connectivity callback
 - (void)reachabilityChanged:(NSNotification *)note {
     Reachability* curReach = [note object];
     NSParameterAssert([curReach isKindOfClass: [Reachability class]]);
@@ -84,6 +87,7 @@
     }
 }
 
+//URL scheme
 - (BOOL)
 	application:(UIApplication *)application
 	openURL:(NSURL *)url

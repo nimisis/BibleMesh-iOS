@@ -35,9 +35,11 @@
 #import "RDContainer.h"
 #import "RDPackage.h"
 #import "EPubViewController.h"
+#import "GAI.h"
+#import "GAIDictionaryBuilder.h"
+#import "GAIFields.h"
 
 @implementation ContainerListController
-
 
 - (BOOL)container:(RDContainer *)container handleSdkError:(NSString *)message isSevereEpubError:(BOOL)isSevereEpubError {
     
@@ -68,6 +70,11 @@
 }
 
 - (void)loadView {
+    
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:kGAIScreenName value:@"Library"];
+    [tracker send:[[GAIDictionaryBuilder createAppView]  build]];
+    
 	self.view = [[UIView alloc] init];
 
 	UITableView *table = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
@@ -154,7 +161,7 @@
     @"" : components.lastObject;
     book.author = @"Some author";
     
-    //temporary images
+    //temporary thumbnails
     NSArray *imgs = [NSArray arrayWithObjects:@"51Tg3M9XR0L", @"41ZG-FMn8BL",
                     @"41O76wsT0VL", @"51rmu8wfj1L",
                     @"51AtdDrV9bL", @"51ZvxGrNoYL",
@@ -164,7 +171,6 @@
     [cell setBook:book therow:indexPath.row];
     return cell;
 }
-
 
 - (void)
 	tableView:(UITableView *)tableView
@@ -179,13 +185,13 @@
 	}*/
     
     RDContainer * m_container = [[RDContainer alloc] initWithDelegate:self path:path];
-    
     RDPackage *m_package = m_container.firstPackage;
     
     //[self popErrorMessage];
     
+    //fix catch error
     if (m_package == nil) {
-        //return nil;
+        return;
     }
     
     EPubViewController *c = [[EPubViewController alloc]
@@ -213,7 +219,6 @@
 {
 	return m_paths.count;
 }
-
 
 - (void)viewDidLayoutSubviews {
 	m_table.frame = self.view.bounds;

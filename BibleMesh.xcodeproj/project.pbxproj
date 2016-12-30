@@ -104,6 +104,14 @@
 		8358471E1B42E789002DA99D /* readium-shared-js_all.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 835846FA1B42DAF6002DA99D /* readium-shared-js_all.js.map */; };
 		83919F161A1E074200FC8118 /* epubReadingSystem.js in Resources */ = {isa = PBXBuildFile; fileRef = A250D199754564056CB0267E /* epubReadingSystem.js */; };
 		83EBB4A419F56C1C0083E8F1 /* annotations.css in Resources */ = {isa = PBXBuildFile; fileRef = 83EBB4A319F56C1C0083E8F1 /* annotations.css */; };
+		8464BCF71E16D20C001FA042 /* Changelog.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8464BCDE1E16D20C001FA042 /* Changelog.txt */; };
+		8464BCF81E16D20C001FA042 /* Readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8464BCEA1E16D20C001FA042 /* Readme.txt */; };
+		8464BCF91E16D20C001FA042 /* Changelog.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8464BCEC1E16D20C001FA042 /* Changelog.txt */; };
+		8464BCFA1E16D20C001FA042 /* Readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8464BCF31E16D20C001FA042 /* Readme.txt */; };
+		8464BCFB1E16D20C001FA042 /* libAdIdAccess.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8464BCF41E16D20C001FA042 /* libAdIdAccess.a */; };
+		8464BCFC1E16D20C001FA042 /* libGoogleAnalyticsServices.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8464BCF51E16D20C001FA042 /* libGoogleAnalyticsServices.a */; };
+		8464BCFD1E16D20C001FA042 /* Readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8464BCF61E16D20C001FA042 /* Readme.txt */; };
+		8464BD011E16D24A001FA042 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8464BD001E16D24A001FA042 /* CoreData.framework */; };
 		84BAD0341DFEA3A80087B00B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84BAD0331DFEA3A80087B00B /* Images.xcassets */; };
 		84BAD03D1DFF5A020087B00B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BAD03C1DFF5A020087B00B /* Reachability.m */; };
 		84BAD0401DFF5C630087B00B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BAD03F1DFF5C620087B00B /* SystemConfiguration.framework */; };
@@ -306,6 +314,29 @@
 		835847091B42DB09002DA99D /* readium-shared-js.js.map */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; name = "readium-shared-js.js.map"; path = "readium-shared-js/build-output/_multiple-bundles/readium-shared-js.js.map"; sourceTree = "<group>"; };
 		8358470A1B42DB09002DA99D /* RequireJS.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = RequireJS.js; path = "readium-shared-js/build-output/_multiple-bundles/RequireJS.js"; sourceTree = "<group>"; };
 		83EBB4A319F56C1C0083E8F1 /* annotations.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = annotations.css; sourceTree = "<group>"; };
+		8464BCDE1E16D20C001FA042 /* Changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Changelog.txt; sourceTree = "<group>"; };
+		8464BCE01E16D20C001FA042 /* GAI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAI.h; sourceTree = "<group>"; };
+		8464BCE11E16D20C001FA042 /* GAIDictionaryBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAIDictionaryBuilder.h; sourceTree = "<group>"; };
+		8464BCE21E16D20C001FA042 /* GAIEcommerceFields.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAIEcommerceFields.h; sourceTree = "<group>"; };
+		8464BCE31E16D20C001FA042 /* GAIEcommerceProduct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAIEcommerceProduct.h; sourceTree = "<group>"; };
+		8464BCE41E16D20C001FA042 /* GAIEcommerceProductAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAIEcommerceProductAction.h; sourceTree = "<group>"; };
+		8464BCE51E16D20C001FA042 /* GAIEcommercePromotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAIEcommercePromotion.h; sourceTree = "<group>"; };
+		8464BCE61E16D20C001FA042 /* GAIFields.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAIFields.h; sourceTree = "<group>"; };
+		8464BCE71E16D20C001FA042 /* GAILogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAILogger.h; sourceTree = "<group>"; };
+		8464BCE81E16D20C001FA042 /* GAITrackedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAITrackedViewController.h; sourceTree = "<group>"; };
+		8464BCE91E16D20C001FA042 /* GAITracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAITracker.h; sourceTree = "<group>"; };
+		8464BCEA1E16D20C001FA042 /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
+		8464BCEC1E16D20C001FA042 /* Changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Changelog.txt; sourceTree = "<group>"; };
+		8464BCEE1E16D20C001FA042 /* TAGContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAGContainer.h; sourceTree = "<group>"; };
+		8464BCEF1E16D20C001FA042 /* TAGContainerOpener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAGContainerOpener.h; sourceTree = "<group>"; };
+		8464BCF01E16D20C001FA042 /* TAGDataLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAGDataLayer.h; sourceTree = "<group>"; };
+		8464BCF11E16D20C001FA042 /* TAGLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAGLogger.h; sourceTree = "<group>"; };
+		8464BCF21E16D20C001FA042 /* TAGManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAGManager.h; sourceTree = "<group>"; };
+		8464BCF31E16D20C001FA042 /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
+		8464BCF41E16D20C001FA042 /* libAdIdAccess.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libAdIdAccess.a; sourceTree = "<group>"; };
+		8464BCF51E16D20C001FA042 /* libGoogleAnalyticsServices.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGoogleAnalyticsServices.a; sourceTree = "<group>"; };
+		8464BCF61E16D20C001FA042 /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
+		8464BD001E16D24A001FA042 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		84BAD0331DFEA3A80087B00B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = BibleMesh/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		84BAD03B1DFF5A020087B00B /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		84BAD03C1DFF5A020087B00B /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -342,8 +373,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8464BD011E16D24A001FA042 /* CoreData.framework in Frameworks */,
 				84BAD0401DFF5C630087B00B /* SystemConfiguration.framework in Frameworks */,
 				34D73601186E729400AA361E /* AVFoundation.framework in Frameworks */,
+				8464BCFB1E16D20C001FA042 /* libAdIdAccess.a in Frameworks */,
+				8464BCFC1E16D20C001FA042 /* libGoogleAnalyticsServices.a in Frameworks */,
 				34C5534116E15D08003A7C23 /* CFNetwork.framework in Frameworks */,
 				340FC16116BC3B4600346A59 /* CoreGraphics.framework in Frameworks */,
 				340FC15F16BC3B4600346A59 /* Foundation.framework in Frameworks */,
@@ -407,6 +441,7 @@
 		340FC15016BC3B4600346A59 = {
 			isa = PBXGroup;
 			children = (
+				8464BCDC1E16D20B001FA042 /* GoogleAnalyticsServicesiOS */,
 				84BAD06B1E00263A0087B00B /* ASIHTTPRequest-With-ARC-master */,
 				84BAD03A1DFF5A020087B00B /* Reachability2 */,
 				3462FBB916BC3C43003C79E1 /* Classes */,
@@ -429,6 +464,7 @@
 		340FC15B16BC3B4600346A59 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8464BD001E16D24A001FA042 /* CoreData.framework */,
 				84BAD03F1DFF5C620087B00B /* SystemConfiguration.framework */,
 				34D73600186E729400AA361E /* AVFoundation.framework */,
 				34C5534016E15D08003A7C23 /* CFNetwork.framework */,
@@ -703,6 +739,67 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		8464BCDC1E16D20B001FA042 /* GoogleAnalyticsServicesiOS */ = {
+			isa = PBXGroup;
+			children = (
+				8464BCDD1E16D20C001FA042 /* GoogleAnalytics */,
+				8464BCEB1E16D20C001FA042 /* GoogleTagManager */,
+				8464BCF41E16D20C001FA042 /* libAdIdAccess.a */,
+				8464BCF51E16D20C001FA042 /* libGoogleAnalyticsServices.a */,
+				8464BCF61E16D20C001FA042 /* Readme.txt */,
+			);
+			path = GoogleAnalyticsServicesiOS;
+			sourceTree = "<group>";
+		};
+		8464BCDD1E16D20C001FA042 /* GoogleAnalytics */ = {
+			isa = PBXGroup;
+			children = (
+				8464BCDE1E16D20C001FA042 /* Changelog.txt */,
+				8464BCDF1E16D20C001FA042 /* Library */,
+				8464BCEA1E16D20C001FA042 /* Readme.txt */,
+			);
+			path = GoogleAnalytics;
+			sourceTree = "<group>";
+		};
+		8464BCDF1E16D20C001FA042 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				8464BCE01E16D20C001FA042 /* GAI.h */,
+				8464BCE11E16D20C001FA042 /* GAIDictionaryBuilder.h */,
+				8464BCE21E16D20C001FA042 /* GAIEcommerceFields.h */,
+				8464BCE31E16D20C001FA042 /* GAIEcommerceProduct.h */,
+				8464BCE41E16D20C001FA042 /* GAIEcommerceProductAction.h */,
+				8464BCE51E16D20C001FA042 /* GAIEcommercePromotion.h */,
+				8464BCE61E16D20C001FA042 /* GAIFields.h */,
+				8464BCE71E16D20C001FA042 /* GAILogger.h */,
+				8464BCE81E16D20C001FA042 /* GAITrackedViewController.h */,
+				8464BCE91E16D20C001FA042 /* GAITracker.h */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		8464BCEB1E16D20C001FA042 /* GoogleTagManager */ = {
+			isa = PBXGroup;
+			children = (
+				8464BCEC1E16D20C001FA042 /* Changelog.txt */,
+				8464BCED1E16D20C001FA042 /* Library */,
+				8464BCF31E16D20C001FA042 /* Readme.txt */,
+			);
+			path = GoogleTagManager;
+			sourceTree = "<group>";
+		};
+		8464BCED1E16D20C001FA042 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				8464BCEE1E16D20C001FA042 /* TAGContainer.h */,
+				8464BCEF1E16D20C001FA042 /* TAGContainerOpener.h */,
+				8464BCF01E16D20C001FA042 /* TAGDataLayer.h */,
+				8464BCF11E16D20C001FA042 /* TAGLogger.h */,
+				8464BCF21E16D20C001FA042 /* TAGManager.h */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
 		84BAD03A1DFF5A020087B00B /* Reachability2 */ = {
 			isa = PBXGroup;
 			children = (
@@ -826,8 +923,11 @@
 				84BAD0341DFEA3A80087B00B /* Images.xcassets in Resources */,
 				8358471B1B42E789002DA99D /* readium-external-libs.js.map in Resources */,
 				8358471D1B42E789002DA99D /* readium-shared-js.js.map in Resources */,
+				8464BCF91E16D20C001FA042 /* Changelog.txt in Resources */,
 				8358471E1B42E789002DA99D /* readium-shared-js_all.js.map in Resources */,
+				8464BCFA1E16D20C001FA042 /* Readme.txt in Resources */,
 				8358470F1B42DB09002DA99D /* readium-external-libs.js in Resources */,
+				8464BCFD1E16D20C001FA042 /* Readme.txt in Resources */,
 				83919F161A1E074200FC8118 /* epubReadingSystem.js in Resources */,
 				8307EC6919E3DE4A00B00468 /* mathjax in Resources */,
 				835847181B42DB0A002DA99D /* RequireJS.js in Resources */,
@@ -836,6 +936,7 @@
 				835847101B42DB09002DA99D /* readium-external-libs.js.bundles.js in Resources */,
 				835846F71B42DA05002DA99D /* sdk.css in Resources */,
 				835847161B42DB09002DA99D /* readium-shared-js.js.bundles.js in Resources */,
+				8464BCF81E16D20C001FA042 /* Readme.txt in Resources */,
 				835846FC1B42DAF6002DA99D /* readium-shared-js_all.js.bundles.js in Resources */,
 				3436EB2A1790C3F300246925 /* host_app_feedback.js in Resources */,
 				835846F31B42D997002DA99D /* reader_RequireJS-multiple-bundles.html in Resources */,
@@ -854,6 +955,7 @@
 				A250D8E19073D0C5B921BA5F /* epub30-test-0220-20131022.epub in Resources */,
 				A250DD9ED6B68B6BD9F73160 /* epubReadingSystem.epub in Resources */,
 				835846FB1B42DAF6002DA99D /* readium-shared-js_all.js in Resources */,
+				8464BCF71E16D20C001FA042 /* Changelog.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1077,6 +1179,10 @@
 					"${SRCROOT}/readium-sdk/Platform/Apple/include",
 				);
 				INFOPLIST_FILE = "BibleMesh-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.nimisis.biblemesh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1098,6 +1204,10 @@
 					"${SRCROOT}/readium-sdk/Platform/Apple/include",
 				);
 				INFOPLIST_FILE = "BibleMesh-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.nimisis.biblemesh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

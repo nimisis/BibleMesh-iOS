@@ -35,8 +35,8 @@
     NSOperationQueue *downloadQueue;
 }
 
-@property (nonatomic, retain) NSOperationQueue *downloadQueue;
 @property (nonatomic, retain) Reachability *hostReachability;
+@property (nonatomic, retain) NSOperationQueue *downloadQueue;
 
 @property (nonatomic, strong) UIWindow *window;
 
