@@ -8,8 +8,8 @@
 
 #import "LoginViewController.h"
 #import "WebViewController.h"
-#import "AppDelegate.h"
-#import "ContainerListController.h"
+//#import "AppDelegate.h"
+//#import "ContainerListController.h"
 
 @interface LoginViewController ()
 
@@ -20,7 +20,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Login";
-    self.screenName = @"Login";
+    //self.screenName = @"Login";
 }
 
 - (void)didReceiveMemoryWarning {

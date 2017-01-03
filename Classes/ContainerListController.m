@@ -35,9 +35,9 @@
 #import "RDContainer.h"
 #import "RDPackage.h"
 #import "EPubViewController.h"
-#import "GAI.h"
+/*#import "GAI.h"
 #import "GAIDictionaryBuilder.h"
-#import "GAIFields.h"
+#import "GAIFields.h"*/
 
 @implementation ContainerListController
 
@@ -71,9 +71,9 @@
 
 - (void)loadView {
     
-    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    /*id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
     [tracker set:kGAIScreenName value:@"Library"];
-    [tracker send:[[GAIDictionaryBuilder createAppView]  build]];
+    [tracker send:[[GAIDictionaryBuilder createAppView]  build]];*/
     
 	self.view = [[UIView alloc] init];
 
