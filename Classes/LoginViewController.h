@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-//#import "GAITrackedViewController.h"
+#import "GAITrackedViewController.h"
 
-@interface LoginViewController : UIViewController
+@interface LoginViewController : GAITrackedViewController
 
 - (IBAction)login:(id)sender;
 

@@ -110,6 +110,13 @@
 		849BE1CC1E1BD03E00D7F283 /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 849BE1C81E1BD03E00D7F283 /* WebViewController.m */; };
 		849BE1CD1E1BD03E00D7F283 /* WebViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849BE1C91E1BD03E00D7F283 /* WebViewController.xib */; };
 		849BE2A11E1BEA7300D7F283 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 849BE2A01E1BEA7300D7F283 /* libsqlite3.tbd */; };
+		849BE4751E1BEFDC00D7F283 /* Changelog.txt in Resources */ = {isa = PBXBuildFile; fileRef = 849BE45C1E1BEFDC00D7F283 /* Changelog.txt */; };
+		849BE4761E1BEFDC00D7F283 /* Readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 849BE4681E1BEFDC00D7F283 /* Readme.txt */; };
+		849BE4771E1BEFDC00D7F283 /* Changelog.txt in Resources */ = {isa = PBXBuildFile; fileRef = 849BE46A1E1BEFDC00D7F283 /* Changelog.txt */; };
+		849BE4781E1BEFDC00D7F283 /* Readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 849BE4711E1BEFDC00D7F283 /* Readme.txt */; };
+		849BE4791E1BEFDC00D7F283 /* libAdIdAccess.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 849BE4721E1BEFDC00D7F283 /* libAdIdAccess.a */; };
+		849BE47A1E1BEFDC00D7F283 /* libGoogleAnalyticsServices.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 849BE4731E1BEFDC00D7F283 /* libGoogleAnalyticsServices.a */; };
+		849BE47B1E1BEFDC00D7F283 /* Readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 849BE4741E1BEFDC00D7F283 /* Readme.txt */; };
 		84BAD0341DFEA3A80087B00B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84BAD0331DFEA3A80087B00B /* Images.xcassets */; };
 		84BAD03D1DFF5A020087B00B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BAD03C1DFF5A020087B00B /* Reachability.m */; };
 		84BAD0401DFF5C630087B00B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BAD03F1DFF5C620087B00B /* SystemConfiguration.framework */; };
@@ -320,6 +327,28 @@
 		849BE1C81E1BD03E00D7F283 /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
 		849BE1C91E1BD03E00D7F283 /* WebViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WebViewController.xib; sourceTree = "<group>"; };
 		849BE2A01E1BEA7300D7F283 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		849BE45C1E1BEFDC00D7F283 /* Changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Changelog.txt; sourceTree = "<group>"; };
+		849BE45E1E1BEFDC00D7F283 /* GAI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAI.h; sourceTree = "<group>"; };
+		849BE45F1E1BEFDC00D7F283 /* GAIDictionaryBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAIDictionaryBuilder.h; sourceTree = "<group>"; };
+		849BE4601E1BEFDC00D7F283 /* GAIEcommerceFields.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAIEcommerceFields.h; sourceTree = "<group>"; };
+		849BE4611E1BEFDC00D7F283 /* GAIEcommerceProduct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAIEcommerceProduct.h; sourceTree = "<group>"; };
+		849BE4621E1BEFDC00D7F283 /* GAIEcommerceProductAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAIEcommerceProductAction.h; sourceTree = "<group>"; };
+		849BE4631E1BEFDC00D7F283 /* GAIEcommercePromotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAIEcommercePromotion.h; sourceTree = "<group>"; };
+		849BE4641E1BEFDC00D7F283 /* GAIFields.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAIFields.h; sourceTree = "<group>"; };
+		849BE4651E1BEFDC00D7F283 /* GAILogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAILogger.h; sourceTree = "<group>"; };
+		849BE4661E1BEFDC00D7F283 /* GAITrackedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAITrackedViewController.h; sourceTree = "<group>"; };
+		849BE4671E1BEFDC00D7F283 /* GAITracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAITracker.h; sourceTree = "<group>"; };
+		849BE4681E1BEFDC00D7F283 /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
+		849BE46A1E1BEFDC00D7F283 /* Changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Changelog.txt; sourceTree = "<group>"; };
+		849BE46C1E1BEFDC00D7F283 /* TAGContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAGContainer.h; sourceTree = "<group>"; };
+		849BE46D1E1BEFDC00D7F283 /* TAGContainerOpener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAGContainerOpener.h; sourceTree = "<group>"; };
+		849BE46E1E1BEFDC00D7F283 /* TAGDataLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAGDataLayer.h; sourceTree = "<group>"; };
+		849BE46F1E1BEFDC00D7F283 /* TAGLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAGLogger.h; sourceTree = "<group>"; };
+		849BE4701E1BEFDC00D7F283 /* TAGManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAGManager.h; sourceTree = "<group>"; };
+		849BE4711E1BEFDC00D7F283 /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
+		849BE4721E1BEFDC00D7F283 /* libAdIdAccess.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libAdIdAccess.a; sourceTree = "<group>"; };
+		849BE4731E1BEFDC00D7F283 /* libGoogleAnalyticsServices.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGoogleAnalyticsServices.a; sourceTree = "<group>"; };
+		849BE4741E1BEFDC00D7F283 /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
 		84BAD0331DFEA3A80087B00B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = BibleMesh/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		84BAD03B1DFF5A020087B00B /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		84BAD03C1DFF5A020087B00B /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -360,12 +389,14 @@
 				8464BD011E16D24A001FA042 /* CoreData.framework in Frameworks */,
 				84BAD0401DFF5C630087B00B /* SystemConfiguration.framework in Frameworks */,
 				34D73601186E729400AA361E /* AVFoundation.framework in Frameworks */,
+				849BE4791E1BEFDC00D7F283 /* libAdIdAccess.a in Frameworks */,
 				34C5534116E15D08003A7C23 /* CFNetwork.framework in Frameworks */,
 				340FC16116BC3B4600346A59 /* CoreGraphics.framework in Frameworks */,
 				340FC15F16BC3B4600346A59 /* Foundation.framework in Frameworks */,
 				348200FC183A9D2D007E72E6 /* MobileCoreServices.framework in Frameworks */,
 				34DAC6F018D4BD22004F926A /* Security.framework in Frameworks */,
 				340FC15D16BC3B4600346A59 /* UIKit.framework in Frameworks */,
+				849BE47A1E1BEFDC00D7F283 /* libGoogleAnalyticsServices.a in Frameworks */,
 				34EB839C1ABA479A00C86B67 /* WebKit.framework in Frameworks */,
 				347C58C016BC879400A647B0 /* libePub3-iOS.a in Frameworks */,
 				34B5457C16BCB07800D14838 /* libxml2.dylib in Frameworks */,
@@ -423,6 +454,7 @@
 		340FC15016BC3B4600346A59 = {
 			isa = PBXGroup;
 			children = (
+				849BE45A1E1BEFDC00D7F283 /* GoogleAnalyticsServicesiOS_3.10 */,
 				84BAD06B1E00263A0087B00B /* ASIHTTPRequest-With-ARC-master */,
 				84BAD03A1DFF5A020087B00B /* Reachability2 */,
 				3462FBB916BC3C43003C79E1 /* Classes */,
@@ -727,6 +759,67 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		849BE45A1E1BEFDC00D7F283 /* GoogleAnalyticsServicesiOS_3.10 */ = {
+			isa = PBXGroup;
+			children = (
+				849BE45B1E1BEFDC00D7F283 /* GoogleAnalytics */,
+				849BE4691E1BEFDC00D7F283 /* GoogleTagManager */,
+				849BE4721E1BEFDC00D7F283 /* libAdIdAccess.a */,
+				849BE4731E1BEFDC00D7F283 /* libGoogleAnalyticsServices.a */,
+				849BE4741E1BEFDC00D7F283 /* Readme.txt */,
+			);
+			path = GoogleAnalyticsServicesiOS_3.10;
+			sourceTree = "<group>";
+		};
+		849BE45B1E1BEFDC00D7F283 /* GoogleAnalytics */ = {
+			isa = PBXGroup;
+			children = (
+				849BE45C1E1BEFDC00D7F283 /* Changelog.txt */,
+				849BE45D1E1BEFDC00D7F283 /* Library */,
+				849BE4681E1BEFDC00D7F283 /* Readme.txt */,
+			);
+			path = GoogleAnalytics;
+			sourceTree = "<group>";
+		};
+		849BE45D1E1BEFDC00D7F283 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				849BE45E1E1BEFDC00D7F283 /* GAI.h */,
+				849BE45F1E1BEFDC00D7F283 /* GAIDictionaryBuilder.h */,
+				849BE4601E1BEFDC00D7F283 /* GAIEcommerceFields.h */,
+				849BE4611E1BEFDC00D7F283 /* GAIEcommerceProduct.h */,
+				849BE4621E1BEFDC00D7F283 /* GAIEcommerceProductAction.h */,
+				849BE4631E1BEFDC00D7F283 /* GAIEcommercePromotion.h */,
+				849BE4641E1BEFDC00D7F283 /* GAIFields.h */,
+				849BE4651E1BEFDC00D7F283 /* GAILogger.h */,
+				849BE4661E1BEFDC00D7F283 /* GAITrackedViewController.h */,
+				849BE4671E1BEFDC00D7F283 /* GAITracker.h */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		849BE4691E1BEFDC00D7F283 /* GoogleTagManager */ = {
+			isa = PBXGroup;
+			children = (
+				849BE46A1E1BEFDC00D7F283 /* Changelog.txt */,
+				849BE46B1E1BEFDC00D7F283 /* Library */,
+				849BE4711E1BEFDC00D7F283 /* Readme.txt */,
+			);
+			path = GoogleTagManager;
+			sourceTree = "<group>";
+		};
+		849BE46B1E1BEFDC00D7F283 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				849BE46C1E1BEFDC00D7F283 /* TAGContainer.h */,
+				849BE46D1E1BEFDC00D7F283 /* TAGContainerOpener.h */,
+				849BE46E1E1BEFDC00D7F283 /* TAGDataLayer.h */,
+				849BE46F1E1BEFDC00D7F283 /* TAGLogger.h */,
+				849BE4701E1BEFDC00D7F283 /* TAGManager.h */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
 		84BAD03A1DFF5A020087B00B /* Reachability2 */ = {
 			isa = PBXGroup;
 			children = (
@@ -850,7 +943,9 @@
 				84BAD0341DFEA3A80087B00B /* Images.xcassets in Resources */,
 				8358471B1B42E789002DA99D /* readium-external-libs.js.map in Resources */,
 				849BE1CD1E1BD03E00D7F283 /* WebViewController.xib in Resources */,
+				849BE4751E1BEFDC00D7F283 /* Changelog.txt in Resources */,
 				8358471D1B42E789002DA99D /* readium-shared-js.js.map in Resources */,
+				849BE4761E1BEFDC00D7F283 /* Readme.txt in Resources */,
 				8358471E1B42E789002DA99D /* readium-shared-js_all.js.map in Resources */,
 				8358470F1B42DB09002DA99D /* readium-external-libs.js in Resources */,
 				83919F161A1E074200FC8118 /* epubReadingSystem.js in Resources */,
@@ -864,6 +959,7 @@
 				835846FC1B42DAF6002DA99D /* readium-shared-js_all.js.bundles.js in Resources */,
 				3436EB2A1790C3F300246925 /* host_app_feedback.js in Resources */,
 				835846F31B42D997002DA99D /* reader_RequireJS-multiple-bundles.html in Resources */,
+				849BE4781E1BEFDC00D7F283 /* Readme.txt in Resources */,
 				835847151B42DB09002DA99D /* readium-shared-js.js in Resources */,
 				849BE1CB1E1BD03E00D7F283 /* LoginViewController.xib in Resources */,
 				835846F51B42D997002DA99D /* reader_RequireJS-single-bundle.html in Resources */,
@@ -873,9 +969,11 @@
 				340535B916BC729200D4A802 /* moby-dick-20120118.epub in Resources */,
 				3403516516CE93F2009E3B88 /* reader.css in Resources */,
 				3403516616CE93F2009E3B88 /* reader.html in Resources */,
+				849BE47B1E1BEFDC00D7F283 /* Readme.txt in Resources */,
 				8358470D1B42DB09002DA99D /* readium-cfi-js.js.bundles.js in Resources */,
 				85DE51A117FDDCAC00F55130 /* page-blanche-20130322.epub in Resources */,
 				340535BB16BC793700D4A802 /* wasteland-20120118.epub in Resources */,
+				849BE4771E1BEFDC00D7F283 /* Changelog.txt in Resources */,
 				A250D5FFC597F4E5EB74D3AC /* epub30-test-0120-20131022.epub in Resources */,
 				A250D8E19073D0C5B921BA5F /* epub30-test-0220-20131022.epub in Resources */,
 				A250DD9ED6B68B6BD9F73160 /* epubReadingSystem.epub in Resources */,
@@ -1099,6 +1197,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = JUZJ695LJ6;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				HEADER_SEARCH_PATHS = (
 					"${SDKROOT}/usr/include/libxml2",
@@ -1107,8 +1206,8 @@
 				INFOPLIST_FILE = "BibleMesh-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS",
-					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS_3.17",
+					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS_3.13",
+					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS_3.10",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.nimisis.biblemesh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1125,6 +1224,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = JUZJ695LJ6;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				HEADER_SEARCH_PATHS = (
 					"${SDKROOT}/usr/include/libxml2",
@@ -1133,8 +1233,8 @@
 				INFOPLIST_FILE = "BibleMesh-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS",
-					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS_3.17",
+					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS_3.13",
+					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS_3.10",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.nimisis.biblemesh;
 				PRODUCT_NAME = "$(TARGET_NAME)";

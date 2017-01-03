@@ -29,11 +29,11 @@
 
 #import "AppDelegate.h"
 #import <AVFoundation/AVFoundation.h>
-//#import "ContainerListController.h"
+#import "ContainerListController.h"
 #import "LoginViewController.h"
-/*#import "GAI.h"
+#import "GAI.h"
 #import "GAIDictionaryBuilder.h"
-#import "GAIFields.h"*/
+#import "GAIFields.h"
 
 @interface AppDelegate()
 
@@ -52,7 +52,7 @@
 	application:(UIApplication *)application
 	didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    /*[[GAI sharedInstance] trackerWithTrackingId:@"UA-67167622-8"];*/
+    [[GAI sharedInstance] trackerWithTrackingId:@"UA-67167622-8"];
     
     //callback for connectivity
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
