@@ -29,8 +29,8 @@
 
 #import "AppDelegate.h"
 #import <AVFoundation/AVFoundation.h>
-#import "ContainerListController.h"
-
+//#import "ContainerListController.h"
+#import "LoginViewController.h"
 #import "GAI.h"
 #import "GAIDictionaryBuilder.h"
 #import "GAIFields.h"
@@ -46,6 +46,7 @@
 
 @synthesize downloadQueue;
 @synthesize hostReachability;
+@synthesize lvc;
 
 - (BOOL)
 	application:(UIApplication *)application
@@ -67,10 +68,11 @@
 
 	self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 	[self configureAppearance];
-
-    ContainerListController *c = [[ContainerListController alloc] init];
-    self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
-	[self.window makeKeyAndVisible];
+    
+    lvc = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
+    self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:lvc];
+    
+    [self.window makeKeyAndVisible];
 
 	return YES;
 }

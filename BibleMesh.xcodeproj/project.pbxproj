@@ -112,6 +112,10 @@
 		8464BCFC1E16D20C001FA042 /* libGoogleAnalyticsServices.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8464BCF51E16D20C001FA042 /* libGoogleAnalyticsServices.a */; };
 		8464BCFD1E16D20C001FA042 /* Readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8464BCF61E16D20C001FA042 /* Readme.txt */; };
 		8464BD011E16D24A001FA042 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8464BD001E16D24A001FA042 /* CoreData.framework */; };
+		849BE1CA1E1BD03E00D7F283 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 849BE1C51E1BD03E00D7F283 /* LoginViewController.m */; };
+		849BE1CB1E1BD03E00D7F283 /* LoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849BE1C61E1BD03E00D7F283 /* LoginViewController.xib */; };
+		849BE1CC1E1BD03E00D7F283 /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 849BE1C81E1BD03E00D7F283 /* WebViewController.m */; };
+		849BE1CD1E1BD03E00D7F283 /* WebViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849BE1C91E1BD03E00D7F283 /* WebViewController.xib */; };
 		84BAD0341DFEA3A80087B00B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84BAD0331DFEA3A80087B00B /* Images.xcassets */; };
 		84BAD03D1DFF5A020087B00B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BAD03C1DFF5A020087B00B /* Reachability.m */; };
 		84BAD0401DFF5C630087B00B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BAD03F1DFF5C620087B00B /* SystemConfiguration.framework */; };
@@ -337,6 +341,12 @@
 		8464BCF51E16D20C001FA042 /* libGoogleAnalyticsServices.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGoogleAnalyticsServices.a; sourceTree = "<group>"; };
 		8464BCF61E16D20C001FA042 /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
 		8464BD001E16D24A001FA042 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		849BE1C41E1BD03E00D7F283 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		849BE1C51E1BD03E00D7F283 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
+		849BE1C61E1BD03E00D7F283 /* LoginViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginViewController.xib; sourceTree = "<group>"; };
+		849BE1C71E1BD03E00D7F283 /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewController.h; sourceTree = "<group>"; };
+		849BE1C81E1BD03E00D7F283 /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
+		849BE1C91E1BD03E00D7F283 /* WebViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WebViewController.xib; sourceTree = "<group>"; };
 		84BAD0331DFEA3A80087B00B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = BibleMesh/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		84BAD03B1DFF5A020087B00B /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		84BAD03C1DFF5A020087B00B /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -655,6 +665,12 @@
 		345CA3E116C00EE100B8B56A /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				849BE1C41E1BD03E00D7F283 /* LoginViewController.h */,
+				849BE1C51E1BD03E00D7F283 /* LoginViewController.m */,
+				849BE1C61E1BD03E00D7F283 /* LoginViewController.xib */,
+				849BE1C71E1BD03E00D7F283 /* WebViewController.h */,
+				849BE1C81E1BD03E00D7F283 /* WebViewController.m */,
+				849BE1C91E1BD03E00D7F283 /* WebViewController.xib */,
 				84BAD04D1E001F410087B00B /* Book.h */,
 				84BAD04E1E001F410087B00B /* Book.m */,
 				84BAD04F1E001F410087B00B /* BookDelegate.h */,
@@ -922,6 +938,7 @@
 				8358471A1B42E789002DA99D /* readium-cfi-js.js.map in Resources */,
 				84BAD0341DFEA3A80087B00B /* Images.xcassets in Resources */,
 				8358471B1B42E789002DA99D /* readium-external-libs.js.map in Resources */,
+				849BE1CD1E1BD03E00D7F283 /* WebViewController.xib in Resources */,
 				8358471D1B42E789002DA99D /* readium-shared-js.js.map in Resources */,
 				8464BCF91E16D20C001FA042 /* Changelog.txt in Resources */,
 				8358471E1B42E789002DA99D /* readium-shared-js_all.js.map in Resources */,
@@ -941,6 +958,7 @@
 				3436EB2A1790C3F300246925 /* host_app_feedback.js in Resources */,
 				835846F31B42D997002DA99D /* reader_RequireJS-multiple-bundles.html in Resources */,
 				835847151B42DB09002DA99D /* readium-shared-js.js in Resources */,
+				849BE1CB1E1BD03E00D7F283 /* LoginViewController.xib in Resources */,
 				835846F51B42D997002DA99D /* reader_RequireJS-single-bundle.html in Resources */,
 				3462FBC816BC3C8F003C79E1 /* Localizable.strings in Resources */,
 				835846F41B42D997002DA99D /* reader_RequireJS-no-optimize.html in Resources */,
@@ -986,6 +1004,7 @@
 				3462FBBD16BC3C43003C79E1 /* AppDelegate.m in Sources */,
 				34212FC618F0649500A9109F /* MultipartMessageHeaderField.m in Sources */,
 				34212FC118F0649500A9109F /* HTTPConnection.m in Sources */,
+				849BE1CA1E1BD03E00D7F283 /* LoginViewController.m in Sources */,
 				84BAD0481E001C670087B00B /* BooksTableViewCell.m in Sources */,
 				84BAD07D1E00263A0087B00B /* ASIHTTPRequest.m in Sources */,
 				340535AA16BC5DD100D4A802 /* BaseViewController.m in Sources */,
@@ -1050,6 +1069,7 @@
 				8358470E1B42DB09002DA99D /* readium-cfi-js.js.map in Sources */,
 				342817DD18DBC48700C8434E /* NavigationElementItem.m in Sources */,
 				34212FCF18F0649500A9109F /* GCDAsyncSocket.m in Sources */,
+				849BE1CC1E1BD03E00D7F283 /* WebViewController.m in Sources */,
 				A250D5118ECA530997C6E72B /* epubReadingSystem.js in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

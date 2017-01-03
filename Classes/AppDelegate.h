@@ -29,15 +29,18 @@
 
 #import <UIKit/UIKit.h>
 #import "Reachability.h"
+#import "LoginViewController.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate> {
     Reachability  *hostReachability;
     NSOperationQueue *downloadQueue;
+    LoginViewController *lvc;
 }
 
 @property (nonatomic, retain) Reachability *hostReachability;
 @property (nonatomic, retain) NSOperationQueue *downloadQueue;
 
+@property (nonatomic, retain) LoginViewController *lvc;
 @property (nonatomic, strong) UIWindow *window;
 
 @end
