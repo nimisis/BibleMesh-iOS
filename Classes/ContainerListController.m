@@ -38,6 +38,7 @@
 #import "GAI.h"
 #import "GAIDictionaryBuilder.h"
 #import "GAIFields.h"
+//#import "BibleMesh-swift.h" //required for new CoreData codegen
 
 @implementation ContainerListController
 
@@ -60,7 +61,7 @@
 - (id)init {
 	if (self = [super initWithTitle:LocStr(@"CONTAINER_LIST_TITLE") navBarHidden:NO]) {
 		m_paths = [ContainerList shared].paths;
-
+        
 		[[NSNotificationCenter defaultCenter] addObserver:self
 			selector:@selector(onContainerListDidChange)
 			name:kSDKLauncherContainerListDidChange object:nil];

@@ -28,7 +28,8 @@
 //  OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "ContainerList.h"
-
+#import "AppDelegate.h"
+#import "Biblemesh-swift.h"
 
 NSString * const kSDKLauncherContainerListDidChange = @"SDKLauncherContainerListDidChange";
 
@@ -37,7 +38,7 @@ NSString * const kSDKLauncherContainerListDidChange = @"SDKLauncherContainerList
 
 
 - (void)checkForChanges {
-	NSArray *pathsCurr = self.paths;
+    NSArray *pathsCurr = self.paths;
 	BOOL didChange = NO;
 
 	NSUInteger countCurr = pathsCurr.count;
@@ -74,7 +75,9 @@ NSString * const kSDKLauncherContainerListDidChange = @"SDKLauncherContainerList
 		NSString *docsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
 			NSUserDomainMask, YES) objectAtIndex:0];
 		NSFileManager *fm = [NSFileManager defaultManager];
-
+        
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        
 		for (NSString *fileName in [fm contentsOfDirectoryAtPath:resPath error:nil]) {
 			if ([fileName.lowercaseString hasSuffix:@".epub"]) {
 				NSString *src = [resPath stringByAppendingPathComponent:fileName];
@@ -83,6 +86,21 @@ NSString * const kSDKLauncherContainerListDidChange = @"SDKLauncherContainerList
 				if (![fm fileExistsAtPath:dst]) {
 					[fm copyItemAtPath:src toPath:dst error:nil];
 				}
+                
+                //to delete. Just some code to insert data into the database
+                /*Epubtitle *del = (Epubtitle *)[NSEntityDescription insertNewObjectForEntityForName:@"Epubtitle" inManagedObjectContext:[appDelegate managedObjectContext]];
+                del.author = @"Dave";
+                del.title = fileName;
+                //[deliveriesArray addObject:del];
+                
+                NSError *error;
+                if ([[appDelegate managedObjectContext] save:&error]) {
+                    NSLog(@"saved");
+                } else {
+                    // Handle the error.
+                    NSAssert(NO, [error description]);
+                }*/
+                
 			}
 		}
 
@@ -90,6 +108,8 @@ NSString * const kSDKLauncherContainerListDidChange = @"SDKLauncherContainerList
 		[self performSelector:@selector(checkForChanges) withObject:nil afterDelay:0];
 	}
 
+    //Epubtitle *ep;
+    
 	return self;
 }
 

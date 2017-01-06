@@ -117,6 +117,7 @@
 		849BE4791E1BEFDC00D7F283 /* libAdIdAccess.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 849BE4721E1BEFDC00D7F283 /* libAdIdAccess.a */; };
 		849BE47A1E1BEFDC00D7F283 /* libGoogleAnalyticsServices.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 849BE4731E1BEFDC00D7F283 /* libGoogleAnalyticsServices.a */; };
 		849BE47B1E1BEFDC00D7F283 /* Readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 849BE4741E1BEFDC00D7F283 /* Readme.txt */; };
+		849BE5351E1FEB0D00D7F283 /* Epubtitle.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 849BE5331E1FEB0D00D7F283 /* Epubtitle.xcdatamodeld */; };
 		84BAD0341DFEA3A80087B00B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84BAD0331DFEA3A80087B00B /* Images.xcassets */; };
 		84BAD03D1DFF5A020087B00B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BAD03C1DFF5A020087B00B /* Reachability.m */; };
 		84BAD0401DFF5C630087B00B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BAD03F1DFF5C620087B00B /* SystemConfiguration.framework */; };
@@ -349,6 +350,8 @@
 		849BE4721E1BEFDC00D7F283 /* libAdIdAccess.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libAdIdAccess.a; sourceTree = "<group>"; };
 		849BE4731E1BEFDC00D7F283 /* libGoogleAnalyticsServices.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGoogleAnalyticsServices.a; sourceTree = "<group>"; };
 		849BE4741E1BEFDC00D7F283 /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
+		849BE52B1E1FE66500D7F283 /* BibleMesh-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BibleMesh-Bridging-Header.h"; sourceTree = "<group>"; };
+		849BE5341E1FEB0D00D7F283 /* Epubtitle.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Epubtitle.xcdatamodel; sourceTree = "<group>"; };
 		84BAD0331DFEA3A80087B00B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = BibleMesh/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		84BAD03B1DFF5A020087B00B /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		84BAD03C1DFF5A020087B00B /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -463,6 +466,7 @@
 				3462FBBF16BC3C8F003C79E1 /* Resources */,
 				3462FBC916BC3CBA003C79E1 /* Supporting Files */,
 				347C58B216BC873700A647B0 /* ePub3.xcodeproj */,
+				849BE52B1E1FE66500D7F283 /* BibleMesh-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -715,6 +719,7 @@
 				341652A716C2F9E700AFDB8B /* SpineItemListController.m */,
 				84BAD0461E001C670087B00B /* BooksTableViewCell.h */,
 				84BAD0471E001C670087B00B /* BooksTableViewCell.m */,
+				849BE5331E1FEB0D00D7F283 /* Epubtitle.xcdatamodeld */,
 			);
 			name = Main;
 			sourceTree = "<group>";
@@ -884,6 +889,7 @@
 				TargetAttributes = {
 					340FC15816BC3B4600346A59 = {
 						DevelopmentTeam = JUZJ695LJ6;
+						LastSwiftMigration = 0820;
 					};
 				};
 			};
@@ -1006,6 +1012,7 @@
 			files = (
 				34212FD618F0649500A9109F /* ContextFilterLogFormatter.m in Sources */,
 				3462FBBD16BC3C43003C79E1 /* AppDelegate.m in Sources */,
+				849BE5351E1FEB0D00D7F283 /* Epubtitle.xcdatamodeld in Sources */,
 				34212FC618F0649500A9109F /* MultipartMessageHeaderField.m in Sources */,
 				34212FC118F0649500A9109F /* HTTPConnection.m in Sources */,
 				849BE1CA1E1BD03E00D7F283 /* LoginViewController.m in Sources */,
@@ -1194,6 +1201,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = JUZJ695LJ6;
@@ -1204,14 +1212,17 @@
 					"${SRCROOT}/readium-sdk/Platform/Apple/include",
 				);
 				INFOPLIST_FILE = "BibleMesh-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS_3.13",
 					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS_3.10",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.nimisis.biblemesh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "BibleMesh-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1221,6 +1232,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = JUZJ695LJ6;
@@ -1231,14 +1243,16 @@
 					"${SRCROOT}/readium-sdk/Platform/Apple/include",
 				);
 				INFOPLIST_FILE = "BibleMesh-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS_3.13",
 					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS_3.10",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.nimisis.biblemesh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "BibleMesh-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1265,6 +1279,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		849BE5331E1FEB0D00D7F283 /* Epubtitle.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				849BE5341E1FEB0D00D7F283 /* Epubtitle.xcdatamodel */,
+			);
+			currentVersion = 849BE5341E1FEB0D00D7F283 /* Epubtitle.xcdatamodel */;
+			path = Epubtitle.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 340FC15116BC3B4600346A59 /* Project object */;
 }
