@@ -46,6 +46,8 @@
     NSLog(@"html: %@", html);
     NSCachedURLResponse *resp = [[NSURLCache sharedURLCache] cachedResponseForRequest:webView.request];
     NSLog(@"%@",[(NSHTTPURLResponse*)resp.response allHeaderFields]);
+    
+    //check that token is of expected format. Use regular expression?
     if ([html hasPrefix:@"sometoken"]) {
         
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -56,6 +58,8 @@
             
             //fix todo. Make request to get titles
             
+            
+            //show library view
             ContainerListController *c = [[ContainerListController alloc] init];
             [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
             

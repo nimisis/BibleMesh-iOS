@@ -52,6 +52,7 @@
 	application:(UIApplication *)application
 	didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    //Google analytics
     [[GAI sharedInstance] trackerWithTrackingId:@"UA-67167622-8"];
     
     //callback for connectivity
@@ -66,14 +67,13 @@
     //for media elements
 	[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
 
-    //
+    //Core data
     NSManagedObjectContext *context = [self managedObjectContext];
     if (!context) {
-        // Handle the error.
         NSLog(@"Handle the NSManagedContext error");
     }
     
-    //NSLog(@"Starting fetch");
+    //start fetch from database
     {
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
         NSEntityDescription *entity = [NSEntityDescription entityForName:@"Epubtitle" inManagedObjectContext:managedObjectContext];
@@ -92,9 +92,10 @@
         }
         
         //[self setEpubtitlesArray:mutableFetchResults];
-        NSLog(@"%lu Epubtitles", (unsigned long)[mutableFetchResults count]);
+        NSLog(@"Got %lu Epubtitles", (unsigned long)[mutableFetchResults count]);
     }
     
+    //start window
 	self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 	[self configureAppearance];
     
@@ -165,7 +166,6 @@
 	[fm copyItemAtPath:pathSrc toPath:pathDst error:nil];
 	return YES;*/
 }
-
 
 - (void)configureAppearance {
 	UIColor *color = [UIColor colorWithRed:39/255.0 green:136/255.0 blue:156/255.0 alpha:1];
