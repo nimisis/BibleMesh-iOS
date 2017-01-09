@@ -67,8 +67,6 @@
     
     [authorLabel setFrame:CGRectMake(IMAGE_WIDTH, 42.0, self.contentView.bounds.size.width - IMAGE_WIDTH - 132, 32.0)];
     [nameLabel setFrame:CGRectMake(IMAGE_WIDTH, 4.0, self.contentView.bounds.size.width - IMAGE_WIDTH, 32.0)];//CGRectMake(80.0, 5.0, 290.0, 70.0)];
-    
-    
 }
 
 - (void)setBook:(Book *)newBook therow:(NSInteger)therow
@@ -106,61 +104,9 @@
                 [scrollingWheel startAnimating];
                 photo.image = nil;
             }
-            needOwnUpdate = TRUE;
-            needWishUpdate = TRUE;
         }
     }
     
-    
-    if (needOwnUpdate) {
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        /*[ownBtn removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
-        if (book.own) {
-            didOwn = TRUE;
-            [ownBtn addTarget:appDelegate action:@selector(disownIt:) forControlEvents:UIControlEventTouchDown];
-            [ownBtn setTitle:@"Remove" forState:UIControlStateNormal];
-            [ownBtn setBackgroundColor:[UIColor colorWithRed:273/255.0f green:83/255.0f blue:79/255.0f alpha:1.0]];
-            [ownBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            ownBtn.tag = book.bookID;
-        } else {
-            didOwn = FALSE;
-            [ownBtn setTitle:@"Own" forState:UIControlStateNormal];
-            if (book.bookID == 0) {
-                [ownBtn addTarget:appDelegate action:@selector(ownNew:) forControlEvents:UIControlEventTouchDown];
-                ownBtn.tag = therow;
-            } else {
-                [ownBtn addTarget:appDelegate action:@selector(ownIt:) forControlEvents:UIControlEventTouchDown];
-                ownBtn.tag = book.bookID;
-            }
-            [ownBtn setBackgroundColor:[UIColor colorWithRed:66/255.0f green:139/255.0f blue:202/255.0f alpha:1.0]];
-            [ownBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        }*/
-    }
-    if (needWishUpdate) {
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        /*[wishBtn removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
-        if (book.wish) {
-            didWish = TRUE;
-            [wishBtn addTarget:appDelegate action:@selector(unwishIt:) forControlEvents:UIControlEventTouchDown];
-            [wishBtn setTitle:@"Un-wish" forState:UIControlStateNormal];
-            [wishBtn setBackgroundColor:[UIColor colorWithRed:92/255.0f green:184/255.0f blue:92/255.0f alpha:1.0]];
-            [wishBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            wishBtn.tag = book.bookID;
-        } else {
-            didWish = FALSE;
-            [wishBtn setTitle:@"Wish" forState:UIControlStateNormal];
-            if (book.bookID == 0) {
-                [wishBtn addTarget:appDelegate action:@selector(wishNew:)
-                  forControlEvents:UIControlEventTouchDown];
-                wishBtn.tag = therow;//indexPath.row;
-            } else {
-                [wishBtn addTarget:appDelegate action:@selector(wishIt:) forControlEvents:UIControlEventTouchDown];
-                wishBtn.tag = book.bookID;
-            }
-            [wishBtn setBackgroundColor:[UIColor whiteColor]];
-            [wishBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        }*/
-    }
 }
 
 - (void)loadImage
@@ -190,11 +136,7 @@
 }
 
 - (void)dealloc {
-    //[photo release];
-    //[nameLabel release];
     [book setDelegate:nil];
-    //[book release];
-    //[super dealloc];
 }
 
 - (void)awakeFromNib {

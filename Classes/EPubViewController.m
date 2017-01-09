@@ -421,6 +421,9 @@
 	[nc addObserver:self selector:@selector(onEPubSettingsDidChange:)
 		name:kSDKLauncherEPubSettingsDidChange object:nil];
 
+    
+    
+    
 	// Create the web view. The choice of web view type is based on the existence of the WKWebView
 	// class, but this could be decided some other way.
     
@@ -476,6 +479,24 @@
 		NSURL *url = [[NSBundle mainBundle] URLForResource:readerFileName withExtension:nil];
 		[webView loadRequest:[NSURLRequest requestWithURL:url]];
 	}
+    
+    UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self  action:@selector(swipeRightAction:)];
+    [swipeRight setDirection:UISwipeGestureRecognizerDirectionRight];
+    [m_webViewUI addGestureRecognizer:swipeRight];
+    [m_webViewWK addGestureRecognizer:swipeRight];
+    
+    UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeLeftAction:)];
+    [swipeLeft setDirection:UISwipeGestureRecognizerDirectionLeft];
+    [m_webViewUI addGestureRecognizer:swipeLeft];
+    [m_webViewWK addGestureRecognizer:swipeLeft];
+}
+
+-(void)swipeLeftAction:(UISwipeGestureRecognizer *) swipe {
+    [self executeJavaScript:@"ReadiumSDK.reader.openPageNext()" completionHandler:nil];
+}
+
+-(void)swipeRightAction:(UISwipeGestureRecognizer *) swipe {
+    [self executeJavaScript:@"ReadiumSDK.reader.openPagePrev()" completionHandler:nil];
 }
 
 - (void)onClickAddBookmark {
@@ -801,9 +822,11 @@
 
 
 - (void)viewWillAppear:(BOOL)animated {
+    
 	[super viewWillAppear:animated];
 
-	if (self.navigationController != nil) {
+    if (self.navigationController != nil) {
+        //[self.navigationController setNavigationBarHidden:YES animated:YES];
 		[self.navigationController setToolbarHidden:NO animated:YES];
 	}
 }

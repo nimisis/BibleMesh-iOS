@@ -57,7 +57,7 @@
     
     //callback for connectivity
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
-    NSString *remoteHostName = @"www.biblemesh.com";
+    NSString *remoteHostName = @"www.biblemesh.com";//read.biblemesh.com
     self.hostReachability = [Reachability reachabilityWithHostName:remoteHostName];
     [self.hostReachability startNotifier];
     
