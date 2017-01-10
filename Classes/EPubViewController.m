@@ -489,6 +489,8 @@
     [swipeLeft setDirection:UISwipeGestureRecognizerDirectionLeft];
     [m_webViewUI addGestureRecognizer:swipeLeft];
     [m_webViewWK addGestureRecognizer:swipeLeft];
+    
+    
 }
 
 -(void)swipeLeftAction:(UISwipeGestureRecognizer *) swipe {
@@ -500,18 +502,75 @@
 }
 
 - (void)onClickAddBookmark {
-	if (m_alertAddBookmark == nil) {
-		m_alertAddBookmark = [[UIAlertView alloc]
-			initWithTitle:LocStr(@"ADD_BOOKMARK_PROMPT_TITLE")
-			message:nil
-			delegate:self
-			cancelButtonTitle:LocStr(@"GENERIC_CANCEL")
-			otherButtonTitles:LocStr(@"GENERIC_OK"), nil];
-		m_alertAddBookmark.alertViewStyle = UIAlertViewStylePlainTextInput;
-		UITextField *textField = [m_alertAddBookmark textFieldAtIndex:0];
-		textField.placeholder = LocStr(@"ADD_BOOKMARK_PROMPT_PLACEHOLDER");
-		[m_alertAddBookmark show];
-	}
+    [self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.addSelectionHighlight(Math.floor((Math.random()*1000000)), 'highlight')" completionHandler:nil];
+    [self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.on('annotationClicked', function(type, idref, cfi, id) {console.debug('ANNOTATION CLICK: ' + id);});" completionHandler:^(id response, NSError *error)
+     {
+         NSString *s = response;
+         int i;
+         i++;
+     }];
+    //getFirstVisibleCfi
+    /*[self executeJavaScript:@"ReadiumSDK.reader.bookmarkCurrentPage()" completionHandler:^(id response, NSError *error)
+     {
+         NSString *s = response;
+     }];*/
+    /*[self executeJavaScript:@"ReadiumSDK.reader.getPaginationInfo().openPages" completionHandler:^(id response, NSError *error)
+     {
+     NSString *s = response;
+     }];*/
+    //[self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.addHighlight('xchapter_001', '/4/2/4,/8[c001s0004]/1:429,/14[c001s0007]/1:25', 123, 'highlight')" completionHandler:nil];
+    /*[self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.on('annotationClicked', function(type, idref, cfi, id) {console.debug('ANNOTATION CLICK: ' + id);});" completionHandler:^(id response, NSError *error)
+     {
+     NSString *s = response;
+     }];*/
+    //cfi = "/4/2/4,/8[c001s0004]/1:429,/14[c001s0007]/1:25";
+    //idref = "xchapter_001";
+    
+    /*[self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.getCurrentSelectionCfi()" completionHandler:^(id response, NSError *error)
+    {
+      NSDictionary *s = response;
+        
+    if (error != nil || s == nil || ![s isKindOfClass:[NSDictionary class]]) {
+        return;
+    }
+     
+    [self executeJavaScript:[NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', '%@', 123, 'highlight')", [s objectForKey:@"idref"], [s objectForKey:@"cfi"]] completionHandler:nil];*/
+    /*[self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.on('annotationClicked', function(type, idref, cfi, id) {console.debug('ANNOTATION CLICK: ' + id);});" completionHandler:^(id response, NSError *error)
+         {
+             int i;
+             i++;
+             NSString *t = response;
+         }];*/
+     /*NSData *data = [s dataUsingEncoding:NSUTF8StringEncoding];
+     
+     NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data
+     options:0 error:&error];*/
+     
+     /*Bookmark *bookmark = [[Bookmark alloc]
+     initWithCFI:[s objectForKey:@"contentCFI"]
+     containerPath:m_container.path
+     idref:[s objectForKey:@"idref"]
+     title:@"title"];*/
+     
+     /*if (bookmark == nil) {
+     NSLog(@"The bookmark is nil!");
+     } else {
+     [[BookmarkDatabase shared] addBookmark:bookmark];
+     }*/
+    //}];
+    //[self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.addSelectionHighlight(Math.floor((Math.random()*1000000)), 'highlight')" completionHandler:nil];
+    /*if (m_alertAddBookmark == nil) {
+     m_alertAddBookmark = [[UIAlertView alloc]
+     initWithTitle:LocStr(@"ADD_BOOKMARK_PROMPT_TITLE")
+     message:nil
+     delegate:self
+     cancelButtonTitle:LocStr(@"GENERIC_CANCEL")
+     otherButtonTitles:LocStr(@"GENERIC_OK"), nil];
+     m_alertAddBookmark.alertViewStyle = UIAlertViewStylePlainTextInput;
+     UITextField *textField = [m_alertAddBookmark textFieldAtIndex:0];
+     textField.placeholder = LocStr(@"ADD_BOOKMARK_PROMPT_PLACEHOLDER");
+     [m_alertAddBookmark show];
+     }*/
 }
 
 
@@ -626,7 +685,7 @@
 
 	itemFixed.width = 12;
 
-	static NSString *arrowL = @"\u2190";
+	/*static NSString *arrowL = @"\u2190";
 	static NSString *arrowR = @"\u2192";
 
 	UIBarButtonItem *itemNext = [[UIBarButtonItem alloc]
@@ -652,18 +711,18 @@
 		[items addObject:itemPrev];
 	}
 
-	[items addObject:itemFixed];
+	[items addObject:itemFixed];*/
 
 	UILabel *label = [[UILabel alloc] init];
 	label.backgroundColor = [UIColor clearColor];
 	label.font = [UIFont systemFontOfSize:16];
 	label.textColor = [UIColor blackColor];
 
-    BOOL canGoNext = m_currentPageProgressionIsLTR ? m_currentPageCanGoRight : m_currentPageCanGoLeft;
+    /*BOOL canGoNext = m_currentPageProgressionIsLTR ? m_currentPageCanGoRight : m_currentPageCanGoLeft;
     BOOL canGoPrevious = m_currentPageProgressionIsLTR ? m_currentPageCanGoLeft : m_currentPageCanGoRight;
 
     itemNext.enabled = canGoNext;
-    itemPrev.enabled = canGoPrevious;
+    itemPrev.enabled = canGoPrevious;*/
 
 	if (m_currentPageOpenPagesArray == nil || [m_currentPageOpenPagesArray count] <= 0) {
 		label.text = @"";
