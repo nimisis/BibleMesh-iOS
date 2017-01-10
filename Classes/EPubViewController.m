@@ -503,12 +503,12 @@
 
 - (void)onClickAddBookmark {
     [self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.addSelectionHighlight(Math.floor((Math.random()*1000000)), 'highlight')" completionHandler:nil];
-    [self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.on('annotationClicked', function(type, idref, cfi, id) {console.debug('ANNOTATION CLICK: ' + id);});" completionHandler:^(id response, NSError *error)
+    /*[self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.on('annotationClicked', function(type, idref, cfi, id) {console.debug('ANNOTATION CLICK: ' + id);});" completionHandler:^(id response, NSError *error)
      {
          NSString *s = response;
          int i;
          i++;
-     }];
+     }];*/
     //getFirstVisibleCfi
     /*[self executeJavaScript:@"ReadiumSDK.reader.bookmarkCurrentPage()" completionHandler:^(id response, NSError *error)
      {
