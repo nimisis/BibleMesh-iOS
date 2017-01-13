@@ -74,7 +74,6 @@
 
 @implementation EPubViewController
 
-
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
 	m_alertAddBookmark = nil;
 
@@ -490,6 +489,7 @@
     [m_webViewUI addGestureRecognizer:swipeLeft];
     [m_webViewWK addGestureRecognizer:swipeLeft];
     
+    //[self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.on('annotationClicked', function(type, idref, cfi, id) {console.debug('My highlight click: ' + id);});" completionHandler:nil];
     
 }
 
@@ -856,10 +856,29 @@
 		else {
 			[self handlePageDidChange:body[1]];
 		}
-	}
-	else if ([messageName isEqualToString:@"readerDidInitialize"]) {
-		[self handleReaderDidInitialize];
-	}
+    }
+    else if ([messageName isEqualToString:@"readerDidInitialize"]) {
+        [self handleReaderDidInitialize];
+    }
+    else if ([messageName isEqualToString:@"annotationClicked"]) {
+        if (body.count < 2 || ![body[1] isKindOfClass:[NSString class]]) {
+            NSLog(@"The annotationClick payload is invalid!");
+        }
+        else {
+            NSLog(@"annotation %@ clicked!", body[1]);
+            
+            //fix make box where note can also be added
+            UIAlertView *annot = [[UIAlertView alloc]
+                                      initWithTitle:@"Annotation click"
+                                      message:body[1]
+                                      delegate:nil
+                                      cancelButtonTitle:@"OK"
+                                      otherButtonTitles:nil];
+            [annot show];
+        }
+    } else {
+        NSLog(@"messageName %@", messageName);
+    }
 }
 
 

@@ -125,7 +125,6 @@ $(document).ready(function ()
                     ReadiumSDK.reader.on(ReadiumSDK.Events.MEDIA_OVERLAY_STATUS_CHANGED, this.onMediaOverlayStatusChanged, this);
                     ReadiumSDK.reader.on(ReadiumSDK.Events.MEDIA_OVERLAY_TTS_SPEAK, this.onMediaOverlayTTSSpeak, this);
                     ReadiumSDK.reader.on(ReadiumSDK.Events.MEDIA_OVERLAY_TTS_STOP, this.onMediaOverlayTTSStop, this);
-
                     if (this.useWKWebView) {
                         window.webkit.messageHandlers.readium.postMessage(['readerDidInitialize']);
                     }
@@ -207,7 +206,15 @@ $(document).ready(function ()
                     reader.plugins.highlights.on("annotationClicked", function(type, idref, cfi, id)
                     {
                         console.log("ANNOTATION CLICK: " + id);
-                        reader.plugins.highlights.removeHighlight(id);
+                        //reader.plugins.highlights.removeHighlight(id);
+                                                 
+                        var payload = JSON.stringify(id);
+                        if (window.useWKWebView) {
+                            window.webkit.messageHandlers.readium.postMessage(['annotationClicked', payload]);
+                        } else {
+                            //fix
+                            window.location.href = "epubobjc:annotationClicked?q=" + encodeURIComponent(payload);
+                        }
                     });
             
                     reader.plugins.highlights.on("textSelectionEvent", function()

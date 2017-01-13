@@ -99,9 +99,13 @@
 	self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 	[self configureAppearance];
     
-    lvc = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
-    self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:lvc];
-    
+    if (false) {
+        lvc = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
+        self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:lvc];
+    } else {
+        ContainerListController *c = [[ContainerListController alloc] init];
+        self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
+    }
     [self.window makeKeyAndVisible];
 
 	return YES;
