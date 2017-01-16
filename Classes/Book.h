@@ -14,6 +14,8 @@
     NSString *author;
     NSString *img;
     
+    NSInteger book_id;
+    
     UIImage *thumbnail;
     UIImage *cover;
     BOOL thumbTried;
@@ -28,6 +30,7 @@
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *author;
 @property (nonatomic, copy) NSString *img;
+@property NSInteger book_id;
 @property (nonatomic, retain) UIImage *thumbnail;
 @property (nonatomic, retain) UIImage *cover;
 @property (nonatomic, assign) NSObject<BookDelegate> *delegate;

@@ -19,8 +19,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://nimisis.com/blogin.php"]];
-    //NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://read.biblemesh.com/epub_content/epub_library.json"]];
+    //NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://nimisis.com/blogin.php"]];
+    //http://biblemesh-readium.us-west-2.elasticbeanstalk.com/epub_content/epub_library.json
+    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://read.biblemesh.com/epub_content/epub_library.json"]];
 
     [_webView loadRequest:urlRequest];
 }

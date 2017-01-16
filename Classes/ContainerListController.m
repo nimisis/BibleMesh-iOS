@@ -163,11 +163,14 @@
     book.author = @"Some author";
     
     //temporary thumbnails
-    NSArray *imgs = [NSArray arrayWithObjects:@"51Tg3M9XR0L", @"41ZG-FMn8BL",
+    /*NSArray *imgs = [NSArray arrayWithObjects:@"51Tg3M9XR0L", @"41ZG-FMn8BL",
                     @"41O76wsT0VL", @"51rmu8wfj1L",
                     @"51AtdDrV9bL", @"51ZvxGrNoYL",
-                    @"51myLZoxXnL", nil];
-    book.img = [imgs objectAtIndex:(indexPath.row % 8)];
+                    @"51myLZoxXnL", nil];*/
+    NSArray *imgs = [NSArray arrayWithObjects:@"OEBPS", nil];
+    book.img = [imgs objectAtIndex:0];
+    book.book_id = 2;
+    //book.boo
     
     [cell setBook:book therow:indexPath.row];
     return cell;

@@ -13,7 +13,7 @@
 @implementation BooksTableViewCell
 
 #define IMAGE_HEIGHT          75.0
-#define IMAGE_WIDTH          55.0
+#define IMAGE_WIDTH          50.0
 #define EDITING_INSET       0.0
 #define TEXT_LEFT_MARGIN    0.0
 
@@ -29,8 +29,8 @@
         didOwn = FALSE;
         didWish = FALSE;
         
-        photo = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, IMAGE_HEIGHT, IMAGE_HEIGHT)];
-        [photo setContentMode:UIViewContentModeLeft];
+        photo = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, IMAGE_WIDTH, IMAGE_HEIGHT)];
+        [photo setContentMode:UIViewContentModeScaleToFill];//]UIViewContentModeLeft];
         [photo setClipsToBounds:YES];
         //titleLabel.contentMode = UIViewContentModeRight;
         [self.contentView addSubview:photo];

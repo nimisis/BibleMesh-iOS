@@ -19,6 +19,7 @@
 @synthesize title;
 @synthesize author;
 @synthesize img;
+@synthesize book_id;
 @synthesize thumbnail;
 @synthesize cover;
 @synthesize delegate;
@@ -58,7 +59,10 @@
 {
     if ((thumbnail == nil) && !thumbTried)
     {
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://ecx.images-amazon.com/images/I/%@._SL75_.jpg", self.img]];//
+        //NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://ecx.images-amazon.com/images/I/%@._SL75_.jpg", self.img]];//
+        NSString *urlstr = [NSString stringWithFormat:@"http://biblemesh-readium.us-west-2.elasticbeanstalk.com/epub_content/book_%ld/%@/Images/cover.jpg", (long) self.book_id, self.img];
+        //NSLog(@"urlstr %@", urlstr);
+        NSURL *url = [NSURL URLWithString:urlstr];
         //book.thumbnailURL = [NSString stringWithFormat:@"http://ecx.images-amazon.com/images/I/%@._SL75_.jpg", currentImg];
         [self loadThumb:url];
         thumbTried = true;
@@ -70,8 +74,11 @@
 {
     if ((cover == nil) && !coverTried)
     {
+        //https://biblemesh-readium.s3.amazonaws.com/epub_content/book_2/OEBPS/Images/cover.jpg
         //NSLog(@"loading %@", [NSString stringWithFormat:@"http://ecx.images-amazon.com/images/I/%@._SL160_.jpg", self.img]);
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://ecx.images-amazon.com/images/I/%@._SL160_.jpg", self.img]];
+        //NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://ecx.images-amazon.com/images/I/%@._SL160_.jpg", self.img]];
+        
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://biblemesh-readium.us-west-2.elasticbeanstalk.com/epub_content/book_%ld/%@/Images/cover.jpg", (long)self.book_id, self.img]];
         [self loadCover:url];
         coverTried = true;
     }
