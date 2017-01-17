@@ -42,11 +42,14 @@
     NSPersistentStoreCoordinator *persistentStoreCoordinator;
 }
 
+@property (nonatomic, retain) NSMutableArray *ePubTitlesArray;
+
 @property (nonatomic, retain) Reachability *hostReachability;
 @property (nonatomic, retain) NSOperationQueue *downloadQueue;
 
 @property (nonatomic, retain) LoginViewController *lvc;
 @property (nonatomic, strong) UIWindow *window;
+
 @property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;
 @property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;

@@ -47,6 +47,7 @@
 @synthesize downloadQueue;
 @synthesize hostReachability;
 @synthesize lvc;
+@synthesize ePubTitlesArray;
 
 - (BOOL)
 	application:(UIApplication *)application
@@ -95,17 +96,19 @@
         NSLog(@"Got %lu Epubtitles", (unsigned long)[mutableFetchResults count]);
     }
     
+    ePubTitlesArray = [[NSMutableArray alloc] init];
+    
     //start window
 	self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 	[self configureAppearance];
     
-    if (false) {
+    //if (true) {
         lvc = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
         self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:lvc];
-    } else {
+    /*} else {
         ContainerListController *c = [[ContainerListController alloc] init];
         self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
-    }
+    }*/
     [self.window makeKeyAndVisible];
 
 	return YES;
@@ -273,6 +276,5 @@
 - (NSString *)applicationDocumentsDirectory {
     return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
 }
-
 
 @end

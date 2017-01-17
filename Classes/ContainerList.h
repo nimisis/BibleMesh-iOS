@@ -32,10 +32,9 @@
 extern NSString * const kSDKLauncherContainerListDidChange;
 
 @interface ContainerList : NSObject {
-	@private NSArray *m_paths;
 }
 
-@property (nonatomic, readonly) NSArray *paths;
+//@property (nonatomic, readonly) NSArray *paths;
 
 + (ContainerList *)shared;
 

@@ -28,7 +28,6 @@
 //  OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "ContainerListController.h"
-//#import "ContainerController.h"
 #import "ContainerList.h"
 #import "BooksTableViewCell.h"
 #import "Book.h"
@@ -38,7 +37,9 @@
 #import "GAI.h"
 #import "GAIDictionaryBuilder.h"
 #import "GAIFields.h"
-//#import "BibleMesh-swift.h" //required for new CoreData codegen
+#import "AppDelegate.h"
+#import "BibleMesh-swift.h" //required for new CoreData codegen
+#import "Download.h"
 
 @implementation ContainerListController
 
@@ -60,18 +61,16 @@
 
 - (id)init {
 	if (self = [super initWithTitle:LocStr(@"CONTAINER_LIST_TITLE") navBarHidden:NO]) {
-		m_paths = [ContainerList shared].paths;
-        
-		[[NSNotificationCenter defaultCenter] addObserver:self
+		
+		/*[[NSNotificationCenter defaultCenter] addObserver:self
 			selector:@selector(onContainerListDidChange)
-			name:kSDKLauncherContainerListDidChange object:nil];
+			name:kSDKLauncherContainerListDidChange object:nil];*/
 	}
 
 	return self;
 }
 
 - (void)loadView {
-    
     id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
     [tracker set:kGAIScreenName value:@"Library"];
     [tracker send:[[GAIDictionaryBuilder createAppView]  build]];
@@ -89,15 +88,9 @@
 #pragma mark UIScrollViewDelegate Methods
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
-    /*if (scrollView == churchBooksTableView) {
-        [_refreshHeaderView egoRefreshScrollViewDidScroll:scrollView];
-    }*/
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
-    /*if (scrollView == churchBooksTableView) {
-        [_refreshHeaderView egoRefreshScrollViewDidEndDragging:scrollView];
-    }*/
     if (!decelerate)
     {
         [self loadContentForVisibleCells];
@@ -117,10 +110,6 @@
 
 - (void)loadContentForVisibleCells
 {
-    if ([m_paths count] == 0) {
-        return;
-    }
-    
     NSArray *visiblePaths = [m_table indexPathsForVisibleRows];
     for (NSIndexPath *indexPath in visiblePaths)
     {
@@ -137,10 +126,10 @@
     }
 }
 
-- (void)onContainerListDidChange {
+/*- (void)onContainerListDidChange {
 	m_paths = [ContainerList shared].paths;
 	[m_table reloadData];
-}
+}*/
 
 - (UITableViewCell *)
 	tableView:(UITableView *)tableView
@@ -156,21 +145,14 @@
     }
     
     Book *book = [[Book alloc] init];
-    NSString *path = [m_paths objectAtIndex:indexPath.row];
-    NSArray *components = path.pathComponents;
-    book.title = (components == nil || components.count == 0) ?
-    @"" : components.lastObject;
-    book.author = @"Some author";
-    
-    //temporary thumbnails
-    /*NSArray *imgs = [NSArray arrayWithObjects:@"51Tg3M9XR0L", @"41ZG-FMn8BL",
-                    @"41O76wsT0VL", @"51rmu8wfj1L",
-                    @"51AtdDrV9bL", @"51ZvxGrNoYL",
-                    @"51myLZoxXnL", nil];*/
-    NSArray *imgs = [NSArray arrayWithObjects:@"OEBPS", nil];
-    book.img = [imgs objectAtIndex:0];
-    book.book_id = 2;
-    //book.boo
+    {
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        Epubtitle *ep = [[appDelegate ePubTitlesArray] objectAtIndex:indexPath.row];
+        book.title = ep.title;
+        book.author = ep.author;
+        book.img = [NSString stringWithFormat:@"http://read.biblemesh.com/%@", [ep coverHref]];
+        NSLog(@"img: %@", book.img);
+    }
     
     [cell setBook:book therow:indexPath.row];
     return cell;
@@ -181,39 +163,114 @@
 	didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
-	NSString *path = [m_paths objectAtIndex:indexPath.row];
-	/*ContainerController *c = [[ContainerController alloc] initWithPath:path];
-
-	if (c != nil) {
-		[self.navigationController pushViewController:c animated:YES];
-	}*/
     
-    RDContainer * m_container = [[RDContainer alloc] initWithDelegate:self path:path];
-    RDPackage *m_package = m_container.firstPackage;
-    
-    //[self popErrorMessage];
-    
-    //fix catch error
-    if (m_package == nil) {
-        return;
-    }
-    
-    EPubViewController *c = [[EPubViewController alloc]
-                             initWithContainer:m_container
-                             package:m_package];
-    
-    //fix or if we have the progress location, use
-    /*
-     EPubViewController *c = [[EPubViewController alloc]
-                            initWithContainer:m_container
-                            package:m_package
-                            spineItem:(RDSpineItem *)spineItem
-                            cfi:(NSString *)cfi*/
-    
-    if (c != nil) {
-        [self.navigationController pushViewController:c animated:YES];
-    } else {
-        //fix error
+    {
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        Epubtitle *ep = [[appDelegate ePubTitlesArray] objectAtIndex:indexPath.row];
+        //check if book exists in folder
+        
+        NSArray *paths = NSSearchPathForDirectoriesInDomains
+        (NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *homePath = [paths objectAtIndex:0];
+        NSString *ePubFile = [homePath stringByAppendingPathComponent:[NSString stringWithFormat:@"book_%d.epub", ep.id]];
+        
+        Boolean downloadit = false;
+        switch (ep.downloadstatus) {
+            case 1:
+                //downloading
+            {
+                UIAlertView *alert = [[UIAlertView alloc]
+                                      initWithTitle:@"Please wait"
+                                      message:@"Download in progress."
+                                      delegate:nil
+                                      cancelButtonTitle:@"OK"
+                                      otherButtonTitles:nil];
+                [alert show];
+            }
+                break;
+            case 0://not downloaded, but could already exist because another user had downloaded it
+            case 2:
+                //downloaded
+                //check exists, open if so. If not, download again
+                if ([[NSFileManager defaultManager] fileExistsAtPath:ePubFile]) {
+                    //open it
+                    NSLog(@"wait or open it");
+                    
+                    RDContainer *m_container = [[RDContainer alloc] initWithDelegate:self path:ePubFile];
+                    RDPackage *m_package = m_container.firstPackage;
+                    //[self popErrorMessage];
+                    
+                    //fix catch error
+                    if (m_package == nil) {
+                        return;
+                    }
+                    
+                    EPubViewController *c = [[EPubViewController alloc]
+                                             initWithContainer:m_container
+                                             package:m_package];
+                    
+                    //fix or if we have the progress location, use
+                    /*
+                     EPubViewController *c = [[EPubViewController alloc]
+                     initWithContainer:m_container
+                     package:m_package
+                     spineItem:(RDSpineItem *)spineItem
+                     cfi:(NSString *)cfi*/
+                    
+                    if (c != nil) {
+                        [self.navigationController pushViewController:c animated:YES];
+                    } else {
+                        //fix error
+                    }
+                } else {
+                    downloadit = true;
+                }
+                break;
+        };
+        
+        if (downloadit) {
+            NetworkStatus netStatus = [[appDelegate hostReachability] currentReachabilityStatus];
+            if (netStatus == NotReachable) {
+                UIAlertView *alert = [[UIAlertView alloc]
+                                      initWithTitle:@"No internet"
+                                      message:@"Please find an internet connection before downloading."
+                                      delegate:nil
+                                      cancelButtonTitle:@"OK"
+                                      otherButtonTitles:nil];
+                [alert show];
+            } else {
+                //download it
+                NSLog(@"download epub");
+                Download *dl = [[Download alloc] init];
+                
+                [dl setEPubFile:ePubFile];
+                [dl setTitle:ep];
+                
+                [ep setDownloadstatus:1];//fix downloading
+                NSError *error = nil;
+                if (![[appDelegate managedObjectContext] save:&error]) {
+                    // Handle the error.
+                    NSLog(@"Handle the error");
+                }
+                
+                UIApplication *app = [UIApplication sharedApplication];
+                dl.bgTask = [app beginBackgroundTaskWithExpirationHandler:^{
+                    [app endBackgroundTask:dl.bgTask];
+                    dl.bgTask = UIBackgroundTaskInvalid;
+                }];
+                
+                NSURLRequest *theRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://read.biblemesh.com/epub_content/book_%d/book.epub", ep.id]]
+                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                                        timeoutInterval:60.0];
+                dl.theConnection = [[NSURLConnection alloc] initWithRequest:theRequest delegate:dl];
+                if (dl.theConnection) {
+                    //fix
+                } else {
+                    // Inform the user that the connection failed.
+                    NSLog(@"Connection failed.");
+                }
+            }
+        }
     }
 }
 
@@ -221,7 +278,8 @@
 	tableView:(UITableView *)tableView
 	numberOfRowsInSection:(NSInteger)section
 {
-	return m_paths.count;
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    return [[appDelegate ePubTitlesArray] count];
 }
 
 - (void)viewDidLayoutSubviews {

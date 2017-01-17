@@ -36,8 +36,7 @@ NSString * const kSDKLauncherContainerListDidChange = @"SDKLauncherContainerList
 
 @implementation ContainerList
 
-
-- (void)checkForChanges {
+/*- (void)checkForChanges {
     NSArray *pathsCurr = self.paths;
 	BOOL didChange = NO;
 
@@ -66,7 +65,7 @@ NSString * const kSDKLauncherContainerListDidChange = @"SDKLauncherContainerList
 	}
 
 	[self performSelector:@selector(checkForChanges) withObject:nil afterDelay:1];
-}
+}*/
 
 
 - (id)init {
@@ -76,7 +75,7 @@ NSString * const kSDKLauncherContainerListDidChange = @"SDKLauncherContainerList
 			NSUserDomainMask, YES) objectAtIndex:0];
 		NSFileManager *fm = [NSFileManager defaultManager];
         
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        /*AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         
 		for (NSString *fileName in [fm contentsOfDirectoryAtPath:resPath error:nil]) {
 			if ([fileName.lowercaseString hasSuffix:@".epub"]) {
@@ -87,33 +86,18 @@ NSString * const kSDKLauncherContainerListDidChange = @"SDKLauncherContainerList
 					[fm copyItemAtPath:src toPath:dst error:nil];
 				}
                 
-                //to delete. Just some code to insert data into the database
-                /*Epubtitle *del = (Epubtitle *)[NSEntityDescription insertNewObjectForEntityForName:@"Epubtitle" inManagedObjectContext:[appDelegate managedObjectContext]];
-                del.author = @"Dave";
-                del.title = fileName;
-                //[deliveriesArray addObject:del];
-                
-                NSError *error;
-                if ([[appDelegate managedObjectContext] save:&error]) {
-                    NSLog(@"saved");
-                } else {
-                    // Handle the error.
-                    NSAssert(NO, [error description]);
-                }*/
                 
 			}
-		}
+		}*/
 
-		m_paths = self.paths;
-		[self performSelector:@selector(checkForChanges) withObject:nil afterDelay:0];
+		/*m_paths = self.paths;
+		[self performSelector:@selector(checkForChanges) withObject:nil afterDelay:0];*/
 	}
-
-    //Epubtitle *ep;
     
 	return self;
 }
 
-
+/*
 - (NSArray *)paths {
 	NSMutableArray *paths = [NSMutableArray arrayWithCapacity:16];
 
@@ -132,7 +116,7 @@ NSString * const kSDKLauncherContainerListDidChange = @"SDKLauncherContainerList
 	}];
 
 	return paths;
-}
+}*/
 
 
 + (ContainerList *)shared {
