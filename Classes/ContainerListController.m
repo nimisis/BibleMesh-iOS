@@ -158,6 +158,48 @@
     return cell;
 }
 
+- (bool) tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    Epubtitle *ep = [[appDelegate ePubTitlesArray] objectAtIndex:indexPath.row];
+    if ([ep downloadstatus] == 2) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+- (void) tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"commit");
+    
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    Epubtitle *ep = [[appDelegate ePubTitlesArray] objectAtIndex:indexPath.row];
+    //check if book exists in folder
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains
+    (NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *homePath = [paths objectAtIndex:0];
+    NSString *ePubFile = [homePath stringByAppendingPathComponent:[NSString stringWithFormat:@"book_%d.epub", ep.id]];
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:ePubFile]) {
+        [[NSFileManager defaultManager] removeItemAtPath:ePubFile error:NULL];
+    }
+
+    //reset the download status to "not downloaded"
+    //fix note that another user who has downloaded the file will then have to re-download.
+    [ep setDownloadstatus:0];
+    
+    NSError *error = nil;
+    if (![[appDelegate managedObjectContext] save:&error]) {
+        // Handle the error.
+        NSLog(@"Handle the error");
+    }
+    
+    [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                     withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
 - (void)
 	tableView:(UITableView *)tableView
 	didSelectRowAtIndexPath:(NSIndexPath *)indexPath
