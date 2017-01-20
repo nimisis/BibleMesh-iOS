@@ -54,4 +54,6 @@
 @property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
++(void)downloadDataFromURL:(NSURL *)url post:(NSString *)post withCompletionHandler:(void (^)(NSData *))completionHandler;//for requesting json
+
 @end

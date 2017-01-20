@@ -40,6 +40,7 @@
 #import "AppDelegate.h"
 #import "BibleMesh-swift.h" //required for new CoreData codegen
 #import "Download.h"
+#import "RDSpineItem.h"
 
 @implementation ContainerListController
 
@@ -150,8 +151,8 @@
         Epubtitle *ep = [[appDelegate ePubTitlesArray] objectAtIndex:indexPath.row];
         book.title = ep.title;
         book.author = ep.author;
-        book.img = [NSString stringWithFormat:@"http://read.biblemesh.com/%@", [ep coverHref]];
-        NSLog(@"img: %@", book.img);
+        book.img = [NSString stringWithFormat:@"https://read.biblemesh.com/%@", [ep coverHref]];
+        //NSLog(@"img: %@", book.img);
     }
     
     [cell setBook:book therow:indexPath.row];
@@ -180,7 +181,7 @@
     NSArray *paths = NSSearchPathForDirectoriesInDomains
     (NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *homePath = [paths objectAtIndex:0];
-    NSString *ePubFile = [homePath stringByAppendingPathComponent:[NSString stringWithFormat:@"book_%d.epub", ep.id]];
+    NSString *ePubFile = [homePath stringByAppendingPathComponent:[NSString stringWithFormat:@"book_%d.epub", ep.bookid]];
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:ePubFile]) {
         [[NSFileManager defaultManager] removeItemAtPath:ePubFile error:NULL];
@@ -214,7 +215,7 @@
         NSArray *paths = NSSearchPathForDirectoriesInDomains
         (NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *homePath = [paths objectAtIndex:0];
-        NSString *ePubFile = [homePath stringByAppendingPathComponent:[NSString stringWithFormat:@"book_%d.epub", ep.id]];
+        NSString *ePubFile = [homePath stringByAppendingPathComponent:[NSString stringWithFormat:@"book_%d.epub", ep.bookid]];
         
         Boolean downloadit = false;
         switch (ep.downloadstatus) {
@@ -235,34 +236,125 @@
                 //downloaded
                 //check exists, open if so. If not, download again
                 if ([[NSFileManager defaultManager] fileExistsAtPath:ePubFile]) {
-                    //open it
-                    NSLog(@"wait or open it");
+                    //open epub
                     
-                    RDContainer *m_container = [[RDContainer alloc] initWithDelegate:self path:ePubFile];
-                    RDPackage *m_package = m_container.firstPackage;
-                    //[self popErrorMessage];
-                    
-                    //fix catch error
-                    if (m_package == nil) {
-                        return;
-                    }
-                    
-                    EPubViewController *c = [[EPubViewController alloc]
-                                             initWithContainer:m_container
-                                             package:m_package];
-                    
-                    //fix or if we have the progress location, use
-                    /*
-                     EPubViewController *c = [[EPubViewController alloc]
-                     initWithContainer:m_container
-                     package:m_package
-                     spineItem:(RDSpineItem *)spineItem
-                     cfi:(NSString *)cfi*/
-                    
-                    if (c != nil) {
-                        [self.navigationController pushViewController:c animated:YES];
-                    } else {
-                        //fix error
+                    /*NetworkStatus netStatus = [[appDelegate hostReachability] currentReachabilityStatus];
+                    if (netStatus == NotReachable) {
+                        NSLog(@"no internet");
+                    } else*/
+                    {
+                        NSString *URLString = [NSString stringWithFormat:@"https://read.biblemesh.com/users/1/books/%d.json", ep.bookid];
+                        NSURL *url = [NSURL URLWithString:URLString];
+                        [AppDelegate downloadDataFromURL:url post:nil withCompletionHandler:^(NSData *data) {
+                            __block NSInteger last_updated;
+                            __block NSString *idref;
+                            __block NSString *elementCfi;
+                        //check local data against data returned
+                        if (data != nil) {
+                            NSError *error = nil;
+                            id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+                            if (error) {
+                                NSLog(@"Error parsing JSON: %@", error);
+                            } else {
+                                if ([jsonObject isKindOfClass:[NSArray class]]) {
+                                    NSLog(@"is array");
+                                } else {
+                                    [jsonObject enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                                        NSLog(@"key: %@", key);
+                                        if ([(NSString *) key isEqualToString:@"highlights"]) {
+                                            //fix todo
+                                        } else if ([(NSString *) key isEqualToString:@"latest_location"]) {
+                                            
+                                            NSData *data2 = [(NSString *) obj dataUsingEncoding:NSUTF8StringEncoding];
+                                            NSError *error = nil;
+                                            id jsonObject2 = [NSJSONSerialization JSONObjectWithData:data2 options:NSJSONReadingMutableContainers error:&error];
+                                            if (error) {
+                                                NSLog(@"Error parsing JSON2: %@", error);
+                                            } else {
+                                                //decode the progress string
+                                                [jsonObject2 enumerateKeysAndObjectsUsingBlock:^(id key2, id obj2, BOOL *stop2) {
+                                                    NSLog(@"key2: %@ obj2: %@", key2, obj2);
+                                                    if ([(NSString*)key2 isEqualToString:@"idref"]) {
+                                                        idref = obj2;
+                                                    } else if ([(NSString*)key2 isEqualToString:@"elementCfi"]) {
+                                                        elementCfi = obj2;
+                                                    }
+                                                }];
+                                            }
+                                        } else if ([(NSString *) key isEqualToString:@"updated_at"]) {
+                                            last_updated = [(NSNumber *) obj integerValue];
+                                        }
+                                    }];
+                                    if (last_updated > [ep lastUpdated])
+                                    {
+                                        //server's values are more recent
+                                        NSLog(@"server more up-to-date server:%ld vs server:%lld", last_updated, [ep lastUpdated]);
+                                        //update local db
+                                        //last updated
+                                        [ep setLastUpdated:last_updated];
+                                        //highlights
+                                        //progress
+                                        [ep setIdref:idref];
+                                        [ep setElementCfi:elementCfi];
+                                        //save
+                                        /*NSError *error = nil;
+                                        if ([[appDelegate managedObjectContext] save:&error]) {
+                                            NSLog(@"saved");
+                                        } else {
+                                            // Handle the error.
+                                            NSLog(@"Handle the error");
+                                        }*/
+                                    } else {
+                                        //local values are more recent
+                                        //update server
+                                    }
+                                    
+                                    RDContainer *m_container = [[RDContainer alloc] initWithDelegate:self path:ePubFile];
+                                    RDPackage *m_package = m_container.firstPackage;
+                                    //[self popErrorMessage];
+                                    
+                                    //fix catch error
+                                    if (m_package == nil) {
+                                        return;
+                                    }
+                                    
+                                    EPubViewController *c = nil;
+                                    if ([[ep idref] isEqualToString:@""]) {
+                                        //open the epub at start
+                                        c = [[EPubViewController alloc]
+                                                                 initWithContainer:m_container
+                                                                 package:m_package];
+                                    } else {
+                                        //open the epub at location
+                                    
+                                        //search for the spineitem with the correct idref to open at correction place
+                                        if (m_package.spineItems.count > 0) {
+                                            for (int i = 0; i < m_package.spineItems.count; i++) {
+                                                RDSpineItem *si = [m_package.spineItems objectAtIndex:i];
+                                                if ([si.idref isEqualToString:[ep idref]]) {
+                                                    c = [[EPubViewController alloc]
+                                                     initWithContainer:m_container
+                                                     package:m_package
+                                                     spineItem:si
+                                                     cfi:[ep elementCfi]];
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (c != nil) {
+                                        [self.navigationController pushViewController:c animated:YES];
+                                    } else {
+                                        //fix error
+                                    }
+                                }
+                            }
+                            
+                            
+                        } else {
+                            NSLog(@"no data");
+                        }
+                    }];
                     }
                 } else {
                     downloadit = true;
@@ -301,7 +393,7 @@
                     dl.bgTask = UIBackgroundTaskInvalid;
                 }];
                 
-                NSURLRequest *theRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://read.biblemesh.com/epub_content/book_%d/book.epub", ep.id]]
+                NSURLRequest *theRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://read.biblemesh.com/epub_content/book_%d/book.epub", ep.bookid]]
                                                             cachePolicy:NSURLRequestUseProtocolCachePolicy
                                                         timeoutInterval:60.0];
                 dl.theConnection = [[NSURLConnection alloc] initWithRequest:theRequest delegate:dl];

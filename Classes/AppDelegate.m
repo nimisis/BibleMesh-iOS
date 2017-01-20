@@ -58,7 +58,7 @@
     
     //callback for connectivity
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
-    NSString *remoteHostName = @"www.biblemesh.com";//read.biblemesh.com
+    NSString *remoteHostName = @"www.biblemesh.com";//fix read.biblemesh.com
     self.hostReachability = [Reachability reachabilityWithHostName:remoteHostName];
     [self.hostReachability startNotifier];
     
@@ -277,4 +277,41 @@
     return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
 }
 
++(void)downloadDataFromURL:(NSURL *)url post:(NSString *)post withCompletionHandler:(void (^)(NSData *))completionHandler {
+    // Instantiate a session configuration object.
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    
+    // Instantiate a session object.
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
+    
+    // Create a data task object to perform the data downloading.
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    if (post != nil) {
+        request.HTTPBody = [post dataUsingEncoding:NSUTF8StringEncoding];
+        request.HTTPMethod = @"POST";
+    }
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        
+        if (error != nil) {
+            // If any error occurs then just display its description on the console.
+            NSLog(@"%@", [error localizedDescription]);
+        }
+        else{
+            // If no error occurs, check the HTTP status code.
+            NSInteger HTTPStatusCode = [(NSHTTPURLResponse *)response statusCode];
+            
+            // If it's other than 200, then show it on the console.
+            if (HTTPStatusCode != 200) {
+                NSLog(@"HTTP status code = %ld", (long)HTTPStatusCode);
+            }
+        }
+        
+        // Call the completion handler with the returned data on the main thread.
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            completionHandler(data);
+        }];
+    }];
+    
+    [task resume];
+}
 @end

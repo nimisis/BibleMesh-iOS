@@ -21,7 +21,7 @@
     [super viewDidLoad];
     
     //NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://nimisis.com/blogin.php"]];
-    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://read.biblemesh.com/epub_content/epub_library.json"]];
+    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://read.biblemesh.com/epub_content/epub_library.json"]];
 
     [_webView loadRequest:urlRequest];
 }
@@ -53,7 +53,7 @@
     //NSCachedURLResponse *resp = [[NSURLCache sharedURLCache] cachedResponseForRequest:webView.request];
     //NSLog(@"%@",[(NSHTTPURLResponse*)resp.response allHeaderFields]);
     
-    NSInteger user_id = 54;//fix
+    NSInteger userid = 54;//fix
     
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
@@ -87,7 +87,7 @@
             //[self setEpubtitlesArray:mutableFetchResults];
             NSLog(@"Got %lu Epubtitles", (unsigned long)[mutableFetchResults count]);
             for(Epubtitle *title in mutableFetchResults) {
-                if (title.userid == user_id) {
+                if (title.userid == userid) {
                     [[appDelegate managedObjectContext] deleteObject:title];
                 }
             }
@@ -97,10 +97,10 @@
             for(NSDictionary *item in jsonArray) {
                 NSLog(@"Item: %@", item);
                 Epubtitle *ep = (Epubtitle *)[NSEntityDescription insertNewObjectForEntityForName:@"Epubtitle" inManagedObjectContext:[appDelegate managedObjectContext]];
-                ep.userid = user_id;
+                ep.userid = userid;
                 [item enumerateKeysAndObjectsUsingBlock: ^(id key, id obj, BOOL *stop) {
                     if ([(NSString *) key  isEqual: @"id"]) {
-                        ep.id = [obj integerValue];
+                        ep.bookid = [obj integerValue];
                     } else if ([(NSString *) key  isEqual: @"author"]) {
                         ep.author = obj;
                     } else if ([(NSString *) key  isEqual: @"coverHref"]) {
