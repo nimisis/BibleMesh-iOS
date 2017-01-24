@@ -243,9 +243,10 @@
                         NSLog(@"no internet");
                     } else*/
                     {
-                        NSString *URLString = [NSString stringWithFormat:@"https://read.biblemesh.com/users/1/books/%d.json", ep.bookid];
+                        NSInteger userid = 1;
+                        NSString *URLString = [NSString stringWithFormat:@"https://read.biblemesh.com/users/%ld/books/%d.json", (long)userid, ep.bookid];
                         NSURL *url = [NSURL URLWithString:URLString];
-                        [AppDelegate downloadDataFromURL:url post:nil withCompletionHandler:^(NSData *data) {
+                        [AppDelegate downloadDataFromURL:url patch:nil withCompletionHandler:^(NSData *data) {
                             __block NSInteger last_updated;
                             __block NSString *idref;
                             __block NSString *elementCfi;
@@ -259,10 +260,45 @@
                                 if ([jsonObject isKindOfClass:[NSArray class]]) {
                                     NSLog(@"is array");
                                 } else {
+                                    NSMutableArray *serverHighlights = [[NSMutableArray alloc] init];
                                     [jsonObject enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
                                         NSLog(@"key: %@", key);
                                         if ([(NSString *) key isEqualToString:@"highlights"]) {
-                                            //fix todo
+                                            if ([obj isKindOfClass:[NSArray class]]) {
+                                                NSLog(@"is array2");
+                                                NSArray *ar = (NSArray *) obj;
+                                                for (int i = 0; i < [ar count]; i++) {
+                                                    NSDictionary *dic = (NSDictionary *)[ar objectAtIndex:i];
+                                                    
+                                                    [serverHighlights addObject:dic];
+                                                    /*NSData *data3 = [(NSString *) [ar objectAtIndex:i] dataUsingEncoding:NSUTF8StringEncoding];
+                                                    NSError *error = nil;
+                                                    id jsonObject3 = [NSJSONSerialization JSONObjectWithData:data3 options:NSJSONReadingMutableContainers error:&error];
+                                                    if (error) {
+                                                        NSLog(@"Error parsing JSON3: %@", error);
+                                                    } else*/ {
+                                                        //decode the progress string
+                                                        /*Highlight *shl = [[Highlight alloc] init];
+                                                        [shl setUserid:(int) userid];
+                                                        [shl setBookid:ep.bookid];
+                                                        [dic enumerateKeysAndObjectsUsingBlock:^(id key3, id obj3, BOOL *stop3) {
+                                                            NSLog(@"key3: %@ obj3: %@", key3, obj3);
+                                                            if ([(NSString*)key3 isEqualToString:@"cfi"]) {
+                                                                [shl setCfi:obj3];
+                                                            } else if ([(NSString*)key3 isEqualToString:@"color"]) {
+                                                                [shl setColor:(int) [(NSNumber *) obj3 integerValue]];
+                                                            } else if ([(NSString*)key3 isEqualToString:@"updated_at"]) {
+                                                                [shl setLastUpdated:[(NSNumber *) obj3 integerValue]];
+                                                            } else if ([(NSString*)key3 isEqualToString:@"note"]) {
+                                                                [shl setNote:obj3];
+                                                            }
+                                                        }];
+                                                        [serverHighlights addObject:shl];*/
+                                                    }
+                                                }
+                                            } else {
+                                                NSLog(@"unexpected");
+                                            }
                                         } else if ([(NSString *) key isEqualToString:@"latest_location"]) {
                                             
                                             NSData *data2 = [(NSString *) obj dataUsingEncoding:NSUTF8StringEncoding];
@@ -282,7 +318,7 @@
                                                 }];
                                             }
                                         } else if ([(NSString *) key isEqualToString:@"updated_at"]) {
-                                            last_updated = [(NSNumber *) obj integerValue];
+                                            last_updated = [(NSNumber *) obj longLongValue];
                                         }
                                     }];
                                     if (last_updated > [ep lastUpdated])
@@ -290,20 +326,74 @@
                                         //server's values are more recent
                                         NSLog(@"server more up-to-date server:%ld vs server:%lld", last_updated, [ep lastUpdated]);
                                         //update local db
+                                        //highlights
+                                        //remove all highlights from highlights array with this userid and bookid
+                                        NSLog(@"num highlights a %ld", [[appDelegate highlightsArray] count]);
+                                        for (int i = 0; i < [[appDelegate highlightsArray] count]; i++) {
+                                            NSManagedObject *hl = [[appDelegate highlightsArray] objectAtIndex:i];
+                                            NSLog(@"user %d book %d", [(Highlight *)hl userid], [(Highlight *)hl bookid]);
+                                            if (([(Highlight *)hl userid] == userid) && ([(Highlight *)hl bookid] == ep.bookid)) {
+                                                [[appDelegate managedObjectContext] deleteObject:hl];
+                                                NSError *error = nil;
+                                                if (![[appDelegate managedObjectContext] save:&error]) {
+                                                    // Handle the error.
+                                                }
+                                                [[appDelegate highlightsArray] removeObjectAtIndex:i];
+                                                i--;
+                                            } else {
+                                                
+                                            }
+                                        }
+                                        NSLog(@"num highlights b %ld", [[appDelegate highlightsArray] count]);
+                                        
+                                        //re-populate the highlights array with data from server
+                                        for (int i = 0; i < [serverHighlights count]; i++) {
+                                            NSDictionary *dic = [serverHighlights objectAtIndex:i];
+                                            
+                                            Highlight *hl = (Highlight *)[NSEntityDescription insertNewObjectForEntityForName:@"Highlight" inManagedObjectContext:[appDelegate managedObjectContext]];
+                                            [hl setUserid:(int) userid];
+                                            [hl setBookid:ep.bookid];
+                                            [dic enumerateKeysAndObjectsUsingBlock:^(id key3, id obj3, BOOL *stop3) {
+                                                NSLog(@"key3: %@ obj3: %@", key3, obj3);
+                                                if ([(NSString*)key3 isEqualToString:@"cfi"]) {
+                                                    [hl setCfi:obj3];
+                                                } else if ([(NSString*)key3 isEqualToString:@"color"]) {
+                                                    [hl setColor:(int) [(NSNumber *) obj3 integerValue]];
+                                                } else if ([(NSString*)key3 isEqualToString:@"updated_at"]) {
+                                                    [hl setLastUpdated:[(NSNumber *) obj3 longLongValue]];
+                                                } else if ([(NSString*)key3 isEqualToString:@"note"]) {
+                                                    [hl setNote:obj3];
+                                                }
+                                            }];
+                                            
+                                            /*[hl setCfi:shl.cfi];
+                                            [hl setNote:shl.note];
+                                            [hl setColor:shl.color];
+                                            [hl setLastUpdated:shl.lastUpdated];*/
+                                            
+                                            NSError *error = nil;
+                                            if ([[appDelegate managedObjectContext] save:&error]) {
+                                                NSLog(@"saved");
+                                                [[appDelegate highlightsArray] addObject:hl];
+                                            } else {
+                                                // Handle the error.
+                                                NSLog(@"Handle the error");
+                                            }
+                                        }
+                                        
                                         //last updated
                                         [ep setLastUpdated:last_updated];
-                                        //highlights
                                         //progress
                                         [ep setIdref:idref];
                                         [ep setElementCfi:elementCfi];
                                         //save
-                                        /*NSError *error = nil;
+                                        NSError *error = nil;
                                         if ([[appDelegate managedObjectContext] save:&error]) {
                                             NSLog(@"saved");
                                         } else {
                                             // Handle the error.
                                             NSLog(@"Handle the error");
-                                        }*/
+                                        }
                                     } else {
                                         //local values are more recent
                                         //update server
@@ -343,6 +433,7 @@
                                         }
                                     }
                                     if (c != nil) {
+                                        [c setEp:ep];
                                         [self.navigationController pushViewController:c animated:YES];
                                     } else {
                                         //fix error

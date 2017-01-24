@@ -43,6 +43,7 @@
 }
 
 @property (nonatomic, retain) NSMutableArray *ePubTitlesArray;
+@property (nonatomic, retain) NSMutableArray *highlightsArray;
 
 @property (nonatomic, retain) Reachability *hostReachability;
 @property (nonatomic, retain) NSOperationQueue *downloadQueue;
@@ -54,6 +55,6 @@
 @property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
-+(void)downloadDataFromURL:(NSURL *)url post:(NSString *)post withCompletionHandler:(void (^)(NSData *))completionHandler;//for requesting json
++(void)downloadDataFromURL:(NSURL *)url patch:(NSString *)patch withCompletionHandler:(void (^)(NSData *))completionHandler;//for requesting json
 
 @end

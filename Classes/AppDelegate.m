@@ -34,6 +34,7 @@
 #import "GAI.h"
 #import "GAIDictionaryBuilder.h"
 #import "GAIFields.h"
+#import "BibleMesh-swift.h" //required for new CoreData codegen
 
 @interface AppDelegate()
 
@@ -48,6 +49,7 @@
 @synthesize hostReachability;
 @synthesize lvc;
 @synthesize ePubTitlesArray;
+@synthesize highlightsArray;
 
 - (BOOL)
 	application:(UIApplication *)application
@@ -74,17 +76,34 @@
         NSLog(@"Handle the NSManagedContext error");
     }
     
+    ePubTitlesArray = [[NSMutableArray alloc] init];
+    highlightsArray = [[NSMutableArray alloc] init];
+    
     //start fetch from database
     {
+        
+        NSFetchRequest *request1 = [[NSFetchRequest alloc] init];
+        NSEntityDescription *entity1 = [NSEntityDescription entityForName:@"Highlight" inManagedObjectContext:managedObjectContext];
+        [request1 setEntity:entity1];
+        
+        NSError *error1 = nil;
+        NSMutableArray *mutableFetchResults1 = [[managedObjectContext executeFetchRequest:request1 error:&error1] mutableCopy];
+        if (mutableFetchResults1 == nil) {
+            // Handle the error.
+        }
+        
+        [self setHighlightsArray:mutableFetchResults1];
+        NSLog(@"Got %lu highlights", (unsigned long)[mutableFetchResults1 count]);
+        
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
         NSEntityDescription *entity = [NSEntityDescription entityForName:@"Epubtitle" inManagedObjectContext:managedObjectContext];
         [request setEntity:entity];
         
-        /*NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"downloadDate" ascending:NO];
-         NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
-         [request setSortDescriptors:sortDescriptors];
-         [sortDescriptors release];
-         [sortDescriptor release];*/
+        //NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"downloadDate" ascending:NO];
+         //NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
+         //[request setSortDescriptors:sortDescriptors];
+         //[sortDescriptors release];
+         //[sortDescriptor release];
         
         NSError *error;
         NSMutableArray *mutableFetchResults = [[managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
@@ -94,9 +113,36 @@
         
         //[self setEpubtitlesArray:mutableFetchResults];
         NSLog(@"Got %lu Epubtitles", (unsigned long)[mutableFetchResults count]);
+        
+        /*for (int i = 0; i < (unsigned long)[mutableFetchResults count]; i++) {
+            Epubtitle *ept = [mutableFetchResults objectAtIndex:i];
+            if (ept.bookid == 1) {
+                NSMutableDictionary *postDict = [[NSMutableDictionary alloc] init];
+                NSMutableDictionary *latest_location = [[NSMutableDictionary alloc] init];
+                [latest_location setValue:ept.idref forKey:@"idref"];
+                [latest_location setValue:ept.elementCfi forKey:@"elementCfi"];
+                [postDict setValue:latest_location forKey:@"latest_location"];
+                [postDict setValue:[NSNumber numberWithLongLong:ept.lastUpdated] forKey:@"updated_at"];
+                NSMutableArray *highlights = [[NSMutableArray alloc] init];
+                for (int j = 0; j < (unsigned long)[mutableFetchResults1 count]; j++) {
+                    Highlight *hl = [mutableFetchResults1 objectAtIndex:j];
+                    if ((hl.bookid == 1) && (hl.userid == 1)) {
+                        NSMutableDictionary *hld = [[NSMutableDictionary alloc] init];
+                        [hld setValue:hl.cfi forKey:@"cfi"];
+                        [hld setValue:[NSNumber numberWithInt:hl.color] forKey:@"color"];
+                        [hld setValue:hl.note forKey:@"note"];
+                        [hld setValue:[NSNumber numberWithLongLong:hl.lastUpdated] forKey:@"updated_at"];
+                        [highlights addObject:hld];
+                    }
+                }
+                [postDict setValue:highlights forKey:@"highlights"];
+                NSData *jsonData = [NSJSONSerialization dataWithJSONObject:postDict options:0 error:nil];
+                
+                // Checking the format
+                NSLog(@"%@",[[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
+            }
+        }*/
     }
-    
-    ePubTitlesArray = [[NSMutableArray alloc] init];
     
     //start window
 	self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
@@ -277,7 +323,7 @@
     return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
 }
 
-+(void)downloadDataFromURL:(NSURL *)url post:(NSString *)post withCompletionHandler:(void (^)(NSData *))completionHandler {
++(void)downloadDataFromURL:(NSURL *)url patch:(NSString *)patch withCompletionHandler:(void (^)(NSData *))completionHandler {
     // Instantiate a session configuration object.
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     
@@ -286,17 +332,20 @@
     
     // Create a data task object to perform the data downloading.
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    if (post != nil) {
-        request.HTTPBody = [post dataUsingEncoding:NSUTF8StringEncoding];
-        request.HTTPMethod = @"POST";
+    if (patch != nil) {
+        NSData *requestData = [patch dataUsingEncoding:NSUTF8StringEncoding];
+        [request setHTTPBody:requestData];
+        [request setHTTPMethod:@"PATCH"];
+        [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[requestData length]] forHTTPHeaderField:@"Content-Length"];
     }
     NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
         if (error != nil) {
             // If any error occurs then just display its description on the console.
             NSLog(@"%@", [error localizedDescription]);
-        }
-        else{
+        } else {
             // If no error occurs, check the HTTP status code.
             NSInteger HTTPStatusCode = [(NSHTTPURLResponse *)response statusCode];
             

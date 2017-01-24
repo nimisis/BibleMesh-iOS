@@ -28,6 +28,7 @@
 //  OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "BaseViewController.h"
+#import "BibleMesh-swift.h" //required for new CoreData codegen
 
 @class Bookmark;
 @class RDContainer;
@@ -35,7 +36,11 @@
 @class RDPackage;
 @class RDSpineItem;
 
-@interface EPubViewController : BaseViewController
+@interface EPubViewController : BaseViewController {
+    Epubtitle *ep;
+}
+
+@property (nonatomic, retain) Epubtitle *ep;
 
 - (instancetype)
 	initWithContainer:(RDContainer *)container

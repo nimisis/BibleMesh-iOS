@@ -41,7 +41,7 @@
 #import "GAI.h"
 #import "GAIDictionaryBuilder.h"
 #import "GAIFields.h"
-
+#import "AppDelegate.h"
 
 @interface EPubViewController () <
 	RDPackageResourceServerDelegate,
@@ -67,12 +67,17 @@
 	@private RDSpineItem *m_spineItem;
 	@private __weak UIWebView *m_webViewUI;
 	@private __weak WKWebView *m_webViewWK;
+    
+    //@public Epubtitle *ep;
 }
+
+//@property (nonatomic, retain) Epubtitle *ep;
 
 @end
 
-
 @implementation EPubViewController
+
+@synthesize ep;
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
 	m_alertAddBookmark = nil;
@@ -261,6 +266,7 @@
 		}
 
 		[self updateToolbar];
+        [self updateLocation];
 	}
 }
 
@@ -669,6 +675,81 @@
 		action:@selector(onClickSettings)];
 }
 
+- (void)updateLocation {
+    NSLog(@"update location");
+    
+    [self executeJavaScript:@"ReadiumSDK.reader.bookmarkCurrentPage()"
+          completionHandler:^(id response, NSError *error)
+     {
+         NSString *s = response;
+         
+         if (error != nil || s == nil || ![s isKindOfClass:[NSString class]] || s.length == 0) {
+             return;
+         }
+         
+         NSData *data = [s dataUsingEncoding:NSUTF8StringEncoding];
+         
+         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data
+                                                              options:0 error:&error];
+         
+         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+         //update local values, then update server
+         
+         NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970])];//fix
+         NSLog(@"unix time is %lld", [unixtime longLongValue]);
+         
+         [ep setLastUpdated:[unixtime longLongValue]];
+         [ep setIdref:[dict valueForKey:@"idref"]];
+         [ep setElementCfi:[dict valueForKey:@"contentCfi"]];
+         
+         //NSError *error = nil;
+         if ([[appDelegate managedObjectContext] save:&error]) {
+             NSLog(@"saved");
+         } else {
+             // Handle the error.
+             NSLog(@"Handle the error");
+         }
+         
+         NSMutableDictionary *postDict = [[NSMutableDictionary alloc] init];
+         NSMutableDictionary *latest_location = [[NSMutableDictionary alloc] init];
+         [latest_location setValue:[dict valueForKey:@"idref"] forKey:@"idref"];
+         [latest_location setValue:[dict valueForKey:@"contentCFI"] forKey:@"elementCfi"];
+         NSData * locData = [NSJSONSerialization  dataWithJSONObject:latest_location options:kNilOptions error:&error];
+         NSString *locStr = [[NSString alloc] initWithData:locData encoding:NSUTF8StringEncoding];
+         NSString *locStr2 = [locStr stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"];
+         [postDict setValue:locStr2 forKey:@"latest_location"];
+         [postDict setValue:unixtime forKey:@"updated_at"];
+         NSMutableArray *highlights = [[NSMutableArray alloc] init];
+         /*for (int j = 0; j < (unsigned long)[[appDelegate highlightsArray] count]; j++) {
+             Highlight *hl = [[appDelegate highlightsArray] objectAtIndex:j];
+             if ((hl.bookid == [ep bookid]) && (hl.userid == [ep userid])) {
+                 NSMutableDictionary *hld = [[NSMutableDictionary alloc] init];
+                 [hld setValue:[hl cfi] forKey:@"cfi"];
+                 [hld setValue:[NSNumber numberWithInt:hl.color] forKey:@"color"];
+                 [hld setValue:[hl note] forKey:@"note"];
+                 [hld setValue:[NSNumber numberWithLongLong:hl.lastUpdated] forKey:@"updated_at"];
+                 //[highlights addObject:hld];//fix
+             }
+         }*/
+         [postDict setValue:highlights forKey:@"highlights"];
+         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:postDict options:kNilOptions error:&error];
+         if(!jsonData && error){
+             NSLog(@"Error creating JSON: %@", [error localizedDescription]);
+             return;
+         }
+         
+         //NSJSONSerialization converts a URL string from http://... to http:\/\/... remove the extra escapes
+         NSString *patch = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+         NSString *patch2 = [patch stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"];
+         
+         NSString *URLString = [NSString stringWithFormat:@"https://read.biblemesh.com/users/%d/books/%d.json", [ep userid], [ep bookid]];
+         NSURL *url = [NSURL URLWithString:URLString];
+         
+         [AppDelegate downloadDataFromURL:url patch:patch2 withCompletionHandler:^(NSData *data) {
+             NSLog(@"returned");
+         }];
+     }];
+}
 
 - (void)updateToolbar {
 	if ((m_webViewUI != nil && m_webViewUI.hidden) || (m_webViewWK != nil && m_webViewWK.hidden)) {

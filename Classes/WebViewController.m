@@ -53,7 +53,7 @@
     //NSCachedURLResponse *resp = [[NSURLCache sharedURLCache] cachedResponseForRequest:webView.request];
     //NSLog(@"%@",[(NSHTTPURLResponse*)resp.response allHeaderFields]);
     
-    NSInteger userid = 54;//fix
+    NSInteger userid = 1;//fix
     
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
@@ -72,10 +72,13 @@
             //fix filter by user id;
             [request setEntity:entity];
             
-            /*NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"downloadDate" ascending:NO];
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %d", userid];
+            //[request setEntity:[NSEntityDescription entityForName:@"DVD" inManagedObjectContext:moc]];
+            [request setPredicate:predicate];
+            NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"bookid" ascending:YES];
              NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
              [request setSortDescriptors:sortDescriptors];
-             [sortDescriptors release];
+            /* [sortDescriptors release];
              [sortDescriptor release];*/
             
             NSError *error = nil;
@@ -87,38 +90,128 @@
             //[self setEpubtitlesArray:mutableFetchResults];
             NSLog(@"Got %lu Epubtitles", (unsigned long)[mutableFetchResults count]);
             for(Epubtitle *title in mutableFetchResults) {
+                NSLog(@"title %@ user %d book %d", title.title, title.userid, title.bookid);
                 if (title.userid == userid) {
-                    [[appDelegate managedObjectContext] deleteObject:title];
+                    //[[appDelegate managedObjectContext] deleteObject:title];
                 }
             }
             
             //[appDelegate ePubTitlesArray] = [[NSMutableArray alloc] init];
             
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            int localIndex = 0;
             for(NSDictionary *item in jsonArray) {
                 NSLog(@"Item: %@", item);
-                Epubtitle *ep = (Epubtitle *)[NSEntityDescription insertNewObjectForEntityForName:@"Epubtitle" inManagedObjectContext:[appDelegate managedObjectContext]];
-                ep.userid = userid;
+                
+                __block NSInteger bookid;
+                __block NSDate *updatedAt;
+                __block NSString *author;
+                __block NSString *coverHref;
+                __block NSString *rootUrl;
+                __block NSString *title;
                 [item enumerateKeysAndObjectsUsingBlock: ^(id key, id obj, BOOL *stop) {
                     if ([(NSString *) key  isEqual: @"id"]) {
-                        ep.bookid = [obj integerValue];
+                        bookid = [obj integerValue];
                     } else if ([(NSString *) key  isEqual: @"author"]) {
-                        ep.author = obj;
+                        author = obj;
                     } else if ([(NSString *) key  isEqual: @"coverHref"]) {
-                        ep.coverHref = obj;
+                        coverHref = obj;
                     } else if ([(NSString *) key  isEqual: @"rootUrl"]) {
-                        ep.rootUrl = obj;
+                        rootUrl = obj;
                     } else if ([(NSString *) key  isEqual: @"title"]) {
-                        ep.title = obj;
+                        title = obj;
+                    } else if ([(NSString *) key  isEqual: @"updated_at"]) {
+                        updatedAt = [dateFormatter dateFromString:obj];
                     }
                 }];
+                Epubtitle *lep = nil;
+                if (localIndex < [mutableFetchResults count]) {
+                    lep = [mutableFetchResults objectAtIndex:localIndex];
+                }
+                while ((lep != nil) && ([lep bookid] < bookid)) {
+                    //delete all epub titles until we get a match
+                    [[appDelegate managedObjectContext] deleteObject:lep];
+                    //fix delete all associated highlights too.
+                    if ([[appDelegate managedObjectContext] save:&error]) {
+                        NSLog(@"saved");
+                    } else {
+                        // Handle the error.
+                        NSLog(@"Handle the error");
+                    }
+                    [mutableFetchResults removeObjectAtIndex:localIndex];
+                    if (localIndex < [mutableFetchResults count]) {
+                        lep = nil;
+                    } else {
+                        lep = [mutableFetchResults objectAtIndex:localIndex];
+                    }
+                }
+                Boolean insertnew = false;
+                if (lep != nil) {
+                    if ([lep bookid] == bookid) {
+                        //test for dates
+                        //if server is newer, update with new server values
+                        /*NSLog(@"comparing %ld %lld", (long) [updatedAt timeIntervalSince1970], [lep lastUpdated]);
+                        if ([updatedAt timeIntervalSince1970] > [lep lastUpdated]) {
+                            [lep setAuthor:author];
+                            [lep setTitle:title];
+                            [lep setLastUpdated:[updatedAt timeIntervalSince1970]];
+                            [lep setCoverHref:coverHref];
+                            [lep setRootUrl:rootUrl];
+                            if ([[appDelegate managedObjectContext] save:&error]) {
+                                NSLog(@"saved");
+                            } else {
+                                // Handle the error.
+                                NSLog(@"Handle the error");
+                            }
+                        } else {
+                            //do nothing as local version is up-to-date
+                        }*/
+                        localIndex++;
+                    } else {
+                        //new book
+                        insertnew = true;
+                    }
+                } else {
+                    insertnew = true;
+                }
+                if (insertnew) {
+                    Epubtitle *ep = (Epubtitle *)[NSEntityDescription insertNewObjectForEntityForName:@"Epubtitle" inManagedObjectContext:[appDelegate managedObjectContext]];
+                    [ep setUserid:[[NSNumber numberWithInt:userid] intValue]];
+                    [ep setBookid:[[NSNumber numberWithInt:bookid] intValue]];
+                    [ep setAuthor:author];
+                    [ep setTitle:title];
+                    //[ep setLastUpdated:[updatedAt timeIntervalSince1970]];
+                    [ep setCoverHref:coverHref];
+                    [ep setRootUrl:rootUrl];
+                    if ([[appDelegate managedObjectContext] save:&error]) {
+                        NSLog(@"saved");
+                        [mutableFetchResults insertObject:ep atIndex:localIndex];
+                        localIndex++;
+                    } else {
+                        // Handle the error.
+                        NSLog(@"Handle the error");
+                    }
+                }
+            }
+            
+            Epubtitle *lep = nil;
+            while (localIndex < [mutableFetchResults count]) {
+                lep = [mutableFetchResults objectAtIndex:localIndex];
+                //delete all epub titles until we get a match
+                [[appDelegate managedObjectContext] deleteObject:lep];
+                //fix delete all associated highlights too.
                 if ([[appDelegate managedObjectContext] save:&error]) {
                     NSLog(@"saved");
-                    [[appDelegate ePubTitlesArray] addObject:ep];
                 } else {
                     // Handle the error.
                     NSLog(@"Handle the error");
                 }
+                [mutableFetchResults removeObjectAtIndex:localIndex];
             }
+            
+            [appDelegate setEPubTitlesArray:mutableFetchResults];
+            //while ((lep != nil) && ([lep bookid] < bookid)) {
         }
         /*if (error)
             NSLog(@"JSONObjectWithData error: %@", error);
@@ -135,6 +228,7 @@
                     NSLog(@"JSONObjectWithData for array error: %@", error);
             }
         }*/
+        
         
         [self dismissViewControllerAnimated:NO completion:^{
             
