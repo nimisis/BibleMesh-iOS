@@ -31,6 +31,8 @@
 #import <CoreData/CoreData.h>
 #import "Reachability.h"
 #import "LoginViewController.h"
+#import "ContainerListController.h"
+#import "BibleMesh-swift.h" //required for new CoreData codegen
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate> {
     Reachability  *hostReachability;
@@ -55,6 +57,7 @@
 @property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
+- (void) refreshData:(Epubtitle *)ep containerListController:(ContainerListController*)clc ePubFile:(NSString*)ePubFile;
 +(void)downloadDataFromURL:(NSURL *)url patch:(NSString *)patch withCompletionHandler:(void (^)(NSData *))completionHandler;//for requesting json
 
 @end

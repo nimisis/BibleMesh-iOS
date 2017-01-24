@@ -695,7 +695,7 @@
          AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
          //update local values, then update server
          
-         NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970])];//fix
+         NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970])];
          NSLog(@"unix time is %lld", [unixtime longLongValue]);
          
          [ep setLastUpdated:[unixtime longLongValue]];
@@ -710,6 +710,7 @@
              NSLog(@"Handle the error");
          }
          
+         //update server
          NSMutableDictionary *postDict = [[NSMutableDictionary alloc] init];
          NSMutableDictionary *latest_location = [[NSMutableDictionary alloc] init];
          [latest_location setValue:[dict valueForKey:@"idref"] forKey:@"idref"];
