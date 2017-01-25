@@ -676,7 +676,21 @@
 - (void)updateHighlights {
     NSLog(@"update highlights");
     
-    /*[self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.removeHighlightsByType('highlight')" completionHandler:^(id response, NSError *error)
+    [self executeJavaScript:@"ReadiumSDK.reader.bookmarkCurrentPage()"
+          completionHandler:^(id response, NSError *error)
+     {
+         NSString *s = response;
+         
+         if (error != nil || s == nil || ![s isKindOfClass:[NSString class]] || s.length == 0) {
+             return;
+         }
+         
+         NSData *data = [s dataUsingEncoding:NSUTF8StringEncoding];
+         
+         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data
+                                                              options:0 error:&error];
+         //[dict valueForKey:@"idref"];
+    [self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.removeHighlightsByType('highlight')" completionHandler:^(id response, NSError *error)
      {
          if (response != nil) {
              NSLog(@"got response");
@@ -686,9 +700,11 @@
          }
          NSLog(@"completed removal of highlights");
          AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-         int index = 1;
+         //int index = 1;
+         NSLog(@"at spineIDRef %@", [dict valueForKey:@"idref"]);
          for(Highlight *hl in [appDelegate highlightsArray]) {
-             NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', %d, 'highlight')", [hl cfi], index];
+             //NSLog(@"about to add id %d", index);
+             NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', '%@', Math.floor((Math.random()*1000000)), 'highlight')", [dict valueForKey:@"idref"], [hl cfi]];
              [self executeJavaScript:js completionHandler:^(id response, NSError *error)
               {
                   if (response != nil) {
@@ -699,9 +715,10 @@
                   }
                   NSLog(@"completed addition of highlight");
               }];
-             index++;
+             //index++;
          }
-     }];*/
+     }];
+     }];
 }
 
 - (void)updateLocation {

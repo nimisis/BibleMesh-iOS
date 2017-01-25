@@ -635,10 +635,6 @@
                     if (m_package.spineItems.count > 0) {
                         for (int i = 0; i < m_package.spineItems.count; i++) {
                             RDSpineItem *si = [m_package.spineItems objectAtIndex:i];
-                            NSLog(@"idref: %@", si.idref);
-                        }
-                        for (int i = 0; i < m_package.spineItems.count; i++) {
-                            RDSpineItem *si = [m_package.spineItems objectAtIndex:i];
                             if ([si.idref isEqualToString:[[self latestLocation] idref]]) {
                                 c = [[EPubViewController alloc]
                                      initWithContainer:m_container
