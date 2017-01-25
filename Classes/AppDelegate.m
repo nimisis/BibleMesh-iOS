@@ -51,13 +51,18 @@
 @synthesize downloadQueue;
 @synthesize hostReachability;
 @synthesize lvc;
-@synthesize ePubTitlesArray;
+@synthesize locsArray;
+@synthesize booksArray;
 @synthesize highlightsArray;
+@synthesize userid;
 
 - (BOOL)
 	application:(UIApplication *)application
 	didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    //fix
+    userid = 1;
+    
     //Google analytics
     [[GAI sharedInstance] trackerWithTrackingId:@"UA-67167622-8"];
     
@@ -79,11 +84,28 @@
         NSLog(@"Handle the NSManagedContext error");
     }
     
-    ePubTitlesArray = [[NSMutableArray alloc] init];
+    booksArray = [[NSMutableArray alloc] init];
+    locsArray = [[NSMutableArray alloc] init];
     highlightsArray = [[NSMutableArray alloc] init];
     
     //start fetch from database
     {
+        
+        NSFetchRequest *request2 = [[NSFetchRequest alloc] init];
+        NSEntityDescription *entity2 = [NSEntityDescription entityForName:@"Location" inManagedObjectContext:managedObjectContext];
+        [request2 setEntity:entity2];
+        
+        NSError *error2 = nil;
+        NSMutableArray *mutableFetchResults2 = [[managedObjectContext executeFetchRequest:request2 error:&error2] mutableCopy];
+        if (mutableFetchResults2 == nil) {
+            // Handle the error.
+        }
+        
+        if ([mutableFetchResults2 count] > 0) {
+            [self setLatestLocation:[mutableFetchResults2 objectAtIndex:0]];
+            NSLog(@"userid %d", [[self latestLocation] userid]);
+        }
+        NSLog(@"Got %lu locations", (unsigned long)[mutableFetchResults2 count]);
         
         NSFetchRequest *request1 = [[NSFetchRequest alloc] init];
         NSEntityDescription *entity1 = [NSEntityDescription entityForName:@"Highlight" inManagedObjectContext:managedObjectContext];
@@ -114,7 +136,7 @@
             // Handle the error.
         }
         
-        //[self setEpubtitlesArray:mutableFetchResults];
+        [self setBooksArray:mutableFetchResults];
         NSLog(@"Got %lu Epubtitles", (unsigned long)[mutableFetchResults count]);
         
         /*for (int i = 0; i < (unsigned long)[mutableFetchResults count]; i++) {
@@ -367,23 +389,55 @@
     [task resume];
 }
 
-- (void) refreshData:(Epubtitle *)ep containerListController:(ContainerListController*)clc ePubFile:(NSString*)ePubFile {
+- (void) refreshData:(Location *)ep containerListController:(ContainerListController*)clc ePubFile:(NSString*)ePubFile {
+    
+    NSError *error = nil;
+    /*NSFetchRequest *request1 = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity1 = [NSEntityDescription entityForName:@"Location" inManagedObjectContext:[self managedObjectContext]];
+    [request1 setEntity:entity1];
+    
+    NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"userid == %d && bookid == %d", [self userid], [ep bookid]];
+    //[request setEntity:[NSEntityDescription entityForName:@"DVD" inManagedObjectContext:moc]];
+    [request1 setPredicate:predicate1];
+    //NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"cfi" ascending:YES];
+    //NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
+    //[request setSortDescriptors:sortDescriptors];
+    
+    NSError *error = nil;
+    NSMutableArray *mutableFetchResults1 = [[[self managedObjectContext] executeFetchRequest:request1 error:&error] mutableCopy];
+    if (mutableFetchResults1 == nil) {
+        // Handle the error.
+        return;
+    }
+    
+    if ([mutableFetchResults1 count] == 0) {
+        Location *eloc = (Location *)[NSEntityDescription insertNewObjectForEntityForName:@"Location" inManagedObjectContext:[self managedObjectContext]];
+        [eloc setUserid:[self userid]];
+        [eloc setBookid:[ep bookid]];
+        [eloc setIdref:@""];
+        NSError *error = nil;
+        if (![[self managedObjectContext] save:&error]) {
+            // Handle the error.
+        }
+        [self setLatestLocation:eloc];
+    } else {
+        [self setLatestLocation:[mutableFetchResults1 objectAtIndex:0]];
+    }
+    NSLog(@"Have %lu latestlocation", (unsigned long)[mutableFetchResults1 count]);
+    */
     
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Highlight" inManagedObjectContext:[self managedObjectContext]];
-    //fix filter by user id;
     [request setEntity:entity];
     
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %d && bookid == %d", [ep userid], [ep bookid]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %d && bookid == %d", [self userid], [ep bookid]];
     //[request setEntity:[NSEntityDescription entityForName:@"DVD" inManagedObjectContext:moc]];
     [request setPredicate:predicate];
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"cfi" ascending:YES];
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
     [request setSortDescriptors:sortDescriptors];
-    /* [sortDescriptors release];
-     [sortDescriptor release];*/
     
-    NSError *error = nil;
+    //NSError *error = nil;
     NSMutableArray *mutableFetchResults = [[[self managedObjectContext] executeFetchRequest:request error:&error] mutableCopy];
     if (mutableFetchResults == nil) {
         // Handle the error.
@@ -391,14 +445,14 @@
     }
     
     [self setHighlightsArray:mutableFetchResults];
-    NSLog(@"Got %lu highlights", (unsigned long)[mutableFetchResults count]);
+    NSLog(@"Have %lu highlights", (unsigned long)[mutableFetchResults count]);
     
     /*NetworkStatus netStatus = [[appDelegate hostReachability] currentReachabilityStatus];
      if (netStatus == NotReachable) {
      NSLog(@"no internet");
      } else*/
     {
-        NSString *URLString = [NSString stringWithFormat:@"https://read.biblemesh.com/users/%d/books/%d.json", [ep userid], [ep bookid]];
+        NSString *URLString = [NSString stringWithFormat:@"https://read.biblemesh.com/users/%d/books/%d.json", [self userid], [ep bookid]];
         NSURL *url = [NSURL URLWithString:URLString];
         [AppDelegate downloadDataFromURL:url patch:nil withCompletionHandler:^(NSData *data) {
             __block NSInteger last_updated;
@@ -480,10 +534,10 @@
                         last_updated = [(NSNumber *) obj longLongValue];
                     }
                 }];
-                if (last_updated > [ep lastUpdated])
+                if (last_updated > [[self latestLocation] lastUpdated])
                 {
                     //server's values are more recent
-                    NSLog(@"server more up-to-date server:%ld vs server:%lld", last_updated, [ep lastUpdated]);
+                    NSLog(@"server more up-to-date server:%ld vs server:%lld", last_updated, [[self latestLocation] lastUpdated]);
                     //update local db
                     //highlights
                     //remove all highlights from highlights array with this userid and bookid
@@ -491,7 +545,7 @@
                     for (int i = 0; i < [[self highlightsArray] count]; i++) {
                         NSManagedObject *hl = [[self highlightsArray] objectAtIndex:i];
                         NSLog(@"user %d book %d", [(Highlight *)hl userid], [(Highlight *)hl bookid]);
-                        if (([(Highlight *)hl userid] == [ep userid]) && ([(Highlight *)hl bookid] == [ep bookid])) {
+                        if (([(Highlight *)hl userid] == [self userid]) && ([(Highlight *)hl bookid] == [ep bookid])) {
                             [[self managedObjectContext] deleteObject:hl];
                             NSError *error = nil;
                             if (![[self managedObjectContext] save:&error]) {
@@ -510,7 +564,7 @@
                         NSDictionary *dic = [serverHighlights objectAtIndex:i];
                         
                         Highlight *hl = (Highlight *)[NSEntityDescription insertNewObjectForEntityForName:@"Highlight" inManagedObjectContext:[self managedObjectContext]];
-                        [hl setUserid:[ep userid]];
+                        [hl setUserid:[self userid]];
                         [hl setBookid:[ep bookid]];
                         [dic enumerateKeysAndObjectsUsingBlock:^(id key3, id obj3, BOOL *stop3) {
                             NSLog(@"key3: %@ obj3: %@", key3, obj3);
@@ -541,10 +595,10 @@
                     }
                     
                     //last updated
-                    [ep setLastUpdated:last_updated];
+                    [[self latestLocation] setLastUpdated:last_updated];
                     //progress
-                    [ep setIdref:idref];
-                    [ep setElementCfi:elementCfi];
+                    [[self latestLocation] setIdref:idref];
+                    [[self latestLocation] setElementCfi:elementCfi];
                     //save
                     NSError *error = nil;
                     if ([[self managedObjectContext] save:&error]) {
@@ -569,7 +623,8 @@
                 }
                 
                 EPubViewController *c = nil;
-                if ([[ep idref] isEqualToString:@""]) {
+                if (([[self latestLocation] idref] == nil) ||
+                    ([[[self latestLocation] idref] isEqualToString:@""])) {
                     //open the epub at start
                     c = [[EPubViewController alloc]
                          initWithContainer:m_container
@@ -580,19 +635,23 @@
                     if (m_package.spineItems.count > 0) {
                         for (int i = 0; i < m_package.spineItems.count; i++) {
                             RDSpineItem *si = [m_package.spineItems objectAtIndex:i];
-                            if ([si.idref isEqualToString:[ep idref]]) {
+                            NSLog(@"idref: %@", si.idref);
+                        }
+                        for (int i = 0; i < m_package.spineItems.count; i++) {
+                            RDSpineItem *si = [m_package.spineItems objectAtIndex:i];
+                            if ([si.idref isEqualToString:[[self latestLocation] idref]]) {
                                 c = [[EPubViewController alloc]
                                      initWithContainer:m_container
                                      package:m_package
                                      spineItem:si
-                                     cfi:[ep elementCfi]];
+                                     cfi:[[self latestLocation] elementCfi]];
                                 break;
                             }
                         }
                     }
                 }
                 if (c != nil) {
-                    [c setEp:ep];
+                    //[c setLoc:[self latestLocation]];
                     [clc.navigationController pushViewController:c animated:YES];
                 } else {
                     //fix error

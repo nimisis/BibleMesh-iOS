@@ -37,10 +37,10 @@
 @class RDSpineItem;
 
 @interface EPubViewController : BaseViewController {
-    Epubtitle *ep;
+    //Location *loc;
 }
 
-@property (nonatomic, retain) Epubtitle *ep;
+//@property (nonatomic, retain) Location *loc;
 
 - (instancetype)
 	initWithContainer:(RDContainer *)container

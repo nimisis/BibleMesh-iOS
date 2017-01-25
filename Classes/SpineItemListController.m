@@ -80,7 +80,7 @@
 	didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	RDSpineItem *spineItem = [m_package.spineItems objectAtIndex:indexPath.row];
-	EPubViewController *c = [[EPubViewController alloc]
+    EPubViewController *c = [[EPubViewController alloc]
 		initWithContainer:m_container
 		package:m_package
 		spineItem:spineItem

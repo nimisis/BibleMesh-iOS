@@ -5,12 +5,10 @@
         <attribute name="bookid" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="coverHref" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="downloadstatus" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="elementCfi" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="idref" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lastUpdated" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="rootUrl" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="userid" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="epubtitleToLocation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Location" syncable="YES"/>
     </entity>
     <entity name="Highlight" representedClassName="Highlight" syncable="YES" codeGenerationType="class">
         <attribute name="bookid" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -20,8 +18,17 @@
         <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userid" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
     </entity>
+    <entity name="Location" representedClassName="Location" syncable="YES" codeGenerationType="class">
+        <attribute name="bookid" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="elementCfi" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="idref" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastUpdated" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="locationToEpub" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Epubtitle" syncable="YES"/>
+    </entity>
     <elements>
-        <element name="Epubtitle" positionX="-36" positionY="9" width="128" height="195"/>
+        <element name="Epubtitle" positionX="-360" positionY="42" width="128" height="163"/>
         <element name="Highlight" positionX="-36" positionY="81" width="128" height="135"/>
+        <element name="Location" positionX="-189" positionY="-63" width="128" height="133"/>
     </elements>
 </model>

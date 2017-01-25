@@ -68,16 +68,13 @@
 	@private __weak UIWebView *m_webViewUI;
 	@private __weak WKWebView *m_webViewWK;
     
-    //@public Epubtitle *ep;
 }
-
-//@property (nonatomic, retain) Epubtitle *ep;
 
 @end
 
 @implementation EPubViewController
 
-@synthesize ep;
+//@synthesize loc;
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
 	m_alertAddBookmark = nil;
@@ -267,6 +264,7 @@
 
 		[self updateToolbar];
         [self updateLocation];
+        [self updateHighlights];
 	}
 }
 
@@ -675,6 +673,37 @@
 		action:@selector(onClickSettings)];
 }
 
+- (void)updateHighlights {
+    NSLog(@"update highlights");
+    
+    /*[self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.removeHighlightsByType('highlight')" completionHandler:^(id response, NSError *error)
+     {
+         if (response != nil) {
+             NSLog(@"got response");
+         }
+         if (error != nil) {
+             NSLog(@"%@", [error description]);
+         }
+         NSLog(@"completed removal of highlights");
+         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+         int index = 1;
+         for(Highlight *hl in [appDelegate highlightsArray]) {
+             NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', %d, 'highlight')", [hl cfi], index];
+             [self executeJavaScript:js completionHandler:^(id response, NSError *error)
+              {
+                  if (response != nil) {
+                      NSLog(@"got response");
+                  }
+                  if (error != nil) {
+                      NSLog(@"%@", [error description]);
+                  }
+                  NSLog(@"completed addition of highlight");
+              }];
+             index++;
+         }
+     }];*/
+}
+
 - (void)updateLocation {
     NSLog(@"update location");
     
@@ -698,9 +727,9 @@
          NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970])];
          NSLog(@"unix time is %lld", [unixtime longLongValue]);
          
-         [ep setLastUpdated:[unixtime longLongValue]];
-         [ep setIdref:[dict valueForKey:@"idref"]];
-         [ep setElementCfi:[dict valueForKey:@"contentCfi"]];
+         [[appDelegate latestLocation] setLastUpdated:[unixtime longLongValue]];
+         [[appDelegate latestLocation] setIdref:[dict valueForKey:@"idref"]];
+         [[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"contentCfi"]];
          
          //NSError *error = nil;
          if ([[appDelegate managedObjectContext] save:&error]) {
@@ -743,7 +772,7 @@
          NSString *patch = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
          NSString *patch2 = [patch stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"];
          
-         NSString *URLString = [NSString stringWithFormat:@"https://read.biblemesh.com/users/%d/books/%d.json", [ep userid], [ep bookid]];
+         NSString *URLString = [NSString stringWithFormat:@"https://read.biblemesh.com/users/%d/books/%d.json", [appDelegate userid], [[appDelegate latestLocation] bookid]];
          NSURL *url = [NSURL URLWithString:URLString];
          
          [AppDelegate downloadDataFromURL:url patch:patch2 withCompletionHandler:^(NSData *data) {

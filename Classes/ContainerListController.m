@@ -148,10 +148,10 @@
     Book *book = [[Book alloc] init];
     {
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        Epubtitle *ep = [[appDelegate ePubTitlesArray] objectAtIndex:indexPath.row];
-        book.title = ep.title;
-        book.author = ep.author;
-        book.img = [NSString stringWithFormat:@"https://read.biblemesh.com/%@", [ep coverHref]];
+        Location *ep = [[appDelegate locsArray] objectAtIndex:indexPath.row];
+        book.title = [[ep locationToEpub] title];
+        book.author = [[ep locationToEpub] author];
+        book.img = [NSString stringWithFormat:@"https://read.biblemesh.com/%@", [[ep locationToEpub] coverHref]];
         //NSLog(@"img: %@", book.img);
     }
     
@@ -162,8 +162,8 @@
 - (bool) tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    Epubtitle *ep = [[appDelegate ePubTitlesArray] objectAtIndex:indexPath.row];
-    if ([ep downloadstatus] == 2) {
+    Location *ep = [[appDelegate locsArray] objectAtIndex:indexPath.row];
+    if ([[ep locationToEpub] downloadstatus] == 2) {
         return YES;
     } else {
         return NO;
@@ -175,13 +175,13 @@
     NSLog(@"commit");
     
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    Epubtitle *ep = [[appDelegate ePubTitlesArray] objectAtIndex:indexPath.row];
+    Location *ep = [[appDelegate locsArray] objectAtIndex:indexPath.row];
     //check if book exists in folder
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains
     (NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *homePath = [paths objectAtIndex:0];
-    NSString *ePubFile = [homePath stringByAppendingPathComponent:[NSString stringWithFormat:@"book_%d.epub", ep.bookid]];
+    NSString *ePubFile = [homePath stringByAppendingPathComponent:[NSString stringWithFormat:@"book_%d.epub", [ep bookid]]];
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:ePubFile]) {
         [[NSFileManager defaultManager] removeItemAtPath:ePubFile error:NULL];
@@ -189,7 +189,7 @@
 
     //reset the download status to "not downloaded"
     //fix note that another user who has downloaded the file will then have to re-download.
-    [ep setDownloadstatus:0];
+    [[ep locationToEpub] setDownloadstatus:0];
     
     NSError *error = nil;
     if (![[appDelegate managedObjectContext] save:&error]) {
@@ -209,7 +209,7 @@
     
     {
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        Epubtitle *ep = [[appDelegate ePubTitlesArray] objectAtIndex:indexPath.row];
+        Location *ep = [[appDelegate locsArray] objectAtIndex:indexPath.row];
         //check if book exists in folder
         
         NSArray *paths = NSSearchPathForDirectoriesInDomains
@@ -218,7 +218,7 @@
         NSString *ePubFile = [homePath stringByAppendingPathComponent:[NSString stringWithFormat:@"book_%d.epub", ep.bookid]];
         
         Boolean downloadit = false;
-        switch (ep.downloadstatus) {
+        switch ([[ep locationToEpub] downloadstatus]) {
             case 1:
                 //downloading
             {
@@ -263,9 +263,9 @@
                 Download *dl = [[Download alloc] init];
                 
                 [dl setEPubFile:ePubFile];
-                [dl setTitle:ep];
+                [dl setTitle:[ep locationToEpub]];
                 
-                [ep setDownloadstatus:1];//fix downloading
+                [[ep locationToEpub] setDownloadstatus:1];//fix downloading
                 NSError *error = nil;
                 if (![[appDelegate managedObjectContext] save:&error]) {
                     // Handle the error.
@@ -298,7 +298,7 @@
 	numberOfRowsInSection:(NSInteger)section
 {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    return [[appDelegate ePubTitlesArray] count];
+    return [[appDelegate locsArray] count];
 }
 
 - (void)viewDidLayoutSubviews {
