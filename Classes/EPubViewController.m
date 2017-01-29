@@ -264,7 +264,13 @@
 
 		[self updateToolbar];
         [self updateLocation];
-        [self updateHighlights];
+        if ([array count] > 0) {
+            NSLog(@"idref: %@", [(NSDictionary *)[array objectAtIndex:0] valueForKey:@"idref"]);
+            [self updateHighlights:[(NSDictionary *)[array objectAtIndex:0] valueForKey:@"idref"]];
+        } else {
+            NSLog(@"idref: nil");
+            [self updateHighlights:nil];
+        }
 	}
 }
 
@@ -673,10 +679,10 @@
 		action:@selector(onClickSettings)];
 }
 
-- (void)updateHighlights {
+- (void)updateHighlights:(NSString *)idref {//fix could have more than one idref
     NSLog(@"update highlights");
     
-    [self executeJavaScript:@"ReadiumSDK.reader.bookmarkCurrentPage()"
+    /*[self executeJavaScript:@"ReadiumSDK.reader.bookmarkCurrentPage()"
           completionHandler:^(id response, NSError *error)
      {
          NSString *s = response;
@@ -689,7 +695,7 @@
          
          NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data
                                                               options:0 error:&error];
-         //[dict valueForKey:@"idref"];
+         //[dict valueForKey:@"idref"];*/
     [self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.removeHighlightsByType('highlight')" completionHandler:^(id response, NSError *error)
      {
          if (response != nil) {
@@ -701,10 +707,11 @@
          NSLog(@"completed removal of highlights");
          AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
          //int index = 1;
-         NSLog(@"at spineIDRef %@", [dict valueForKey:@"idref"]);
+         NSLog(@"at spineIDRef %@", idref);
          for(Highlight *hl in [appDelegate highlightsArray]) {
              //NSLog(@"about to add id %d", index);
-             NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', '%@', Math.floor((Math.random()*1000000)), 'highlight')", [dict valueForKey:@"idref"], [hl cfi]];
+             //fix check that idref is [hl idref]
+             NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', '%@', Math.floor((Math.random()*1000000)), 'highlight')", idref, [hl cfi]];
              [self executeJavaScript:js completionHandler:^(id response, NSError *error)
               {
                   if (response != nil) {
@@ -718,7 +725,7 @@
              //index++;
          }
      }];
-     }];
+     //}];
 }
 
 - (void)updateLocation {
@@ -741,8 +748,13 @@
          AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
          //update local values, then update server
          
-         NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970])];
+         NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970]) + [appDelegate serverTimeOffset]];
          NSLog(@"unix time is %lld", [unixtime longLongValue]);
+         
+         NSString *dateString = [NSDateFormatter localizedStringFromDate:[NSDate date]
+                                                               dateStyle:NSDateFormatterShortStyle
+                                                               timeStyle:NSDateFormatterFullStyle];
+         NSLog(@"%@",dateString);
          
          [[appDelegate latestLocation] setLastUpdated:[unixtime longLongValue]];
          [[appDelegate latestLocation] setIdref:[dict valueForKey:@"idref"]];
@@ -789,7 +801,9 @@
          NSString *patch = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
          NSString *patch2 = [patch stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"];
          
-         NSString *URLString = [NSString stringWithFormat:@"https://read.biblemesh.com/users/%d/books/%d.json", [appDelegate userid], [[appDelegate latestLocation] bookid]];
+         NSLog(@"patch2:%@", patch2);
+         
+         NSString *URLString = [NSString stringWithFormat:@"https://read.biblemesh.com/users/%ld/books/%d.json", (long)[appDelegate userid], [[appDelegate latestLocation] bookid]];
          NSURL *url = [NSURL URLWithString:URLString];
          
          [AppDelegate downloadDataFromURL:url patch:patch2 withCompletionHandler:^(NSData *data) {

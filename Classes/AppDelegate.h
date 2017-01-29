@@ -56,6 +56,7 @@
 @property (nonatomic, strong) UIWindow *window;
 
 @property NSInteger userid;
+@property NSInteger serverTimeOffset;
 
 @property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;
 @property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;

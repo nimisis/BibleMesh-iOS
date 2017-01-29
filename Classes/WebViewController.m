@@ -245,10 +245,45 @@
             
             //fix todo. Make request to get titles
             
+            //get servertime
             
-            //show library view
-            ContainerListController *c = [[ContainerListController alloc] init];
-            [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
+            NSString *URLString = @"https://read.biblemesh.com/currenttime.json";
+            NSURL *url = [NSURL URLWithString:URLString];
+            [AppDelegate downloadDataFromURL:url patch:nil withCompletionHandler:^(NSData *data) {
+                NSLog(@"returned");
+                
+                __block NSInteger serverTime;
+                //check local data against data returned
+                if (data == nil) {
+                    NSLog(@"no data");
+                    //return;
+                } else {
+                    NSError *error = nil;
+                    id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+                    if (error) {
+                        NSLog(@"Error parsing JSON: %@", error);
+                        return;
+                    }
+                    if ([jsonObject isKindOfClass:[NSArray class]]) {
+                        NSLog(@"is array");
+                        return;
+                    }
+                    
+                    NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970])];
+                    NSLog(@"unix time is %lld", [unixtime longLongValue]);
+                    [jsonObject enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                        if ([(NSString *) key isEqualToString:@"currentServerTime"]) {
+                            serverTime = [(NSNumber *) obj longLongValue];
+                            NSLog(@"servertime %ld diff:%lld", serverTime, (serverTime - [unixtime longLongValue]));
+                            [appDelegate setServerTimeOffset:(serverTime - [unixtime longLongValue])];
+                        }
+                    }];
+                }
+                
+                //show library view
+                ContainerListController *c = [[ContainerListController alloc] init];
+                [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
+            }];
             
             /*UIAlertController * alert = [UIAlertController
                                          alertControllerWithTitle:@"Token"

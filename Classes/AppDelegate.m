@@ -55,6 +55,7 @@
 @synthesize booksArray;
 @synthesize highlightsArray;
 @synthesize userid;
+@synthesize serverTimeOffset;
 
 - (BOOL)
 	application:(UIApplication *)application
@@ -62,6 +63,7 @@
 {
     //fix
     userid = 1;
+    serverTimeOffset = 0;
     
     //Google analytics
     [[GAI sharedInstance] trackerWithTrackingId:@"UA-67167622-8"];

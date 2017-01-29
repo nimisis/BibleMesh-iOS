@@ -215,7 +215,7 @@
         NSArray *paths = NSSearchPathForDirectoriesInDomains
         (NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *homePath = [paths objectAtIndex:0];
-        NSString *ePubFile = [homePath stringByAppendingPathComponent:[NSString stringWithFormat:@"book_%d.epub", ep.bookid]];
+        NSString *ePubFile = [homePath stringByAppendingPathComponent:[NSString stringWithFormat:@"book_%d.epub", [ep bookid]]];
         
         Boolean downloadit = false;
         switch ([[ep locationToEpub] downloadstatus]) {
