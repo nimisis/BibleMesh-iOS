@@ -62,7 +62,7 @@
 @property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
-- (void) refreshData:(Location *)ep containerListController:(ContainerListController*)clc ePubFile:(NSString*)ePubFile;
+- (void) refreshData:(ContainerListController*)clc ePubFile:(NSString*)ePubFile;
 +(void)downloadDataFromURL:(NSURL *)url patch:(NSString *)patch withCompletionHandler:(void (^)(NSData *))completionHandler;//for requesting json
 
 @end

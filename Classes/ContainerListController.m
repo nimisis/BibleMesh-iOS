@@ -209,16 +209,19 @@
     
     {
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        Location *ep = [[appDelegate locsArray] objectAtIndex:indexPath.row];
+        //Location *ep = [[appDelegate locsArray] objectAtIndex:indexPath.row];
+        
+        [appDelegate setLatestLocation:[[appDelegate locsArray] objectAtIndex:indexPath.row]];
+        
         //check if book exists in folder
         
         NSArray *paths = NSSearchPathForDirectoriesInDomains
         (NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *homePath = [paths objectAtIndex:0];
-        NSString *ePubFile = [homePath stringByAppendingPathComponent:[NSString stringWithFormat:@"book_%d.epub", [ep bookid]]];
+        NSString *ePubFile = [homePath stringByAppendingPathComponent:[NSString stringWithFormat:@"book_%d.epub", [[appDelegate latestLocation] bookid]]];
         
         Boolean downloadit = false;
-        switch ([[ep locationToEpub] downloadstatus]) {
+        switch ([[[appDelegate latestLocation] locationToEpub] downloadstatus]) {
             case 1:
                 //downloading
             {
@@ -238,7 +241,7 @@
                 if ([[NSFileManager defaultManager] fileExistsAtPath:ePubFile]) {
                     //open epub
                     
-                    [appDelegate refreshData:ep containerListController:self ePubFile:ePubFile];
+                    [appDelegate refreshData:self ePubFile:ePubFile];
                     
                     
                 } else {
@@ -263,9 +266,9 @@
                 Download *dl = [[Download alloc] init];
                 
                 [dl setEPubFile:ePubFile];
-                [dl setTitle:[ep locationToEpub]];
+                [dl setTitle:[[appDelegate latestLocation] locationToEpub]];
                 
-                [[ep locationToEpub] setDownloadstatus:1];//fix downloading
+                [[[appDelegate latestLocation] locationToEpub] setDownloadstatus:1];//fix downloading
                 NSError *error = nil;
                 if (![[appDelegate managedObjectContext] save:&error]) {
                     // Handle the error.
@@ -278,7 +281,7 @@
                     dl.bgTask = UIBackgroundTaskInvalid;
                 }];
                 
-                NSURLRequest *theRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://read.biblemesh.com/epub_content/book_%d/book.epub", ep.bookid]]
+                NSURLRequest *theRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://read.biblemesh.com/epub_content/book_%d/book.epub", [[appDelegate latestLocation] bookid]]]
                                                             cachePolicy:NSURLRequestUseProtocolCachePolicy
                                                         timeoutInterval:60.0];
                 dl.theConnection = [[NSURLConnection alloc] initWithRequest:theRequest delegate:dl];

@@ -14,6 +14,7 @@
         <attribute name="bookid" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="cfi" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="color" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="idref" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lastUpdated" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userid" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -28,7 +29,7 @@
     </entity>
     <elements>
         <element name="Epubtitle" positionX="-360" positionY="42" width="128" height="163"/>
-        <element name="Highlight" positionX="-36" positionY="81" width="128" height="135"/>
+        <element name="Highlight" positionX="-36" positionY="81" width="128" height="150"/>
         <element name="Location" positionX="-189" positionY="-63" width="128" height="133"/>
     </elements>
 </model>

@@ -48,7 +48,9 @@
 	UIAlertViewDelegate,
 	UIPopoverControllerDelegate,
 	UIWebViewDelegate,
-	WKScriptMessageHandler>
+//    UIGestureRecognizerDelegate,
+	WKScriptMessageHandler
+>
 {
 	@private UIAlertView *m_alertAddBookmark;
 	@private RDContainer *m_container;
@@ -115,6 +117,14 @@
 	}
 }
 
+/*
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    BOOL result = NO;
+    if ((gestureRecognizer == myScreenEdgePanGestureRecognizer) && [[otherGestureRecognizer view] isDescendantOfView:[gestureRecognizer view]]) {
+        result = YES;
+    }
+    return result;
+}*/
 
 - (void)cleanUp {
     if (m_webViewWK != nil) {
@@ -135,7 +145,6 @@
 		m_popover = nil;
 	}
 }
-
 
 - (BOOL)commonInit {
 
@@ -207,7 +216,6 @@
 		completionHandler(nil, nil);
 	}
 }
-
 
 - (void)handleMediaOverlayStatusDidChange:(NSString *)payload {
 	NSData *data = [payload dataUsingEncoding:NSUTF8StringEncoding];
@@ -413,7 +421,6 @@
 	return self;
 }
 
-
 - (void)loadView {
     
     id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
@@ -489,8 +496,24 @@
 		[webView loadRequest:[NSURLRequest requestWithURL:url]];
 	}
     
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)];
+    [tap setNumberOfTapsRequired:1];
+    //[tap setDelegate:self];
+    //[tap setNumberOfTouchesRequired:1];
+    [tap setEnabled:YES];
+    [[m_webViewUI scrollView] addGestureRecognizer:tap];
+    [[m_webViewWK scrollView] addGestureRecognizer:tap];
+    
+    UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(press:)];
+    //[press setNumberOfTouchesRequired:1];
+    [press setNumberOfTapsRequired:1];
+    [press setEnabled:YES];
+    [[m_webViewUI scrollView] addGestureRecognizer:press];
+    [[m_webViewWK scrollView] addGestureRecognizer:press];
+    
     UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self  action:@selector(swipeRightAction:)];
     [swipeRight setDirection:UISwipeGestureRecognizerDirectionRight];
+    //[swipeRight set]
     [m_webViewUI addGestureRecognizer:swipeRight];
     [m_webViewWK addGestureRecognizer:swipeRight];
     
@@ -498,9 +521,33 @@
     [swipeLeft setDirection:UISwipeGestureRecognizerDirectionLeft];
     [m_webViewUI addGestureRecognizer:swipeLeft];
     [m_webViewWK addGestureRecognizer:swipeLeft];
-    
-    //[self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.on('annotationClicked', function(type, idref, cfi, id) {console.debug('My highlight click: ' + id);});" completionHandler:nil];
-    
+}
+
+//-(void)popupMenu:(NSString *)context {
+  //  NSLog(@"popupmenu");
+    /*NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Context Menu"];
+    [theMenu insertItemWithTitle:@"Beep" action:@selector(beep:) keyEquivalent:@"" atIndex:0];
+    [theMenu insertItemWithTitle:@"Honk" action:@selector(honk:) keyEquivalent:@"" atIndex:1];
+    [theMenu popUpMenuPositioningItem:theMenu.itemArray[0] atLocation:NSPointFromCGPoint(CGPointMake(0,0)) inView:self.view];*/
+/*}
+
+-(void)beep:(id)val {
+    NSLog(@"got beep %@", val);
+}
+
+-(void)honk:(id)val {
+    NSLog(@"got honk %@", val);
+ }*/
+
+//- (IBAction)showGestureForTapRecognizer:(UITapGestureRecognizer *)recognizer {
+-(void)tapped:(UITapGestureRecognizer *) tap {
+    NSLog(@"tap");
+    //[self executeJavaScript:@"ReadiumSDK.reader.openPageNext()" completionHandler:nil];
+}
+
+-(void)press:(UILongPressGestureRecognizer *) press {
+    NSLog(@"pres");
+    //[self executeJavaScript:@"ReadiumSDK.reader.openPageNext()" completionHandler:nil];
 }
 
 -(void)swipeLeftAction:(UISwipeGestureRecognizer *) swipe {
@@ -711,18 +758,22 @@
          for(Highlight *hl in [appDelegate highlightsArray]) {
              //NSLog(@"about to add id %d", index);
              //fix check that idref is [hl idref]
-             NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', '%@', Math.floor((Math.random()*1000000)), 'highlight')", idref, [hl cfi]];
-             [self executeJavaScript:js completionHandler:^(id response, NSError *error)
-              {
-                  if (response != nil) {
-                      NSLog(@"got response");
-                  }
-                  if (error != nil) {
-                      NSLog(@"%@", [error description]);
-                  }
-                  NSLog(@"completed addition of highlight");
-              }];
-             //index++;
+             if ([idref isEqualToString:[hl idref]]) {
+                 NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', '%@', Math.floor((Math.random()*1000000)), 'highlight')", [hl idref], [hl cfi]];
+                 [self executeJavaScript:js completionHandler:^(id response, NSError *error)
+                  {
+                      if (response != nil) {
+                          NSLog(@"got response");
+                      }
+                      if (error != nil) {
+                          NSLog(@"%@", [error description]);
+                      }
+                      NSLog(@"completed addition of highlight");
+                  }];
+                 //index++;
+             } else {
+                 NSLog(@"skipped as idref not matched");
+             }
          }
      }];
      //}];
@@ -756,9 +807,9 @@
                                                                timeStyle:NSDateFormatterFullStyle];
          NSLog(@"%@",dateString);
          
-         [[appDelegate latestLocation] setLastUpdated:[unixtime longLongValue]];
-         [[appDelegate latestLocation] setIdref:[dict valueForKey:@"idref"]];
-         [[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"contentCfi"]];
+         //[[appDelegate latestLocation] setLastUpdated:[unixtime longLongValue]];
+         //[[appDelegate latestLocation] setIdref:[dict valueForKey:@"idref"]];
+         //[[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"contentCfi"]];
          
          //NSError *error = nil;
          if ([[appDelegate managedObjectContext] save:&error]) {
@@ -959,7 +1010,6 @@
 	}];
 }
 
-
 - (void)
 	userContentController:(WKUserContentController *)userContentController
 	didReceiveScriptMessage:(WKScriptMessage *)message
@@ -1018,9 +1068,14 @@
                                       otherButtonTitles:nil];
             [annot show];
         }
+    } else if ([messageName isEqualToString:@"context"]) {
+        NSLog(@"context");
+        //[self popupMenu:message.body];
+    } else if ([messageName isEqualToString:@"settingsDidApply"]) {
     } else {
         NSLog(@"messageName %@", messageName);
     }
+    
 }
 
 
@@ -1040,15 +1095,19 @@
 	}
 }
 
+- (void)hideNavController {
+    if (self.navigationController != nil) {
+        
+        //[self.navigationController setNavigationBarHidden:YES animated:YES];
+        //[self.navigationController setToolbarHidden:NO animated:YES];
+    }
+}
 
 - (void)viewWillAppear:(BOOL)animated {
     
 	[super viewWillAppear:animated];
 
-    if (self.navigationController != nil) {
-        //[self.navigationController setNavigationBarHidden:YES animated:YES];
-		[self.navigationController setToolbarHidden:NO animated:YES];
-	}
+    NSTimer *hideTimer = [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(hideNavController) userInfo:nil repeats:NO];
 }
 
 

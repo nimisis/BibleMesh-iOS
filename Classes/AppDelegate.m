@@ -56,6 +56,7 @@
 @synthesize highlightsArray;
 @synthesize userid;
 @synthesize serverTimeOffset;
+@synthesize latestLocation;
 
 - (BOOL)
 	application:(UIApplication *)application
@@ -89,6 +90,9 @@
     booksArray = [[NSMutableArray alloc] init];
     locsArray = [[NSMutableArray alloc] init];
     highlightsArray = [[NSMutableArray alloc] init];
+    //latestLocation = [[Location alloc] init];
+    
+    //[[self latestLocation] setLastUpdated:0];
     
     //start fetch from database
     {
@@ -103,8 +107,10 @@
             // Handle the error.
         }
         
+        //latestLocation = [[Location alloc] init];
         if ([mutableFetchResults2 count] > 0) {
             [self setLatestLocation:[mutableFetchResults2 objectAtIndex:0]];
+            [self setLocsArray:mutableFetchResults2];
             NSLog(@"userid %d", [[self latestLocation] userid]);
         }
         NSLog(@"Got %lu locations", (unsigned long)[mutableFetchResults2 count]);
@@ -391,8 +397,9 @@
     [task resume];
 }
 
-- (void) refreshData:(Location *)ep containerListController:(ContainerListController*)clc ePubFile:(NSString*)ePubFile {
+- (void) refreshData:(ContainerListController*)clc ePubFile:(NSString*)ePubFile {
     
+    //Location *ep = [self latestLocation];
     NSError *error = nil;
     /*NSFetchRequest *request1 = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity1 = [NSEntityDescription entityForName:@"Location" inManagedObjectContext:[self managedObjectContext]];
@@ -432,7 +439,7 @@
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Highlight" inManagedObjectContext:[self managedObjectContext]];
     [request setEntity:entity];
     
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %d && bookid == %d", [self userid], [ep bookid]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %d && bookid == %d", [self userid], [[self latestLocation] bookid]];
     //[request setEntity:[NSEntityDescription entityForName:@"DVD" inManagedObjectContext:moc]];
     [request setPredicate:predicate];
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"cfi" ascending:YES];
@@ -454,7 +461,7 @@
      NSLog(@"no internet");
      } else*/
     {
-        NSString *URLString = [NSString stringWithFormat:@"https://read.biblemesh.com/users/%d/books/%d.json", [self userid], [ep bookid]];
+        NSString *URLString = [NSString stringWithFormat:@"https://read.biblemesh.com/users/%ld/books/%d.json", (long)[self userid], [[self latestLocation] bookid]];
         NSURL *url = [NSURL URLWithString:URLString];
         [AppDelegate downloadDataFromURL:url patch:nil withCompletionHandler:^(NSData *data) {
             __block NSInteger last_updated;
@@ -547,7 +554,7 @@
                     for (int i = 0; i < [[self highlightsArray] count]; i++) {
                         NSManagedObject *hl = [[self highlightsArray] objectAtIndex:i];
                         NSLog(@"user %d book %d", [(Highlight *)hl userid], [(Highlight *)hl bookid]);
-                        if (([(Highlight *)hl userid] == [self userid]) && ([(Highlight *)hl bookid] == [ep bookid])) {
+                        if (([(Highlight *)hl userid] == [self userid]) && ([(Highlight *)hl bookid] == [[self latestLocation] bookid])) {
                             [[self managedObjectContext] deleteObject:hl];
                             NSError *error = nil;
                             if (![[self managedObjectContext] save:&error]) {
@@ -567,10 +574,12 @@
                         
                         Highlight *hl = (Highlight *)[NSEntityDescription insertNewObjectForEntityForName:@"Highlight" inManagedObjectContext:[self managedObjectContext]];
                         [hl setUserid:[self userid]];
-                        [hl setBookid:[ep bookid]];
+                        [hl setBookid:[[self latestLocation] bookid]];
                         [dic enumerateKeysAndObjectsUsingBlock:^(id key3, id obj3, BOOL *stop3) {
                             NSLog(@"key3: %@ obj3: %@", key3, obj3);
-                            if ([(NSString*)key3 isEqualToString:@"cfi"]) {
+                            if ([(NSString*)key3 isEqualToString:@"spineIdRef"]) {
+                                [hl setIdref:obj3];
+                            } else if ([(NSString*)key3 isEqualToString:@"cfi"]) {
                                 [hl setCfi:obj3];
                             } else if ([(NSString*)key3 isEqualToString:@"color"]) {
                                 [hl setColor:(int) [(NSNumber *) obj3 integerValue]];
@@ -580,11 +589,6 @@
                                 [hl setNote:obj3];
                             }
                         }];
-                        
-                        /*[hl setCfi:shl.cfi];
-                         [hl setNote:shl.note];
-                         [hl setColor:shl.color];
-                         [hl setLastUpdated:shl.lastUpdated];*/
                         
                         NSError *error = nil;
                         if ([[self managedObjectContext] save:&error]) {
@@ -637,7 +641,7 @@
                     if (m_package.spineItems.count > 0) {
                         for (int i = 0; i < m_package.spineItems.count; i++) {
                             RDSpineItem *si = [m_package.spineItems objectAtIndex:i];
-                            if ([si.idref isEqualToString:[[self latestLocation] idref]]) {
+                            if ([[si idref] isEqualToString:[[self latestLocation] idref]]) {
                                 c = [[EPubViewController alloc]
                                      initWithContainer:m_container
                                      package:m_package

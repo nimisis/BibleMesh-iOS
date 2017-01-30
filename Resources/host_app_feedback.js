@@ -115,6 +115,10 @@ $(document).ready(function ()
                         window.webkit.messageHandlers != null &&
                         window.webkit.messageHandlers.readium != null) {
                         // The presence of a "readium" webkit message handler means that WKWebView is in use.
+                        //$(body).on("contextmenu", function (evt) {
+   							//window.webkit.messageHandlers.readium.postMessage(['context']);
+  // 							evt.preventDefault();
+	//					});
                         this.useWKWebView = true;
                     }
 
