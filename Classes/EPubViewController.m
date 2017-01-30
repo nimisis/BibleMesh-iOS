@@ -70,6 +70,7 @@
 	@private __weak UIWebView *m_webViewUI;
 	@private __weak WKWebView *m_webViewWK;
     @private NSTimer *hideTimer;
+    @private UIProgressView *progress;
 }
 
 @end
@@ -458,12 +459,11 @@
 		m_webViewWK = webView;
 		webView.hidden = YES;
         webView.scrollView.bounces = NO;
-        //self.automaticallyAdjustsScrollViewInsets = NO;
+        [self.view addSubview:webView];
         
-        //webView.scrollView.panGestureRecognizer.enabled = NO;
-        //webView.scrollView.pinchGestureRecognizer.enabled = NO;
-        //webVIew.scrollView.
-		[self.view addSubview:webView];
+        UIProgressView *prog = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar];;
+        [self.view addSubview:prog];
+        progress = prog;
 
 		// RDPackageResourceConnection looks at corePaths and corePrefixes in the following
 		// query string to determine what core resources it should provide responses for. Since
@@ -909,6 +909,11 @@
     itemNext.enabled = canGoNext;
     itemPrev.enabled = canGoPrevious;*/
 
+    int pindex = 0;
+    int cindex = 0;
+    int chapts = m_package.spineItems.count;
+    int tpages = 0;
+    
 	if (m_currentPageOpenPagesArray == nil || [m_currentPageOpenPagesArray count] <= 0) {
 		label.text = @"";
 	}
@@ -923,6 +928,9 @@
 
             int pageIndex = m_currentPageIsFixedLayout ? spineItemIndex.intValue : spineItemPageIndex.intValue;
 
+            pindex = pageIndex+1;
+            cindex = [spineItemIndex intValue];
+            
             [pageNumbers addObject: [NSNumber numberWithInt:pageIndex + 1]];
         }
 
@@ -935,6 +943,8 @@
             NSNumber *number = [firstOpenPageDict valueForKey:@"spineItemPageCount"];
 
             pageCount = m_currentPageIsFixedLayout ? m_currentPageSpineItemCount: number.intValue;
+            tpages = chapts * pageCount;
+            pindex += cindex * pageCount;
         }
         NSString* totalPages = [NSString stringWithFormat:@"%d", pageCount];
 
@@ -950,7 +960,16 @@
 		target:nil
 		action:nil]
 	];
-
+    
+    if (tpages > 0) {
+        float prog = ((float)pindex / (float)tpages);
+        if (prog > 1.0f) {
+            NSLog(@"prog too big");
+            prog = 1.0f;
+        }
+        [progress setProgress:prog];
+    }
+    
 	[self executeJavaScript:@"ReadiumSDK.reader.isMediaOverlayAvailable()"
 		completionHandler:^(id response, NSError *error)
 	{
@@ -1092,6 +1111,8 @@
         //m_webViewWK.frame = CGRectMake(0, 64, size.width, 568 - 64.0f - 44.0f);//fix ipad the same?
         m_webViewWK.scrollView.contentInset = UIEdgeInsetsZero;
 		m_webViewWK.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
+        
+        progress.frame = CGRectMake(10, size.height - 10, size.width-20, 10);
     }
 }
 
