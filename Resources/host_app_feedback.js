@@ -221,11 +221,20 @@ $(document).ready(function ()
                         }
                     });
             
-                    reader.plugins.highlights.on("textSelectionEvent", function()
+                    /*reader.plugins.highlights.on("textSelectionEvent", function()
                     {
                         console.log("ANNOTATION SELECT");
                         reader.plugins.highlights.addSelectionHighlight(Math.floor((Math.random()*1000000)), "highlight");
-                    });
+                    });*/
+                          
+                    /*reader.plugins.highlights.on("mouseup", function()
+                            {
+                                console.log("mouse up");
+                                                 };*/
+                                                 /*reader.plugins.highlights.on("click", function()
+                                                                              {
+                                                                              console.log("click");
+                                                                              };*/
                 }
                   
                 // external (require()'d via Dependency Injection, see examplePluginConfig function parameter passed above)

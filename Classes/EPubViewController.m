@@ -48,7 +48,7 @@
 	UIAlertViewDelegate,
 	UIPopoverControllerDelegate,
 	UIWebViewDelegate,
-//    UIGestureRecognizerDelegate,
+    UIGestureRecognizerDelegate,
 	WKScriptMessageHandler
 >
 {
@@ -69,14 +69,12 @@
 	@private RDSpineItem *m_spineItem;
 	@private __weak UIWebView *m_webViewUI;
 	@private __weak WKWebView *m_webViewWK;
-    
+    @private NSTimer *hideTimer;
 }
 
 @end
 
 @implementation EPubViewController
-
-//@synthesize loc;
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
 	m_alertAddBookmark = nil;
@@ -117,15 +115,6 @@
 	}
 }
 
-/*
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    BOOL result = NO;
-    if ((gestureRecognizer == myScreenEdgePanGestureRecognizer) && [[otherGestureRecognizer view] isDescendantOfView:[gestureRecognizer view]]) {
-        result = YES;
-    }
-    return result;
-}*/
-
 - (void)cleanUp {
     if (m_webViewWK != nil) {
         [m_webViewWK.configuration.userContentController removeScriptMessageHandlerForName:@"readium"];
@@ -143,7 +132,11 @@
 	if (m_popover != nil) {
 		[m_popover dismissPopoverAnimated:NO];
 		m_popover = nil;
-	}
+    }
+    if (hideTimer != nil) {
+        [hideTimer invalidate];
+        hideTimer = nil;
+    }
 }
 
 - (BOOL)commonInit {
@@ -281,7 +274,6 @@
         }
 	}
 }
-
 
 - (void)handleReaderDidInitialize {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
@@ -430,6 +422,8 @@
 	self.view = [[UIView alloc] init];
 	self.view.backgroundColor = [UIColor whiteColor];
 
+    hideTimer = nil;
+    
 	// Notifications
 
 	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
@@ -437,8 +431,6 @@
 	[nc addObserver:self selector:@selector(onEPubSettingsDidChange:)
 		name:kSDKLauncherEPubSettingsDidChange object:nil];
 
-    
-    
     
 	// Create the web view. The choice of web view type is based on the existence of the WKWebView
 	// class, but this could be decided some other way.
@@ -465,7 +457,12 @@
 		WKWebView *webView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:config];
 		m_webViewWK = webView;
 		webView.hidden = YES;
-		webView.scrollView.bounces = NO;
+        webView.scrollView.bounces = NO;
+        //self.automaticallyAdjustsScrollViewInsets = NO;
+        
+        //webView.scrollView.panGestureRecognizer.enabled = NO;
+        //webView.scrollView.pinchGestureRecognizer.enabled = NO;
+        //webVIew.scrollView.
 		[self.view addSubview:webView];
 
 		// RDPackageResourceConnection looks at corePaths and corePrefixes in the following
@@ -497,23 +494,28 @@
 	}
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)];
-    [tap setNumberOfTapsRequired:1];
     //[tap setDelegate:self];
-    //[tap setNumberOfTouchesRequired:1];
-    [tap setEnabled:YES];
-    [[m_webViewUI scrollView] addGestureRecognizer:tap];
-    [[m_webViewWK scrollView] addGestureRecognizer:tap];
+    //[[m_webViewWK scrollView] addGestureRecognizer:tap];
+    //[[m_webViewWK scrollView] addGestureRecognizer:tap];
+    [[self view] addGestureRecognizer:tap];
+    //[[m_webViewWK scrollView] addGestureRecognizer:tap];
     
-    UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(press:)];
-    //[press setNumberOfTouchesRequired:1];
-    [press setNumberOfTapsRequired:1];
-    [press setEnabled:YES];
-    [[m_webViewUI scrollView] addGestureRecognizer:press];
+    /*UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panned:)];
+    [pan setDelegate:self];
+    [[m_webViewWK scrollView] addGestureRecognizer:pan];
+    [[m_webViewWK scrollView] addGestureRecognizer:pan];
+    
+    UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(pressed:)];
+    [press setDelegate:self];
+    [press setNumberOfTapsRequired:0];
+    [press setMinimumPressDuration:0];
     [[m_webViewWK scrollView] addGestureRecognizer:press];
+    [[m_webViewWK scrollView] addGestureRecognizer:press];
+    
+    [tap requireGestureRecognizerToFail:press];*/
     
     UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self  action:@selector(swipeRightAction:)];
     [swipeRight setDirection:UISwipeGestureRecognizerDirectionRight];
-    //[swipeRight set]
     [m_webViewUI addGestureRecognizer:swipeRight];
     [m_webViewWK addGestureRecognizer:swipeRight];
     
@@ -523,31 +525,48 @@
     [m_webViewWK addGestureRecognizer:swipeLeft];
 }
 
+//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+  //  shouldRecognizeSimultaneouslyWithGestureRecognizer:(nonnull UIGestureRecognizer *)otherGestureRecognizer {
+    
+    /*if (gestureRecognizer.view == m_webViewWK.scrollView) {
+        NSLog(@"a %ld", (long)gestureRecognizer.state);
+    } else {
+        NSLog(@"b");
+    }
+    if (otherGestureRecognizer.view == m_webViewWK.scrollView) {
+        NSLog(@"c %ld", (long)otherGestureRecognizer.state);
+    } else {
+        NSLog(@"d");
+    }*/
+  //  return YES;
+//}
+
 //-(void)popupMenu:(NSString *)context {
   //  NSLog(@"popupmenu");
     /*NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Context Menu"];
     [theMenu insertItemWithTitle:@"Beep" action:@selector(beep:) keyEquivalent:@"" atIndex:0];
     [theMenu insertItemWithTitle:@"Honk" action:@selector(honk:) keyEquivalent:@"" atIndex:1];
     [theMenu popUpMenuPositioningItem:theMenu.itemArray[0] atLocation:NSPointFromCGPoint(CGPointMake(0,0)) inView:self.view];*/
-/*}
+//}
 
--(void)beep:(id)val {
-    NSLog(@"got beep %@", val);
-}
-
--(void)honk:(id)val {
-    NSLog(@"got honk %@", val);
- }*/
-
-//- (IBAction)showGestureForTapRecognizer:(UITapGestureRecognizer *)recognizer {
 -(void)tapped:(UITapGestureRecognizer *) tap {
     NSLog(@"tap");
-    //[self executeJavaScript:@"ReadiumSDK.reader.openPageNext()" completionHandler:nil];
+    if (self.navigationController != nil) {
+        [self.navigationController setNavigationBarHidden:NO animated:YES];
+        [self.navigationController setToolbarHidden:NO animated:YES];
+        if (hideTimer != nil) {
+            [hideTimer invalidate];
+        }
+        hideTimer = [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(hideNavController) userInfo:nil repeats:NO];
+    }
 }
 
--(void)press:(UILongPressGestureRecognizer *) press {
-    NSLog(@"pres");
-    //[self executeJavaScript:@"ReadiumSDK.reader.openPageNext()" completionHandler:nil];
+-(void)panned:(UIPanGestureRecognizer *) pan {
+    NSLog(@"pan");
+}
+
+-(void)pressed:(UILongPressGestureRecognizer *) press {
+    NSLog(@"press");
 }
 
 -(void)swipeLeftAction:(UISwipeGestureRecognizer *) swipe {
@@ -630,36 +649,29 @@
      }*/
 }
 
-
 - (void)onClickMONext {
 	[self executeJavaScript:@"ReadiumSDK.reader.nextMediaOverlay()" completionHandler:nil];
 }
-
 
 - (void)onClickMOPause {
 	[self executeJavaScript:@"ReadiumSDK.reader.toggleMediaOverlay()" completionHandler:nil];
 }
 
-
 - (void)onClickMOPlay {
 	[self executeJavaScript:@"ReadiumSDK.reader.toggleMediaOverlay()" completionHandler:nil];
 }
-
 
 - (void)onClickMOPrev {
 	[self executeJavaScript:@"ReadiumSDK.reader.previousMediaOverlay()" completionHandler:nil];
 }
 
-
 - (void)onClickNext {
 	[self executeJavaScript:@"ReadiumSDK.reader.openPageNext()" completionHandler:nil];
 }
 
-
 - (void)onClickPrev {
 	[self executeJavaScript:@"ReadiumSDK.reader.openPagePrev()" completionHandler:nil];
 }
-
 
 - (void)onClickSettings {
 	EPubSettingsController *c = [[EPubSettingsController alloc] init];
@@ -678,11 +690,9 @@
 	}
 }
 
-
 - (void)onEPubSettingsDidChange:(NSNotification *)notification {
 	[self passSettingsToJavaScript];
 }
-
 
 - (void)
 	packageResourceServer:(RDPackageResourceServer *)packageResourceServer
@@ -698,7 +708,6 @@
 	}
 }
 
-
 - (void)passSettingsToJavaScript {
 	NSData *data = [NSJSONSerialization dataWithJSONObject:[EPubSettings shared].dictionary
 		options:0 error:nil];
@@ -713,11 +722,9 @@
 	}
 }
 
-
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
 	m_popover = nil;
 }
-
 
 - (void)updateNavigationItems {
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
@@ -729,20 +736,6 @@
 - (void)updateHighlights:(NSString *)idref {//fix could have more than one idref
     NSLog(@"update highlights");
     
-    /*[self executeJavaScript:@"ReadiumSDK.reader.bookmarkCurrentPage()"
-          completionHandler:^(id response, NSError *error)
-     {
-         NSString *s = response;
-         
-         if (error != nil || s == nil || ![s isKindOfClass:[NSString class]] || s.length == 0) {
-             return;
-         }
-         
-         NSData *data = [s dataUsingEncoding:NSUTF8StringEncoding];
-         
-         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data
-                                                              options:0 error:&error];
-         //[dict valueForKey:@"idref"];*/
     [self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.removeHighlightsByType('highlight')" completionHandler:^(id response, NSError *error)
      {
          if (response != nil) {
@@ -776,7 +769,6 @@
              }
          }
      }];
-     //}];
 }
 
 - (void)updateLocation {
@@ -807,9 +799,9 @@
                                                                timeStyle:NSDateFormatterFullStyle];
          NSLog(@"%@",dateString);
          
-         //[[appDelegate latestLocation] setLastUpdated:[unixtime longLongValue]];
-         //[[appDelegate latestLocation] setIdref:[dict valueForKey:@"idref"]];
-         //[[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"contentCfi"]];
+         [[appDelegate latestLocation] setLastUpdated:[unixtime longLongValue]];
+         [[appDelegate latestLocation] setIdref:[dict valueForKey:@"idref"]];
+         [[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"contentCfi"]];
          
          //NSError *error = nil;
          if ([[appDelegate managedObjectContext] save:&error]) {
@@ -1078,45 +1070,58 @@
     
 }
 
-
 - (void)viewDidLayoutSubviews {
 	CGSize size = self.view.bounds.size;
-
+    
+    //NSLog(@"size h1 %.0f, h2 %.0f", size.height, self.view.frame.size.height);
 	if (m_webViewUI != nil) {
 		m_webViewUI.frame = self.view.bounds;
 	}
 	else if (m_webViewWK != nil) {
 		self.automaticallyAdjustsScrollViewInsets = NO;
 		CGFloat y0 = self.topLayoutGuide.length;
-		CGFloat y1 = size.height - self.bottomLayoutGuide.length;
-		m_webViewWK.frame = CGRectMake(0, y0, size.width, y1 - y0);
-		m_webViewWK.scrollView.contentInset = UIEdgeInsetsZero;
+        if (y0 != 64.0f) {
+            y0 = 64.0f;
+        }
+        //NSLog(@"y %0.f %0.f", size.height, self.bottomLayoutGuide.length);
+        CGFloat y1 = size.height - self.bottomLayoutGuide.length;//seems to be required to prevent scrollview from being dragged upwards
+        if (y1 == size.height) {
+            y1 -= 44.0f;
+        }
+        m_webViewWK.frame = CGRectMake(0, y0, size.width, y1 - y0);
+        //m_webViewWK.frame = CGRectMake(0, 64, size.width, 568 - 64.0f - 44.0f);//fix ipad the same?
+        m_webViewWK.scrollView.contentInset = UIEdgeInsetsZero;
 		m_webViewWK.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
-	}
+    }
 }
 
 - (void)hideNavController {
     if (self.navigationController != nil) {
-        
-        //[self.navigationController setNavigationBarHidden:YES animated:YES];
-        //[self.navigationController setToolbarHidden:NO animated:YES];
+        [self.navigationController setNavigationBarHidden:YES animated:YES];
+        [self.navigationController setToolbarHidden:YES animated:YES];
     }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    
 	[super viewWillAppear:animated];
-
-    NSTimer *hideTimer = [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(hideNavController) userInfo:nil repeats:NO];
+    
+    if (self.navigationController != nil) {
+        [self.navigationController setNavigationBarHidden:NO animated:YES];
+        [self.navigationController setToolbarHidden:NO animated:YES];
+        if (hideTimer != nil) {
+            [hideTimer invalidate];
+        }
+        hideTimer = [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(hideNavController) userInfo:nil repeats:NO];
+    }
 }
 
 
 - (void)viewWillDisappear:(BOOL)animated {
 	[super viewWillDisappear:animated];
 
-	if (self.navigationController != nil) {
+	/*if (self.navigationController != nil) {
 		[self.navigationController setToolbarHidden:YES animated:YES];
-	}
+	}*/
 }
 
 
