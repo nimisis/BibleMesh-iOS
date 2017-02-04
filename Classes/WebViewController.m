@@ -247,7 +247,8 @@
             
             //get servertime
             
-            NSString *URLString = @"https://read.biblemesh.com/currenttime.json";
+            //NSString *URLString = @"https://read.biblemesh.com/currenttime.json";
+            NSString *URLString = @"https://read.biblemesh.com/usersetup.json";
             NSURL *url = [NSURL URLWithString:URLString];
             [AppDelegate downloadDataFromURL:url patch:nil withCompletionHandler:^(NSData *data) {
                 NSLog(@"returned");
@@ -276,6 +277,11 @@
                             serverTime = [(NSNumber *) obj longLongValue];
                             NSLog(@"servertime %ld diff:%lld", serverTime, (serverTime - [unixtime longLongValue]));
                             [appDelegate setServerTimeOffset:(serverTime - [unixtime longLongValue])];
+                        } else if ([(NSString *) key isEqualToString:@"userInfo"]) {//fix
+                        } else if ([(NSString *) key isEqualToString:@"gaCode"]) {//fix
+                        } else if ([(NSString *) key isEqualToString:@"error"]) {//fix
+                        } else {
+                            NSLog(@"other usersetup value");
                         }
                     }];
                 }

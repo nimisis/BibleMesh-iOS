@@ -543,14 +543,137 @@
                         last_updated = [(NSNumber *) obj longLongValue];
                     }
                 }];
-                if (last_updated > [[self latestLocation] lastUpdated])
+                
+                
+                /* pseudo code
+                 for each server highlight, look for matching in local,
+                 if match found
+                 compare lastupdated value
+                 if server value is newer (i.e. bigger)
+                 update local
+                 if server value is older (i.e. smaller)
+                 ignore
+                 if highlight is in queue to update the server (unlikely)
+                 ignore
+                 else
+                 update server (should never happen as !)
+                 if same
+                 ignore (no change)
+                 else
+                 add highlight to local
+                 
+                 for each local highlight not matched above
+                 if highlight is in queue to update the server
+                 ignore
+                 else
+                 delete (must have been deleted somewhere else)
+                */
+                
                 {
-                    //server's values are more recent
-                    NSLog(@"server more up-to-date server:%ld vs server:%lld", last_updated, [[self latestLocation] lastUpdated]);
-                    //update local db
                     //highlights
                     //remove all highlights from highlights array with this userid and bookid
-                    NSLog(@"num highlights a %ld", [[self highlightsArray] count]);
+                    
+                    NSMutableArray *oldhighlightsArray = [[self highlightsArray] copy];
+                    [highlightsArray removeAllObjects];
+                    
+                    NSMutableArray *validHighlights = [[NSMutableArray alloc] initWithCapacity:oldhighlightsArray.count];
+                    //for (Highlight *oldhl in oldhighlightsArray) {
+                    for (int i = 0; i < oldhighlightsArray.count; i++) {
+                        [validHighlights addObject:[NSNumber numberWithBool:NO]];
+                    }
+                    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Highlight" inManagedObjectContext:[self managedObjectContext]];
+                    
+                    for (int i = 0; i < [serverHighlights count]; i++) {
+                        NSDictionary *dic = [serverHighlights objectAtIndex:i];
+                        
+                        
+                        Highlight *temphl = [[Highlight alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:nil];
+                        
+                        [dic enumerateKeysAndObjectsUsingBlock:^(id key3, id obj3, BOOL *stop3) {
+                            NSLog(@"key3: %@ obj3: %@", key3, obj3);
+                            if ([(NSString*)key3 isEqualToString:@"spineIdRef"]) {
+                                [temphl setIdref:obj3];
+                                //[temphl setIdref:@"daveown"];
+                            } else if ([(NSString*)key3 isEqualToString:@"cfi"]) {
+                                [temphl setCfi:obj3];
+                            } else if ([(NSString*)key3 isEqualToString:@"color"]) {
+                                [temphl setColor:(int) [(NSNumber *) obj3 integerValue]];
+                            } else if ([(NSString*)key3 isEqualToString:@"updated_at"]) {
+                                [temphl setLastUpdated:[(NSNumber *) obj3 longLongValue]];
+                            } else if ([(NSString*)key3 isEqualToString:@"note"]) {
+                                [temphl setNote:obj3];
+                            }
+                        }];
+                        NSInteger foundmatch = -1;
+                        NSInteger index = 0;
+                        for (Highlight *oldhl in oldhighlightsArray) {
+                            if ([temphl.cfi isEqualToString:oldhl.cfi] && [temphl.idref isEqualToString:oldhl.idref]) {
+                                foundmatch = index;
+                                [validHighlights setObject:[NSNumber numberWithBool:YES] atIndexedSubscript:index];
+                                if (temphl.lastUpdated > oldhl.lastUpdated) {
+                                    [oldhl setLastUpdated:[temphl lastUpdated]];
+                                    [oldhl setColor:[temphl color]];
+                                    [oldhl setNote:[temphl note]];
+                                    NSError *error = nil;
+                                    if ([[self managedObjectContext] save:&error]) {
+                                        NSLog(@"saved");
+                                        [[self highlightsArray] addObject:oldhl];
+                                    } else {
+                                        // Handle the error.
+                                        NSLog(@"Handle the error");
+                                    }
+                                } else if (temphl.lastUpdated < oldhl.lastUpdated) {
+                                    //ignore
+                                    [[self highlightsArray] addObject:oldhl];
+                                } else {
+                                    [[self highlightsArray] addObject:oldhl];
+                                }
+                                break;
+                            }
+                            index++;
+                        }
+                        if (foundmatch == -1) {
+                            Highlight *hl = (Highlight *)[NSEntityDescription insertNewObjectForEntityForName:@"Highlight" inManagedObjectContext:[self managedObjectContext]];
+                            [hl setCfi:[temphl cfi]];
+                            [hl setIdref:[temphl idref]];
+                            [hl setLastUpdated:[temphl lastUpdated]];
+                            [hl setColor:[temphl color]];
+                            [hl setNote:[temphl note]];
+                            [hl setUserid:[self userid]];
+                            [hl setBookid:[[self latestLocation] bookid]];
+                            
+                            NSError *error = nil;
+                            if ([[self managedObjectContext] save:&error]) {
+                                NSLog(@"saved");
+                                [[self highlightsArray] addObject:hl];
+                            } else {
+                                // Handle the error.
+                                NSLog(@"Handle the error");
+                            }
+                        }
+                        
+                    }
+                    //remove unmatched
+                    for (int i = 0; i < validHighlights.count; i++) {
+                        if ([[validHighlights objectAtIndex:i] isEqual:[NSNumber numberWithBool:YES]]) {
+                            //Highlight *t = [oldhighlightsArray objectAtIndex:i];
+                            NSLog(@"skip");
+                        } else {
+                            Highlight *t = [oldhighlightsArray objectAtIndex:i];
+                            
+                            NSManagedObject *hlToDelete = t;
+                            [[self managedObjectContext] deleteObject:hlToDelete];
+                            
+                            // Commit the change.
+                            NSError *error;
+                            if (![[self managedObjectContext] save:&error]) {
+                                // Handle the error.
+                            }
+                        }
+                    }
+                    
+                    
+                    /*NSLog(@"num highlights a %ld", [[self highlightsArray] count]);
                     for (int i = 0; i < [[self highlightsArray] count]; i++) {
                         NSManagedObject *hl = [[self highlightsArray] objectAtIndex:i];
                         NSLog(@"user %d book %d", [(Highlight *)hl userid], [(Highlight *)hl bookid]);
@@ -598,8 +721,13 @@
                             // Handle the error.
                             NSLog(@"Handle the error");
                         }
-                    }
-                    
+                    }*/
+                }
+                
+                if (last_updated > [[self latestLocation] lastUpdated])
+                {
+                    //server's values are more recent
+                    NSLog(@"server more up-to-date server:%ld vs server:%lld", last_updated, [[self latestLocation] lastUpdated]);
                     //last updated
                     [[self latestLocation] setLastUpdated:last_updated];
                     //progress
