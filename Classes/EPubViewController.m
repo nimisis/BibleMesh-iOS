@@ -584,7 +584,70 @@
 }
 
 - (void)onClickAddBookmark {
-    [self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.addSelectionHighlight(Math.floor((Math.random()*1000000)), 'highlight')" completionHandler:nil];
+    
+    [self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.getCurrentSelectionCfi()" completionHandler:^(id response, NSError *error){
+        NSDictionary *dict = response;
+        //NSLog(@"get selection done %@", s);
+        int r = arc4random() % 1000000;
+        //[hl setAnnotationID:r];
+        NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', '%@', %d, 'highlight')",
+                        [dict valueForKey:@"idref"], [dict valueForKey:@"cfi"], r];
+        [self executeJavaScript:js completionHandler:^(id response, NSError *error)
+         {
+             if (response != nil) {
+                 NSLog(@"got response");
+             }
+             if (error != nil) {
+                 NSLog(@"%@", [error description]);
+             }
+             NSLog(@"completed addition of highlight");
+             AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+             Highlight *hl = (Highlight *)[NSEntityDescription insertNewObjectForEntityForName:@"Highlight" inManagedObjectContext:[appDelegate managedObjectContext]];
+             [hl setCfi:[dict valueForKey:@"cfi"]];
+             [hl setIdref:[dict valueForKey:@"idref"]];
+             NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970]) + [appDelegate serverTimeOffset]];
+             [hl setLastUpdated:[unixtime longLongValue]];
+             [hl setColor:1];
+             [hl setNote:@""];
+             [hl setUserid:[appDelegate userid]];
+             [hl setBookid:[[appDelegate latestLocation] bookid]];
+             
+             //NSError *error = nil;
+             if ([[appDelegate managedObjectContext] save:&error]) {
+                 NSLog(@"saved");
+                 [[appDelegate highlightsArray] addObject:hl];
+             } else {
+                 // Handle the error.
+                 NSLog(@"Handle the error");
+             }
+             [self updateLocation:[NSNumber numberWithLong:[[appDelegate latestLocation] lastUpdated]] highlight:hl delete:NO];
+         }];
+    }];
+    /*return;
+    int r = arc4random() % 1000000;
+    [self executeJavaScript:[NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addSelectionHighlight(%d, 'highlight')", r] completionHandler:^(id response, NSError *error){
+        NSString *s = response;
+        NSLog(@"add selection done %@", s);*/
+        
+        /*AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        Highlight *hl = (Highlight *)[NSEntityDescription insertNewObjectForEntityForName:@"Highlight" inManagedObjectContext:[appDelegate managedObjectContext]];
+        [hl setCfi:[temphl cfi]];
+        [hl setIdref:[temphl idref]];
+        [hl setLastUpdated:[temphl lastUpdated]];
+        [hl setColor:[temphl color]];
+        [hl setNote:[temphl note]];
+        [hl setUserid:[self userid]];
+        [hl setBookid:[[self latestLocation] bookid]];
+        
+        NSError *error = nil;
+        if ([[self managedObjectContext] save:&error]) {
+            NSLog(@"saved");
+            [[self highlightsArray] addObject:hl];
+        } else {
+            // Handle the error.
+            NSLog(@"Handle the error");
+        }*/
+    //}];
     /*[self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.on('annotationClicked', function(type, idref, cfi, id) {console.debug('ANNOTATION CLICK: ' + id);});" completionHandler:^(id response, NSError *error)
      {
          NSString *s = response;
@@ -771,7 +834,13 @@
                       }
                       NSLog(@"completed addition of highlight");
                   }];
-                 //index++;
+                 NSError *error = nil;
+                 if ([[appDelegate managedObjectContext] save:&error]) {
+                     NSLog(@"saved annotation id");
+                 } else {
+                     // Handle the error.
+                     NSLog(@"Handle the error");
+                 }
              } else {
                  NSLog(@"skipped as idref not matched");
              }
