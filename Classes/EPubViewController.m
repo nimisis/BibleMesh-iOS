@@ -49,7 +49,8 @@
 	UIPopoverControllerDelegate,
 	UIWebViewDelegate,
     UIGestureRecognizerDelegate,
-	WKScriptMessageHandler
+	WKScriptMessageHandler,
+    UITextViewDelegate
 >
 {
 	@private UIAlertView *m_alertAddBookmark;
@@ -264,8 +265,13 @@
 			m_webViewWK.hidden = NO;
 		}
 
-		[self updateToolbar];
-        [self updateLocation];
+        [self updateToolbar];
+        
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        //update local values, then update server
+        
+        NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970]) + [appDelegate serverTimeOffset]];
+        [self updateLocation:unixtime highlight:nil delete:NO];
         if ([array count] > 0) {
             NSLog(@"idref: %@", [(NSDictionary *)[array objectAtIndex:0] valueForKey:@"idref"]);
             [self updateHighlights:[(NSDictionary *)[array objectAtIndex:0] valueForKey:@"idref"]];
@@ -752,7 +758,9 @@
              //NSLog(@"about to add id %d", index);
              //fix check that idref is [hl idref]
              if ([idref isEqualToString:[hl idref]]) {
-                 NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', '%@', Math.floor((Math.random()*1000000)), 'highlight')", [hl idref], [hl cfi]];
+                 int r = arc4random() % 1000000;
+                 [hl setAnnotationID:r];
+                 NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', '%@', %d, 'highlight')", [hl idref], [hl cfi], r];
                  [self executeJavaScript:js completionHandler:^(id response, NSError *error)
                   {
                       if (response != nil) {
@@ -771,7 +779,7 @@
      }];
 }
 
-- (void)updateLocation {
+- (void)updateLocation:(NSNumber *)unixtime highlight:(Highlight *) hl delete:(Boolean)del{
     NSLog(@"update location");
     
     [self executeJavaScript:@"ReadiumSDK.reader.bookmarkCurrentPage()"
@@ -788,28 +796,19 @@
          NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data
                                                               options:0 error:&error];
          
+         if (del) {
+         [self executeJavaScript:[NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.removeHighlight(%d)", hl.annotationID] completionHandler:^(id response2, NSError *error2)
+          {
+              NSString *s2 = response;
+              NSLog(@"single highlight removed %@", s2);
+          }];
+         }
+         
          AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
          //update local values, then update server
          
-         NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970]) + [appDelegate serverTimeOffset]];
+         //NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970]) + [appDelegate serverTimeOffset]];
          NSLog(@"unix time is %lld", [unixtime longLongValue]);
-         
-         NSString *dateString = [NSDateFormatter localizedStringFromDate:[NSDate date]
-                                                               dateStyle:NSDateFormatterShortStyle
-                                                               timeStyle:NSDateFormatterFullStyle];
-         NSLog(@"%@",dateString);
-         
-         [[appDelegate latestLocation] setLastUpdated:[unixtime longLongValue]];
-         [[appDelegate latestLocation] setIdref:[dict valueForKey:@"idref"]];
-         [[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"contentCfi"]];
-         
-         //NSError *error = nil;
-         if ([[appDelegate managedObjectContext] save:&error]) {
-             NSLog(@"saved");
-         } else {
-             // Handle the error.
-             NSLog(@"Handle the error");
-         }
          
          //update server
          NSMutableDictionary *postDict = [[NSMutableDictionary alloc] init];
@@ -822,6 +821,18 @@
          [postDict setValue:locStr2 forKey:@"latest_location"];
          [postDict setValue:unixtime forKey:@"updated_at"];
          NSMutableArray *highlights = [[NSMutableArray alloc] init];
+         if (hl != nil) {
+             NSMutableDictionary *hld = [[NSMutableDictionary alloc] init];
+             [hld setValue:[hl idref] forKey:@"spineIdRef"];
+             [hld setValue:[hl cfi] forKey:@"cfi"];
+             [hld setValue:[NSNumber numberWithInt:hl.color] forKey:@"color"];
+             [hld setValue:[hl note] forKey:@"note"];
+             [hld setValue:[NSNumber numberWithLongLong:hl.lastUpdated] forKey:@"updated_at"];
+             if (del) {
+                 [hld setValue:@YES forKey:@"_delete"];
+             }
+             [highlights addObject:hld];//fix
+         }
          /*for (int j = 0; j < (unsigned long)[[appDelegate highlightsArray] count]; j++) {
              Highlight *hl = [[appDelegate highlightsArray] objectAtIndex:j];
              if ((hl.bookid == [ep bookid]) && (hl.userid == [ep userid])) {
@@ -852,6 +863,37 @@
          [AppDelegate downloadDataFromURL:url patch:patch2 withCompletionHandler:^(NSData *data) {
              NSLog(@"returned");
          }];
+         
+         if (hl == nil) {
+             NSString *dateString = [NSDateFormatter localizedStringFromDate:[NSDate date]
+                                                                   dateStyle:NSDateFormatterShortStyle
+                                                                   timeStyle:NSDateFormatterFullStyle];
+             NSLog(@"%@",dateString);
+             
+             [[appDelegate latestLocation] setLastUpdated:[unixtime longLongValue]];
+             [[appDelegate latestLocation] setIdref:[dict valueForKey:@"idref"]];
+             [[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"contentCfi"]];
+             
+             NSError *error = nil;
+             if ([[appDelegate managedObjectContext] save:&error]) {
+                 NSLog(@"saved");
+             } else {
+                 // Handle the error.
+                 NSLog(@"Handle the error");
+             }
+         } else if (del) {
+             NSManagedObject *hlToDelete = hl;
+             [[appDelegate managedObjectContext] deleteObject:hlToDelete];
+             NSError *error = nil;
+             if ([[appDelegate managedObjectContext] save:&error]) {
+                 NSLog(@"deleted highlight");
+                 [[appDelegate highlightsArray] removeObject:hl];
+                 //[self ]
+             } else {
+                 // Handle the error.
+                 NSLog(@"Handle the error");
+             }
+         }
      }];
 }
 
@@ -1021,6 +1063,24 @@
 	}];
 }
 
+- (void)textViewDidBeginEditing:(UITextView *)textView
+{
+    if ([textView.text isEqualToString:@"Notes"]) {
+        textView.text = @"";
+        textView.textColor = [UIColor blackColor]; //optional
+    }
+    [textView becomeFirstResponder];
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView
+{
+    if ([textView.text isEqualToString:@""]) {
+        textView.text = @"Notes";
+        textView.textColor = [UIColor lightGrayColor]; //optional
+    }
+    [textView resignFirstResponder];
+}
+
 - (void)
 	userContentController:(WKUserContentController *)userContentController
 	didReceiveScriptMessage:(WKScriptMessage *)message
@@ -1071,13 +1131,105 @@
             NSLog(@"annotation %@ clicked!", body[1]);
             
             //fix make box where note can also be added
-            UIAlertView *annot = [[UIAlertView alloc]
+            /*UIAlertView *annot = [[UIAlertView alloc]
                                       initWithTitle:@"Annotation click"
                                       message:body[1]
                                       delegate:nil
                                       cancelButtonTitle:@"OK"
                                       otherButtonTitles:nil];
-            [annot show];
+            [annot show];*/
+            UIAlertController * alert = [UIAlertController
+                                         alertControllerWithTitle:@" "
+                                         message:@" "//[NSString stringWithFormat:@"annotation clicked %@", body[1]]
+                                         preferredStyle:UIAlertControllerStyleAlert];
+            
+            UITextView *tv = [[UITextView alloc] initWithFrame:CGRectNull];
+            
+            AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+            tv.text = @"Notes";
+            tv.textColor = [UIColor lightGrayColor];
+            Highlight *thl = nil;
+            for (Highlight *hl in [appDelegate highlightsArray]) {
+                NSLog(@"matching %d with %@", [hl annotationID], body[1]);
+                if ([[NSString stringWithFormat:@"\"%d\"", [hl annotationID]] isEqualToString:body[1]]) {
+                    NSLog(@"matched!");
+                    thl = hl;
+                    tv.text = [hl note];
+                    tv.textColor = [UIColor blackColor];
+                    break;
+                } else {
+                    NSLog(@"no match");
+                }
+            }
+            tv.delegate = self;
+            tv.layer.cornerRadius = 8;
+            tv.layer.borderColor = [[UIColor grayColor] CGColor];
+            tv.layer.borderWidth = 1.0f;
+            
+            [[alert view] addSubview:tv];
+            
+            /*[alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+                textField.placeholder = @"Notes";
+                textField.text = @"Hello";
+                textField.num
+                //textField.textColor = [UIColor blueColor];
+                textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+                textField.borderStyle = UITextBorderStyleNone;
+                //textField.secureTextEntry = YES;
+            }];*/
+            
+            /*NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:alert.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:self.view.frame.size.height*1.8f];
+            [alert.view addConstraint:constraint];*/
+            
+            UIAlertAction* saveButton = [UIAlertAction
+                                       actionWithTitle:@"Save"
+                                       style:UIAlertActionStyleDefault
+                                       handler:^(UIAlertAction * action) {
+                                           NSLog(@"Saved");
+                                           [thl setNote:tv.text];
+                                           NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970]) + [appDelegate serverTimeOffset]];
+                                           [thl setLastUpdated:[unixtime longLongValue]];
+                                           NSError *error = nil;
+                                           if ([[appDelegate managedObjectContext] save:&error]) {
+                                               NSLog(@"saved highlight");
+                                           } else {
+                                               // Handle the error.
+                                               NSLog(@"Handle the error");
+                                           }
+                                           [self updateLocation:[NSNumber numberWithLong:[[appDelegate latestLocation] lastUpdated]] highlight:thl delete:NO];
+                                       }];
+            
+            [alert addAction:saveButton];
+            UIAlertAction* deleteButton = [UIAlertAction
+                                       actionWithTitle:@"Delete"
+                                       style:UIAlertActionStyleDestructive
+                                       handler:^(UIAlertAction * action) {
+                                           NSLog(@"Deleted");
+                                           
+                                           [self updateLocation:[NSNumber numberWithLong:[[appDelegate latestLocation] lastUpdated]] highlight:thl delete:YES];
+                                       }];
+            
+            [alert addAction:deleteButton];
+            UIAlertAction* shareButton = [UIAlertAction
+                                          actionWithTitle:@"Share"
+                                          style:UIAlertActionStyleDefault
+                                          handler:^(UIAlertAction * action) {
+                                              NSLog(@"Shared");//fix todo
+                                          }];
+            
+            [alert addAction:shareButton];
+            UIAlertAction* cancelButton = [UIAlertAction
+                                          actionWithTitle:@"Cancel"
+                                          style:UIAlertActionStyleCancel
+                                          handler:^(UIAlertAction * action) {
+                                              NSLog(@"Cancel");
+                                          }];
+            
+            [alert addAction:cancelButton];
+            [self presentViewController:alert animated:YES completion:^{
+                NSInteger margin = 5;
+                tv.frame = CGRectMake(margin, margin, alert.view.frame.size.width-2*margin, alert.view.frame.size.height-4*46-margin);
+            }];
         }
     } else if ([messageName isEqualToString:@"context"]) {
         NSLog(@"context");

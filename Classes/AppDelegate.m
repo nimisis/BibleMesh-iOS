@@ -604,11 +604,11 @@
                                 [temphl setNote:obj3];
                             }
                         }];
-                        NSInteger foundmatch = -1;
+                        Boolean foundmatch = false;
                         NSInteger index = 0;
                         for (Highlight *oldhl in oldhighlightsArray) {
                             if ([temphl.cfi isEqualToString:oldhl.cfi] && [temphl.idref isEqualToString:oldhl.idref]) {
-                                foundmatch = index;
+                                foundmatch = true;
                                 [validHighlights setObject:[NSNumber numberWithBool:YES] atIndexedSubscript:index];
                                 if (temphl.lastUpdated > oldhl.lastUpdated) {
                                     [oldhl setLastUpdated:[temphl lastUpdated]];
@@ -632,7 +632,7 @@
                             }
                             index++;
                         }
-                        if (foundmatch == -1) {
+                        if (!foundmatch) {
                             Highlight *hl = (Highlight *)[NSEntityDescription insertNewObjectForEntityForName:@"Highlight" inManagedObjectContext:[self managedObjectContext]];
                             [hl setCfi:[temphl cfi]];
                             [hl setIdref:[temphl idref]];
@@ -656,7 +656,6 @@
                     //remove unmatched
                     for (int i = 0; i < validHighlights.count; i++) {
                         if ([[validHighlights objectAtIndex:i] isEqual:[NSNumber numberWithBool:YES]]) {
-                            //Highlight *t = [oldhighlightsArray objectAtIndex:i];
                             NSLog(@"skip");
                         } else {
                             Highlight *t = [oldhighlightsArray objectAtIndex:i];
