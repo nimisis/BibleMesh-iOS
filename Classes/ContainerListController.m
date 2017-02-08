@@ -145,6 +145,7 @@
         cell = [[BooksTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     
+    //fix
     Book *book = [[Book alloc] init];
     {
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];

@@ -238,7 +238,6 @@
             }
         }*/
         
-        
         [self dismissViewControllerAnimated:NO completion:^{
             
             NSLog(@"token is %@", jsonString);
