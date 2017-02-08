@@ -216,7 +216,6 @@ $(document).ready(function ()
                         if (window.useWKWebView) {
                             window.webkit.messageHandlers.readium.postMessage(['annotationClicked', payload]);
                         } else {
-                            //fix
                             window.location.href = "epubobjc:annotationClicked?q=" + encodeURIComponent(payload);
                         }
                     });

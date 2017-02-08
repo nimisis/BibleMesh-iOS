@@ -243,11 +243,7 @@
             
             NSLog(@"token is %@", jsonString);
             
-            //fix todo. Make request to get titles
-            
             //get servertime
-            
-            //NSString *URLString = @"https://read.biblemesh.com/currenttime.json";
             NSString *URLString = @"https://read.biblemesh.com/usersetup.json";
             NSURL *url = [NSURL URLWithString:URLString];
             [AppDelegate downloadDataFromURL:url patch:nil withCompletionHandler:^(NSData *data) {
@@ -277,9 +273,9 @@
                             serverTime = [(NSNumber *) obj longLongValue];
                             NSLog(@"servertime %ld diff:%lld", serverTime, (serverTime - [unixtime longLongValue]));
                             [appDelegate setServerTimeOffset:(serverTime - [unixtime longLongValue])];
-                        } else if ([(NSString *) key isEqualToString:@"userInfo"]) {//fix
-                        } else if ([(NSString *) key isEqualToString:@"gaCode"]) {//fix
-                        } else if ([(NSString *) key isEqualToString:@"error"]) {//fix
+                        } else if ([(NSString *) key isEqualToString:@"userInfo"]) {//fix todo
+                        } else if ([(NSString *) key isEqualToString:@"gaCode"]) {//fix todo
+                        } else if ([(NSString *) key isEqualToString:@"error"]) {//fix todo
                         } else {
                             NSLog(@"other usersetup value");
                         }
@@ -291,19 +287,6 @@
                 [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
             }];
             
-            /*UIAlertController * alert = [UIAlertController
-                                         alertControllerWithTitle:@"Token"
-                                         message:html
-                                         preferredStyle:UIAlertControllerStyleAlert];
-            
-            UIAlertAction* okButton = [UIAlertAction
-                                        actionWithTitle:@"OK"
-                                        style:UIAlertActionStyleDefault
-                                        handler:^(UIAlertAction * action) {
-                                        }];
-            
-            [alert addAction:okButton];
-            [[appDelegate lvc] presentViewController:alert animated:YES completion:nil];*/
         }];
     }
 }

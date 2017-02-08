@@ -821,7 +821,7 @@
          NSLog(@"at spineIDRef %@", idref);
          for(Highlight *hl in [appDelegate highlightsArray]) {
              //NSLog(@"about to add id %d", index);
-             //fix check that idref is [hl idref]
+             //check that idref is [hl idref]
              if ([idref isEqualToString:[hl idref]]) {
                  int r = arc4random() % 1000000 + 1;
                  [hl setAnnotationID:r];
@@ -902,19 +902,8 @@
              if (del) {
                  [hld setValue:@YES forKey:@"_delete"];
              }
-             [highlights addObject:hld];//fix
+             [highlights addObject:hld];
          }
-         /*for (int j = 0; j < (unsigned long)[[appDelegate highlightsArray] count]; j++) {
-             Highlight *hl = [[appDelegate highlightsArray] objectAtIndex:j];
-             if ((hl.bookid == [ep bookid]) && (hl.userid == [ep userid])) {
-                 NSMutableDictionary *hld = [[NSMutableDictionary alloc] init];
-                 [hld setValue:[hl cfi] forKey:@"cfi"];
-                 [hld setValue:[NSNumber numberWithInt:hl.color] forKey:@"color"];
-                 [hld setValue:[hl note] forKey:@"note"];
-                 [hld setValue:[NSNumber numberWithLongLong:hl.lastUpdated] forKey:@"updated_at"];
-                 //[highlights addObject:hld];//fix
-             }
-         }*/
          [postDict setValue:highlights forKey:@"highlights"];
          NSData *jsonData = [NSJSONSerialization dataWithJSONObject:postDict options:kNilOptions error:&error];
          if(!jsonData && error){
@@ -1201,14 +1190,6 @@
         else {
             NSLog(@"annotation %@ clicked!", body[1]);
             
-            //fix make box where note can also be added
-            /*UIAlertView *annot = [[UIAlertView alloc]
-                                      initWithTitle:@"Annotation click"
-                                      message:body[1]
-                                      delegate:nil
-                                      cancelButtonTitle:@"OK"
-                                      otherButtonTitles:nil];
-            [annot show];*/
             UIAlertController * alert = [UIAlertController
                                          alertControllerWithTitle:@" "
                                          message:@" "//[NSString stringWithFormat:@"annotation clicked %@", body[1]]
