@@ -18,6 +18,7 @@
 #define TEXT_LEFT_MARGIN    0.0
 
 @synthesize book;
+@synthesize statusLabel;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -26,8 +27,8 @@
         // Initialization code
         //self.backgroundColor = [UIColor blackColor];
         
-        didOwn = FALSE;
-        didWish = FALSE;
+        //didOwn = FALSE;
+        //didWish = FALSE;
         
         photo = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, IMAGE_WIDTH, IMAGE_HEIGHT)];
         [photo setContentMode:UIViewContentModeScaleToFill];//]UIViewContentModeLeft];
@@ -50,6 +51,13 @@
         [authorLabel setNumberOfLines:2];
         [self.contentView addSubview:authorLabel];
         
+        statusLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        [statusLabel setFont:[UIFont systemFontOfSize:12.0]];
+        [statusLabel setTextColor:[UIColor blueColor]];
+        //[statusLabel setHighlightedTextColor:[UIColor whiteColor]];
+        [statusLabel setNumberOfLines:1];
+        [self.contentView addSubview:statusLabel];
+        
         scrollingWheel = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(17.5, 27.5, 20.0, 20.0)];
         [scrollingWheel setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
         [scrollingWheel setHidesWhenStopped:YES];
@@ -65,21 +73,14 @@
     [super layoutSubviews];
     //[photo setFrame:CGRectMake(0.0, 0.0, IMAGE_HEIGHT, IMAGE_HEIGHT)];
     
-    [authorLabel setFrame:CGRectMake(IMAGE_WIDTH, 42.0, self.contentView.bounds.size.width - IMAGE_WIDTH - 132, 32.0)];
-    [nameLabel setFrame:CGRectMake(IMAGE_WIDTH, 4.0, self.contentView.bounds.size.width - IMAGE_WIDTH, 32.0)];//CGRectMake(80.0, 5.0, 290.0, 70.0)];
+    [authorLabel setFrame:CGRectMake(IMAGE_WIDTH+10, 26.0, self.contentView.bounds.size.width - IMAGE_WIDTH, 22.0)];
+    [nameLabel setFrame:CGRectMake(IMAGE_WIDTH+10, 4.0, self.contentView.bounds.size.width - IMAGE_WIDTH, 22.0)];
+    [statusLabel setFrame:CGRectMake(IMAGE_WIDTH+10, 48.0, self.contentView.bounds.size.width - IMAGE_WIDTH, 22.0)];
 }
 
 - (void)setBook:(Book *)newBook therow:(NSInteger)therow
 {
-    BOOL needOwnUpdate = FALSE;
-    BOOL needWishUpdate = FALSE;
     if (newBook == book) {
-        if (didOwn != book.own) {
-            needOwnUpdate = TRUE;
-        }
-        if (didWish != book.wish) {
-            needWishUpdate = TRUE;
-        }
     } else {
         if (book) {
             book.delegate = nil;
@@ -94,6 +95,7 @@
         if (book != nil) {
             nameLabel.text = book.title;
             authorLabel.text = book.author;
+            statusLabel.text = book.status;
             
             // This is to avoid the item loading the image
             // when this setter is called; we only want that

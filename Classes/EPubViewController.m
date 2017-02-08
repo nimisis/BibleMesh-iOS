@@ -588,8 +588,29 @@
     [self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.getCurrentSelectionCfi()" completionHandler:^(id response, NSError *error){
         NSDictionary *dict = response;
         //NSLog(@"get selection done %@", s);
-        int r = arc4random() % 1000000;
-        //[hl setAnnotationID:r];
+        int r = arc4random() % 1000000 + 1;
+        
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        Highlight *hl = (Highlight *)[NSEntityDescription insertNewObjectForEntityForName:@"Highlight" inManagedObjectContext:[appDelegate managedObjectContext]];
+        [hl setCfi:[dict valueForKey:@"cfi"]];
+        [hl setAnnotationID:r];
+        [hl setIdref:[dict valueForKey:@"idref"]];
+        NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970]) + [appDelegate serverTimeOffset]];
+        [hl setLastUpdated:[unixtime longLongValue]];
+        [hl setColor:1];
+        [hl setNote:@""];
+        [hl setUserid:[appDelegate userid]];
+        [hl setBookid:[[appDelegate latestLocation] bookid]];
+        
+        //NSError *error = nil;
+        if ([[appDelegate managedObjectContext] save:&error]) {
+            NSLog(@"saved");
+            [[appDelegate highlightsArray] addObject:hl];
+        } else {
+            // Handle the error.
+            NSLog(@"Handle the error");
+        }
+        
         NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', '%@', %d, 'highlight')",
                         [dict valueForKey:@"idref"], [dict valueForKey:@"cfi"], r];
         [self executeJavaScript:js completionHandler:^(id response, NSError *error)
@@ -601,27 +622,8 @@
                  NSLog(@"%@", [error description]);
              }
              NSLog(@"completed addition of highlight");
-             AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-             Highlight *hl = (Highlight *)[NSEntityDescription insertNewObjectForEntityForName:@"Highlight" inManagedObjectContext:[appDelegate managedObjectContext]];
-             [hl setCfi:[dict valueForKey:@"cfi"]];
-             [hl setIdref:[dict valueForKey:@"idref"]];
-             NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970]) + [appDelegate serverTimeOffset]];
-             [hl setLastUpdated:[unixtime longLongValue]];
-             [hl setColor:1];
-             [hl setNote:@""];
-             [hl setUserid:[appDelegate userid]];
-             [hl setBookid:[[appDelegate latestLocation] bookid]];
-             
-             //NSError *error = nil;
-             if ([[appDelegate managedObjectContext] save:&error]) {
-                 NSLog(@"saved");
-                 [[appDelegate highlightsArray] addObject:hl];
-             } else {
-                 // Handle the error.
-                 NSLog(@"Handle the error");
-             }
-             [self updateLocation:[NSNumber numberWithLong:[[appDelegate latestLocation] lastUpdated]] highlight:hl delete:NO];
          }];
+        [self updateLocation:[NSNumber numberWithLong:[[appDelegate latestLocation] lastUpdated]] highlight:hl delete:NO];
     }];
     /*return;
     int r = arc4random() % 1000000;
@@ -821,7 +823,7 @@
              //NSLog(@"about to add id %d", index);
              //fix check that idref is [hl idref]
              if ([idref isEqualToString:[hl idref]]) {
-                 int r = arc4random() % 1000000;
+                 int r = arc4random() % 1000000 + 1;
                  [hl setAnnotationID:r];
                  NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', '%@', %d, 'highlight')", [hl idref], [hl cfi], r];
                  [self executeJavaScript:js completionHandler:^(id response, NSError *error)

@@ -25,6 +25,7 @@
 @synthesize delegate;
 @synthesize thumbTried;
 @synthesize coverTried;
+@synthesize status;
 
 - (void) dealloc
 {

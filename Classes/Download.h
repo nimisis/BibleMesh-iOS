@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "BibleMesh-swift.h" //required for new CoreData codegen
+#import "BooksTableViewCell.h"
 
 @interface Download : NSObject
 
@@ -20,6 +21,7 @@
     NSInteger statusCode;
     NSString *ePubFile;
     Epubtitle *title;
+    BooksTableViewCell *bookcell;
 }
 
 @property (nonatomic, retain) NSURLConnection *theConnection;
@@ -27,4 +29,5 @@
 @property (nonatomic, retain) NSString *ePubFile;
 @property UIBackgroundTaskIdentifier bgTask;
 @property (nonatomic, retain) NSFileHandle *handle;
+@property (nonatomic, retain) BooksTableViewCell *bookcell;
 @end

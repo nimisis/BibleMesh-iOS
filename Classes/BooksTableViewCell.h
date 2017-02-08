@@ -15,15 +15,13 @@
     UIImageView *photo;
     UILabel *nameLabel;
     UILabel *authorLabel;
-    //UIButton *ownBtn;
-    //UIButton *wishBtn;
+    UILabel *statusLabel;
     Book *book;
     UIActivityIndicatorView *scrollingWheel;
-    BOOL didOwn;
-    BOOL didWish;
 }
 
 @property (nonatomic, retain) Book *book;
+@property (nonatomic, retain) UILabel *statusLabel;
 
 - (void)setBook:(Book *)newBook therow:(NSInteger)therow;
 - (void)loadImage;

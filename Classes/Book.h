@@ -13,6 +13,7 @@
     NSString *title;
     NSString *author;
     NSString *img;
+    NSString *status;
     
     NSInteger book_id;
     
@@ -30,6 +31,7 @@
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *author;
 @property (nonatomic, copy) NSString *img;
+@property (nonatomic, copy) NSString *status;
 @property NSInteger book_id;
 @property (nonatomic, retain) UIImage *thumbnail;
 @property (nonatomic, retain) UIImage *cover;

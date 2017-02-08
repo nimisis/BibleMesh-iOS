@@ -16,6 +16,7 @@
 @synthesize handle;
 @synthesize title;
 @synthesize ePubFile;
+@synthesize bookcell;
 
 - (BOOL)addSkipBackupAttributeToItemAtPath:(NSString *) filePathString
 {
@@ -45,6 +46,14 @@
         [self addSkipBackupAttributeToItemAtPath:ePubFile];
         handle = [NSFileHandle fileHandleForWritingAtPath:ePubFile];
         expectedSize = [response expectedContentLength];
+        [title setFsize:expectedSize];
+        
+        NSError *error = nil;
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        if (![[appDelegate managedObjectContext] save:&error]) {
+            // Handle the error.
+            NSLog(@"Handle the error");
+        }
     }
 }
 
@@ -63,8 +72,11 @@
             expectedSize = 20000000;//files are unlikely to be bigger than this...
         }
         Float32 downloadDone = 100.0f * ((float) bytesReceived / (float) expectedSize);
-        NSString * progressStr = [NSString stringWithFormat:@"Cancel %.0f%%", downloadDone];
+        //NSString * progressStr = [NSString stringWithFormat:@"Cancel %.0f%%", downloadDone];
+        NSString * progressStr = [NSString stringWithFormat:@"Downloading... %.0f%%", downloadDone];
         NSLog(@"%@", progressStr);
+        [[bookcell statusLabel] setText:progressStr];
+        //[[bookcell statusLabel] setTextColor:[UIColor blueColor]];
     }
 }
 
@@ -78,6 +90,7 @@
                           cancelButtonTitle:@"OK"
                           otherButtonTitles:nil];
     [alert show];
+    bookcell.statusLabel.text = @"Download";
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
@@ -94,6 +107,8 @@
         // Handle the error.
         NSLog(@"Handle the error");
     }
+    
+    bookcell.statusLabel.text = @"";
     
     UIApplication *app = [UIApplication sharedApplication];
     

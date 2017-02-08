@@ -152,7 +152,19 @@
         book.title = [[ep locationToEpub] title];
         book.author = [[ep locationToEpub] author];
         book.img = [NSString stringWithFormat:@"https://read.biblemesh.com/%@", [[ep locationToEpub] coverHref]];
+        //switch ([[[appDelegate latestLocation] locationToEpub] downloadstatus]) {
         //NSLog(@"img: %@", book.img);
+        switch ([[ep locationToEpub] downloadstatus]) {
+            case 0://not downloaded
+                book.status = @"Download";
+                break;
+            case 1://downloading
+                book.status = @"Downloading...";
+                break;
+            case 2://downloaded
+                book.status = @"";
+                break;
+        }
     }
     
     [cell setBook:book therow:indexPath.row];
@@ -239,11 +251,17 @@
                 //downloaded
                 //check exists, open if so. If not, download again
                 if ([[NSFileManager defaultManager] fileExistsAtPath:ePubFile]) {
-                    //open epub
-                    
-                    [appDelegate refreshData:self ePubFile:ePubFile];
-                    
-                    
+                    NSError *attributesError;
+                    NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:ePubFile error:&attributesError];
+                    if ([fileAttributes fileSize] != [[[appDelegate latestLocation] locationToEpub] fsize]) {
+                        NSLog(@"Unexpected filesize, delete and re-download");
+                        NSError *error;
+                        [[NSFileManager defaultManager] removeItemAtPath:ePubFile error:&error];
+                        downloadit = true;
+                    } else {
+                        //open epub
+                        [appDelegate refreshData:self ePubFile:ePubFile];
+                    }
                 } else {
                     downloadit = true;
                 }
@@ -265,6 +283,10 @@
                 NSLog(@"download epub");
                 Download *dl = [[Download alloc] init];
                 
+                BooksTableViewCell *btv = (BooksTableViewCell *) [tableView cellForRowAtIndexPath:indexPath];
+                btv.statusLabel.text = @"Downloading...";
+                
+                [dl setBookcell:btv];
                 [dl setEPubFile:ePubFile];
                 [dl setTitle:[[appDelegate latestLocation] locationToEpub]];
                 

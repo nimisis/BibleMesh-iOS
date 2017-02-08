@@ -5,6 +5,7 @@
         <attribute name="bookid" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="coverHref" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="downloadstatus" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="fsize" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="lastUpdated" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="rootUrl" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
@@ -29,7 +30,7 @@
         <relationship name="locationToEpub" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Epubtitle" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Epubtitle" positionX="-360" positionY="42" width="128" height="163"/>
+        <element name="Epubtitle" positionX="-360" positionY="42" width="128" height="180"/>
         <element name="Highlight" positionX="-36" positionY="81" width="128" height="165"/>
         <element name="Location" positionX="-189" positionY="-63" width="128" height="133"/>
     </elements>
