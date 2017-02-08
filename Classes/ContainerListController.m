@@ -77,6 +77,8 @@
     [tracker send:[[GAIDictionaryBuilder createAppView]  build]];
     
 	self.view = [[UIView alloc] init];
+    
+    thumbsArray = [[NSMutableArray alloc] init];
 
 	UITableView *table = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
 	m_table = table;
@@ -146,13 +148,26 @@
     }
     
     //fix
-    Book *book = [[Book alloc] init];
-    {
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        Location *ep = [[appDelegate locsArray] objectAtIndex:indexPath.row];
+    
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    Location *ep = [[appDelegate locsArray] objectAtIndex:indexPath.row];
+    Book *book = nil;
+    for (Book *b in thumbsArray) {
+        if ([b.title isEqualToString:[[ep locationToEpub] title]]) {
+            book = b;
+            break;
+        }
+    }
+    if (book == nil) {
+        book = [[Book alloc] init];
         book.title = [[ep locationToEpub] title];
         book.author = [[ep locationToEpub] author];
         book.img = [NSString stringWithFormat:@"https://read.biblemesh.com/%@", [[ep locationToEpub] coverHref]];
+        [thumbsArray addObject:book];
+    }
+    
+    //Book *book = [[Book alloc] init];
+    {
         //switch ([[[appDelegate latestLocation] locationToEpub] downloadstatus]) {
         //NSLog(@"img: %@", book.img);
         switch ([[ep locationToEpub] downloadstatus]) {

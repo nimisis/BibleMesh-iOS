@@ -35,17 +35,9 @@
 	UITableViewDataSource,
 	UITableViewDelegate>
 {
-    /*NSURLConnection *theConnection;
-    UIBackgroundTaskIdentifier bgTask;
-    NSInteger bytesReceived;
-    NSInteger expectedSize;
-    NSFileHandle *handle;*/
-    
+    NSMutableArray *thumbsArray;
 	@private __weak UITableView *m_table;
 }
 
-/*@property (nonatomic, retain) NSURLConnection *theConnection;
-@property UIBackgroundTaskIdentifier bgTask;
-@property (nonatomic, retain) NSFileHandle *handle;*/
 
 @end
