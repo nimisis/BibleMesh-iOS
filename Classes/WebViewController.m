@@ -21,8 +21,9 @@
     [super viewDidLoad];
     
     //NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://nimisis.com/blogin.php"]];
-    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://read.biblemesh.com/epub_content/epub_library.json"]];
-
+    NSMutableURLRequest* urlRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://read.biblemesh.com/epub_content/epub_library.json"]];
+    [urlRequest setValue:@"true" forHTTPHeaderField:@"App-Request"];
+    
     [_webView loadRequest:urlRequest];
 }
 
@@ -50,8 +51,8 @@
     NSString *jsonString = [webView stringByEvaluatingJavaScriptFromString:@"document.getElementsByTagName(\"pre\")[0].innerHTML"];
     NSLog(@"json: %@", jsonString);
     //header info
-    //NSCachedURLResponse *resp = [[NSURLCache sharedURLCache] cachedResponseForRequest:webView.request];
-    //NSLog(@"%@",[(NSHTTPURLResponse*)resp.response allHeaderFields]);
+    NSCachedURLResponse *resp = [[NSURLCache sharedURLCache] cachedResponseForRequest:webView.request];
+    NSLog(@"%@",[(NSHTTPURLResponse*)resp.response allHeaderFields]);
     
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
