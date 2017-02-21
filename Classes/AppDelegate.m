@@ -183,7 +183,7 @@
     
     //if (true) {
         lvc = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
-        self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:lvc];
+        self.window.rootViewController = lvc;//[[UINavigationController alloc] initWithRootViewController:lvc];
     /*} else {
         ContainerListController *c = [[ContainerListController alloc] init];
         self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
