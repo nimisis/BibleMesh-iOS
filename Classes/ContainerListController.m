@@ -85,7 +85,44 @@
 	table.dataSource = self;
 	table.delegate = self;
 	[self.view addSubview:table];
+    
+    UIBarButtonItem *logoutButton = [[UIBarButtonItem alloc] initWithTitle:@"Logout" style:UIBarButtonItemStylePlain target:self action:@selector(logout)];
+    self.navigationItem.rightBarButtonItem = logoutButton;
 }
+
+- (void) logout {
+    UIAlertController * alert = [UIAlertController
+                                 alertControllerWithTitle:@"Log out"
+                                 message:@"Are you sure you want to log out?"
+                                 preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* yesButton = [UIAlertAction
+                                 actionWithTitle:@"Yes"
+                                 style:UIAlertActionStyleDefault
+                                handler:^(UIAlertAction * action) {
+                                    //fix start spinner?
+                                    NSURL *url = [NSURL URLWithString:@"https://read.biblemesh.com/logout"];
+                                    [AppDelegate downloadDataFromURL:url patch:nil withCompletionHandler:^(NSData *data) {
+                                        NSLog(@"logout returned");
+                                        
+                                        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                                        [appDelegate window].rootViewController = [appDelegate lvc];
+                                    }];
+                                }];
+    
+    [alert addAction:yesButton];
+    UIAlertAction* cancelButton = [UIAlertAction
+                                   actionWithTitle:@"Cancel"
+                                   style:UIAlertActionStyleCancel
+                                   handler:^(UIAlertAction * action) {
+                                       NSLog(@"Cancel");
+                                   }];
+    
+    [alert addAction:cancelButton];
+    [self presentViewController:alert animated:YES completion:nil];
+    
+}
+
 
 #pragma mark -
 #pragma mark UIScrollViewDelegate Methods
