@@ -121,10 +121,8 @@
             NSURL *url = [NSURL URLWithString:URLString];
             [AppDelegate downloadDataFromURL:url patch:nil withCompletionHandler:^(NSData *data) {
                 
-                //
                 NSLog(@"returned");
                 
-                //NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
                 NSError *error = nil;
                 NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
                 if (!jsonArray) {

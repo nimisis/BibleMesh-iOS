@@ -105,6 +105,12 @@
                                     [AppDelegate downloadDataFromURL:url patch:nil withCompletionHandler:^(NSData *data) {
                                         NSLog(@"logout returned");
                                         
+                                        NSHTTPCookieStorage *storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+                                        for (NSHTTPCookie *cookie in [storage cookies])
+                                        {
+                                            [storage deleteCookie:cookie];
+                                        }
+                                        
                                         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
                                         [appDelegate window].rootViewController = [appDelegate lvc];
                                     }];

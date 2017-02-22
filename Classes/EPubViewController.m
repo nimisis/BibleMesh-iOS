@@ -932,7 +932,8 @@
              
              [[appDelegate latestLocation] setLastUpdated:[unixtime longLongValue]];
              [[appDelegate latestLocation] setIdref:[dict valueForKey:@"idref"]];
-             [[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"contentCFI"]];
+             //[[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"contentCFI"]];
+             [[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"elementCfi"]];
              
              NSError *error = nil;
              if ([[appDelegate managedObjectContext] save:&error]) {

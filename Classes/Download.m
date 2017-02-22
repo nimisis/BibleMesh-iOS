@@ -37,10 +37,7 @@
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
     NSLog(@"response status code: %ld", (long)[httpResponse statusCode]);
     statusCode = [httpResponse statusCode];
-    if (statusCode == 404) {
-        //NSLog(@"404");
-        //[handle truncateFileAtOffset:0];//deletes file?
-    } else {
+    if (statusCode == 200) {
         [[NSFileManager defaultManager] createFileAtPath:ePubFile contents:nil attributes:nil];
         //make sure file does not get backed up by iCloud
         [self addSkipBackupAttributeToItemAtPath:ePubFile];
@@ -59,9 +56,7 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
     bytesReceived = bytesReceived + [data length];
-    if (statusCode == 404) {
-        
-    } else {
+    if (statusCode == 200) {
         [handle writeData:data];
             
         //NSLog(@"got %ld bytes for %@", bytesReceived, connection.originalRequest.URL.absoluteString);
@@ -96,10 +91,12 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     NSLog(@"did finish download");
-    if (statusCode == 404) {
-        [title setDownloadstatus:0];//not downloaded
-    } else {
+    if (statusCode == 200) {
+    /*    [title setDownloadstatus:0];//not downloaded
+    } else {*/
         [title setDownloadstatus:2];//completed
+    } else {
+        [title setDownloadstatus:0];//not downloaded
     }
     NSError *error = nil;
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
