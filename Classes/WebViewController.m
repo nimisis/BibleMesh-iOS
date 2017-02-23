@@ -301,10 +301,10 @@
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     NSLog(@"did fail load");
-    //show library view
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    //show library view? No!
+    /*AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     ContainerListController *c = [[ContainerListController alloc] init];
-    [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
+    [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:c];*/
 }
 
 

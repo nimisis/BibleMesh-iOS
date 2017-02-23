@@ -37,10 +37,10 @@
 {
 	@private UITableViewCell *m_cellColumnGap;
 	@private UITableViewCell *m_cellFontScale;
-	@private UITableViewCell *m_cellScroll;
+	/*@private UITableViewCell *m_cellScroll;
 	@private UITableViewCell *m_cellScrollAuto;
 	@private UITableViewCell *m_cellScrollContinuous;
-	@private UITableViewCell *m_cellScrollDoc;
+	@private UITableViewCell *m_cellScrollDoc;*/
 	@private UITableViewCell *m_cellSyntheticSpread;
 	@private UITableViewCell *m_cellSyntheticSpreadAuto;
 	@private UITableViewCell *m_cellSyntheticSpreadDouble;
@@ -108,6 +108,7 @@
 		m_cellFontScale.accessoryView = stepper;
 		m_cellFontScale.selectionStyle = UITableViewCellSelectionStyleNone;
 
+        /*
 		// Scroll
 
 		m_cellScroll = [[UITableViewCell alloc] initWithStyle:
@@ -129,7 +130,8 @@
 			UITableViewCellStyleDefault reuseIdentifier:nil];
 		m_cellScrollDoc.indentationLevel = 1;
 		m_cellScrollDoc.textLabel.text = LocStr(@"EPUB_SETTINGS_SCROLL_DOC");
-
+        */
+        
 		// Synthetic spread
 
 		m_cellSyntheticSpread = [[UITableViewCell alloc] initWithStyle:
@@ -155,10 +157,10 @@
 		// Finish up
 
 		m_cells = @[
-			m_cellScroll,
-			m_cellScrollAuto,
-			m_cellScrollDoc,
-			m_cellScrollContinuous,
+			//m_cellScroll,
+			//m_cellScrollAuto,
+			//m_cellScrollDoc,
+			//m_cellScrollContinuous,
 			m_cellSyntheticSpread,
 			m_cellSyntheticSpreadAuto,
 			m_cellSyntheticSpreadSingle,
@@ -223,7 +225,7 @@
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
 
-	if (cell == m_cellScrollAuto) {
+	/*if (cell == m_cellScrollAuto) {
 		[EPubSettings shared].scroll = EPubSettingsScrollAuto;
 	}
 	else if (cell == m_cellScrollContinuous) {
@@ -232,7 +234,8 @@
 	else if (cell == m_cellScrollDoc) {
 		[EPubSettings shared].scroll = EPubSettingsScrollDoc;
 	}
-	else if (cell == m_cellSyntheticSpreadAuto) {
+	else*/
+    if (cell == m_cellSyntheticSpreadAuto) {
 		[EPubSettings shared].syntheticSpread = EPubSettingsSyntheticSpreadAuto;
 	}
 	else if (cell == m_cellSyntheticSpreadDouble) {
@@ -261,7 +264,7 @@
 	m_cellFontScale.textLabel.text = LocStr(@"EPUB_SETTINGS_FONT_SCALE",
 		(int)round(100.0 * settings.fontScale));
 
-	m_cellScrollAuto.accessoryType =
+	/*m_cellScrollAuto.accessoryType =
 		(settings.scroll == EPubSettingsScrollAuto) ?
 		UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
 
@@ -272,7 +275,8 @@
 	m_cellScrollDoc.accessoryType =
 		(settings.scroll == EPubSettingsScrollDoc) ?
 		UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-
+    */
+    
 	m_cellSyntheticSpreadAuto.accessoryType =
 		(settings.syntheticSpread == EPubSettingsSyntheticSpreadAuto) ?
 		UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;

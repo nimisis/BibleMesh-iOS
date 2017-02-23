@@ -583,47 +583,58 @@
     [self executeJavaScript:@"ReadiumSDK.reader.openPagePrev()" completionHandler:nil];
 }
 
-- (void)onClickAddBookmark {
-    
+- (void)onClickAddHighlight {    
     [self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.getCurrentSelectionCfi()" completionHandler:^(id response, NSError *error){
-        NSDictionary *dict = response;
-        //NSLog(@"get selection done %@", s);
-        int r = arc4random() % 1000000 + 1;
-        
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        Highlight *hl = (Highlight *)[NSEntityDescription insertNewObjectForEntityForName:@"Highlight" inManagedObjectContext:[appDelegate managedObjectContext]];
-        [hl setCfi:[dict valueForKey:@"cfi"]];
-        [hl setAnnotationID:r];
-        [hl setIdref:[dict valueForKey:@"idref"]];
-        NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970]) + [appDelegate serverTimeOffset]];
-        [hl setLastUpdated:[unixtime longLongValue]];
-        [hl setColor:1];
-        [hl setNote:@""];
-        [hl setUserid:[appDelegate userid]];
-        [hl setBookid:[[appDelegate latestLocation] bookid]];
-        
-        //NSError *error = nil;
-        if ([[appDelegate managedObjectContext] save:&error]) {
-            NSLog(@"saved");
-            [[appDelegate highlightsArray] addObject:hl];
+        if (!response) {
+            NSLog(@"no selection");
+            UIAlertView * alert =[[UIAlertView alloc]
+                                  initWithTitle:@"No selection"
+                                  message:@"Please select some text before highlighting"
+                                  delegate: self
+                                  cancelButtonTitle:@"OK"
+                                  otherButtonTitles: nil];
+            //[alert addButtonWithTitle:@"Ignore"];
+            [alert show];
         } else {
-            // Handle the error.
-            NSLog(@"Handle the error");
+            NSDictionary *dict = response;
+            //NSLog(@"get selection done %@", s);
+            int r = arc4random() % 1000000 + 1;
+            
+            AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+            Highlight *hl = (Highlight *)[NSEntityDescription insertNewObjectForEntityForName:@"Highlight" inManagedObjectContext:[appDelegate managedObjectContext]];
+            [hl setCfi:[dict valueForKey:@"cfi"]];
+            [hl setAnnotationID:r];
+            [hl setIdref:[dict valueForKey:@"idref"]];
+            NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970]) + [appDelegate serverTimeOffset]];
+            [hl setLastUpdated:[unixtime longLongValue]];
+            [hl setColor:1];
+            [hl setNote:@""];
+            [hl setUserid:[appDelegate userid]];
+            [hl setBookid:[[appDelegate latestLocation] bookid]];
+            
+            //NSError *error = nil;
+            if ([[appDelegate managedObjectContext] save:&error]) {
+                NSLog(@"saved");
+                [[appDelegate highlightsArray] addObject:hl];
+            } else {
+                // Handle the error.
+                NSLog(@"Handle the error");
+            }
+            
+            NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', '%@', %d, 'highlight')",
+                            [dict valueForKey:@"idref"], [dict valueForKey:@"cfi"], r];
+            [self executeJavaScript:js completionHandler:^(id response, NSError *error)
+             {
+                 if (response != nil) {
+                     NSLog(@"got response");
+                 }
+                 if (error != nil) {
+                     NSLog(@"%@", [error description]);
+                 }
+                 NSLog(@"completed addition of highlight");
+             }];
+            [self updateLocation:[NSNumber numberWithLong:[[appDelegate latestLocation] lastUpdated]] highlight:hl delete:NO];
         }
-        
-        NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.addHighlight('%@', '%@', %d, 'highlight')",
-                        [dict valueForKey:@"idref"], [dict valueForKey:@"cfi"], r];
-        [self executeJavaScript:js completionHandler:^(id response, NSError *error)
-         {
-             if (response != nil) {
-                 NSLog(@"got response");
-             }
-             if (error != nil) {
-                 NSLog(@"%@", [error description]);
-             }
-             NSLog(@"completed addition of highlight");
-         }];
-        [self updateLocation:[NSNumber numberWithLong:[[appDelegate latestLocation] lastUpdated]] highlight:hl delete:NO];
     }];
     /*return;
     int r = arc4random() % 1000000;
@@ -799,9 +810,15 @@
 
 - (void)updateNavigationItems {
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
-		initWithBarButtonSystemItem:UIBarButtonSystemItemAction
+		initWithTitle:@"Settings" style:UIBarButtonItemStylePlain
 		target:self
 		action:@selector(onClickSettings)];
+    
+    self.navigationItem.rightBarButtonItem.title = @"\u2699";
+    UIFont *f1 = [UIFont fontWithName:@"Helvetica" size:24.0];
+    NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:f1, UITextAttributeFont, nil];
+    [self.navigationItem.rightBarButtonItem setTitleTextAttributes:dict forState:UIControlStateNormal];
+    
 }
 
 - (void)updateHighlights:(NSString *)idref {//fix could have more than one idref
@@ -1050,8 +1067,9 @@
             pindex += cindex * pageCount;
         }
         NSString* totalPages = [NSString stringWithFormat:@"%d", pageCount];
-
-        label.text = LocStr(@"PAGE_X_OF_Y", [currentPages UTF8String], [totalPages UTF8String], m_currentPageIsFixedLayout?[@"FXL" UTF8String]:[@"reflow" UTF8String]);
+        
+        //label.text = LocStr(@"PAGE_X_OF_Y", [currentPages UTF8String], [totalPages UTF8String], m_currentPageIsFixedLayout?[@"FXL" UTF8String]:[@"reflow" UTF8String]);
+        label.text = LocStr(@"PAGE_X_OF_Y", [currentPages UTF8String], [totalPages UTF8String]);
 	}
 
 	[label sizeToFit];
@@ -1115,9 +1133,10 @@
 		}
 
 		[items addObject:[[UIBarButtonItem alloc]
-			initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
+			initWithTitle:@"highlight"
+            style:UIBarButtonItemStylePlain
 			target:self
-			action:@selector(onClickAddBookmark)]
+			action:@selector(onClickAddHighlight)]
 		];
 
 		self.toolbarItems = items;
