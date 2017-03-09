@@ -86,7 +86,7 @@
 
 
 - (CGFloat)fontScale {
-	return [self cgFloatForKey:kKeyFontScale defaultValue:1];
+	return [self cgFloatForKey:kKeyFontScale defaultValue:2];
 }
 
 
@@ -153,7 +153,7 @@
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	NSNumber *number = [defaults objectForKey:kKeySyntheticSpread];
 	return (number == nil || ![number isKindOfClass:[NSNumber class]]) ?
-		EPubSettingsSyntheticSpreadAuto : number.integerValue;
+		EPubSettingsSyntheticSpreadSingle : number.integerValue;
 }
 
 
