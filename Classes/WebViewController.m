@@ -59,6 +59,7 @@
     if ([jsonString hasPrefix:@"{\"error"]) {
         NSLog(@"error");//fix
     } else if ([jsonString hasPrefix:@"{\"userInfo"]) {
+        NSLog(@"token is %@", jsonString);
         
         NSData *userdata = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         
@@ -90,6 +91,9 @@
                     NSDictionary *dic = (NSDictionary *)obj;
                     NSLog(@"userID is %ld", [[dic valueForKey:@"id"] integerValue]);
                     [appDelegate setUserid: [[dic valueForKey:@"id"] integerValue]];
+                    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                    [defaults setInteger:[[dic valueForKey:@"id"] integerValue] forKey:@"userid"];
+                    [defaults synchronize];
                 } else if ([(NSString *) key isEqualToString:@"gaCode"]) {//fix todo
                 } else if ([(NSString *) key isEqualToString:@"error"]) {//fix todo
                 } else {
@@ -115,8 +119,6 @@
         }*/
         
         [self dismissViewControllerAnimated:NO completion:^{
-            
-            NSLog(@"token is %@", jsonString);
             
             //get servertime
             NSString *URLString = @"https://read.biblemesh.com/epub_content/epub_library.json";
@@ -289,9 +291,6 @@
                     
                     //while ((lep != nil) && ([lep bookid] < bookid)) {
                 }
-                
-                
-                
                 //show library view
                 ContainerListController *c = [[ContainerListController alloc] init];
                 [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:c];

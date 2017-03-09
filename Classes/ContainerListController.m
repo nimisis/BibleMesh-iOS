@@ -112,6 +112,7 @@
                                         }
                                         
                                         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                                        [[appDelegate lvc] setFirstload:YES];
                                         [appDelegate window].rootViewController = [appDelegate lvc];
                                     }];
                                 }];

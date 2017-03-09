@@ -9,8 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "GAITrackedViewController.h"
 
-@interface LoginViewController : GAITrackedViewController
+@interface LoginViewController : GAITrackedViewController {
+    BOOL firstload;
+}
 
+@property BOOL firstload;
+@property (nonatomic, retain) IBOutlet UIButton *loginBtn;
 - (IBAction)login:(id)sender;
 
 @end

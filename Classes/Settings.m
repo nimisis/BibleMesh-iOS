@@ -86,7 +86,7 @@
 
 
 - (CGFloat)fontScale {
-	return [self cgFloatForKey:kKeyFontScale defaultValue:2];
+	return [self cgFloatForKey:kKeyFontScale defaultValue:2.5];
 }
 
 

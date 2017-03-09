@@ -456,6 +456,7 @@
     [self setHighlightsArray:mutableFetchResults];
     NSLog(@"Have %lu highlights", (unsigned long)[mutableFetchResults count]);
     
+    //fix
     /*NetworkStatus netStatus = [[appDelegate hostReachability] currentReachabilityStatus];
      if (netStatus == NotReachable) {
      NSLog(@"no internet");
