@@ -501,11 +501,14 @@
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)];
     //[tap setDelegate:self];
-    //[[m_webViewWK scrollView] addGestureRecognizer:tap];
-    //[[m_webViewWK scrollView] addGestureRecognizer:tap];
     [[self view] addGestureRecognizer:tap];
     //[[m_webViewWK scrollView] addGestureRecognizer:tap];
     
+    /*UITapGestureRecognizer *tap2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped2:)];
+    [tap2 setDelegate:self];
+    //[[self view] addGestureRecognizer:tap];
+    [[m_webViewWK scrollView] addGestureRecognizer:tap2];
+    */
     /*UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panned:)];
     [pan setDelegate:self];
     [[m_webViewWK scrollView] addGestureRecognizer:pan];
@@ -531,10 +534,10 @@
     [m_webViewWK addGestureRecognizer:swipeLeft];
 }
 
-//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-  //  shouldRecognizeSimultaneouslyWithGestureRecognizer:(nonnull UIGestureRecognizer *)otherGestureRecognizer {
+/*- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldRecognizeSimultaneouslyWithGestureRecognizer:(nonnull UIGestureRecognizer *)otherGestureRecognizer {
     
-    /*if (gestureRecognizer.view == m_webViewWK.scrollView) {
+    if (gestureRecognizer.view == m_webViewWK.scrollView) {
         NSLog(@"a %ld", (long)gestureRecognizer.state);
     } else {
         NSLog(@"b");
@@ -543,9 +546,24 @@
         NSLog(@"c %ld", (long)otherGestureRecognizer.state);
     } else {
         NSLog(@"d");
-    }*/
-  //  return YES;
-//}
+    }
+    return YES;
+}
+
+-(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    //CGPoint touchLocation = [_tileMap convertTouchToNodeSpace: touch];
+    // use your CGPoint
+    //CGPoint aPtInScrollView = [m_webViewWK convertPoint:[touch locationInView:[m_webViewWK scrollView] toView:[m_webViewWK scrollView]];
+    
+    CGPoint touchLoc = [touch locationInView:[m_webViewWK scrollView]];
+    NSString *js = [NSString stringWithFormat:@"document.elementFromPoint(%f, %f).text", touchLoc.x, touchLoc.y];
+    
+    [self executeJavaScript:js completionHandler:^(id response, NSError *error){
+        NSLog(@"got response");
+    }];
+    return YES;
+}*/
 
 //-(void)popupMenu:(NSString *)context {
   //  NSLog(@"popupmenu");
@@ -566,6 +584,10 @@
         hideTimer = [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(hideNavController) userInfo:nil repeats:NO];
     }
 }
+
+/*-(void)tapped2:(UITapGestureRecognizer *) tap {
+    NSLog(@"tap2");
+}*/
 
 -(void)panned:(UIPanGestureRecognizer *) pan {
     NSLog(@"pan");

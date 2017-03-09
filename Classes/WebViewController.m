@@ -56,7 +56,9 @@
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
     //check that token is of expected format. Use regular expression?
-    if ([jsonString hasPrefix:@"{\"userInfo"]) {
+    if ([jsonString hasPrefix:@"{\"error"]) {
+        NSLog(@"error");//fix
+    } else if ([jsonString hasPrefix:@"{\"userInfo"]) {
         
         NSData *userdata = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         

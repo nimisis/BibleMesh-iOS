@@ -205,7 +205,9 @@
         book = [[Book alloc] init];
         book.title = [[ep locationToEpub] title];
         book.author = [[ep locationToEpub] author];
-        book.img = [NSString stringWithFormat:@"https://read.biblemesh.com/%@", [[ep locationToEpub] coverHref]];
+        //epub_content/book_[bookId]/cover_thumbnail_created_on_import.png
+        //book.img = [NSString stringWithFormat:@"https://read.biblemesh.com/%@", [[ep locationToEpub] coverHref]];
+        book.img = [NSString stringWithFormat:@"https://read.biblemesh.com/epub_content/book_%d/cover_thumbnail_created_on_import.png", [ep bookid]];
         [thumbsArray addObject:book];
     }
     
