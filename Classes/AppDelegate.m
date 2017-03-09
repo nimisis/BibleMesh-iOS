@@ -108,12 +108,13 @@
         }
         
         //latestLocation = [[Location alloc] init];
-        if ([mutableFetchResults2 count] > 0) {
+        /*if ([mutableFetchResults2 count] > 0) {
             [self setLatestLocation:[mutableFetchResults2 objectAtIndex:0]];
             [self setLocsArray:mutableFetchResults2];
             NSLog(@"userid %d", [[self latestLocation] userid]);
-        }
+        }*/
         NSLog(@"Got %lu locations", (unsigned long)[mutableFetchResults2 count]);
+        
         
         NSFetchRequest *request1 = [[NSFetchRequest alloc] init];
         NSEntityDescription *entity1 = [NSEntityDescription entityForName:@"Highlight" inManagedObjectContext:managedObjectContext];
@@ -146,6 +147,18 @@
         
         [self setBooksArray:mutableFetchResults];
         NSLog(@"Got %lu Epubtitles", (unsigned long)[mutableFetchResults count]);
+        for (int i = 0; i < (unsigned long)[mutableFetchResults count]; i++) {
+            Epubtitle *ept = [mutableFetchResults objectAtIndex:i];
+            if (ept.downloadstatus == 1) {
+                NSLog(@"found a title that is mid-download");
+                ept.downloadstatus = 0;
+                NSError *error = nil;
+                if (![[self managedObjectContext] save:&error]) {
+                    // Handle the error.
+                }
+            }
+            NSLog(@"downloadstatus %d", ept.downloadstatus);
+        }
         
         /*for (int i = 0; i < (unsigned long)[mutableFetchResults count]; i++) {
             Epubtitle *ept = [mutableFetchResults objectAtIndex:i];
@@ -469,7 +482,7 @@
             __block NSString *idref;
             __block NSString *elementCfi;
             //check local data against data returned
-            if (data == nil) {
+            if ((data == nil) || ([data length] == 0)) {
                 NSLog(@"no data");
                 //return;
             } else {
@@ -536,7 +549,11 @@
                                 if ([(NSString*)key2 isEqualToString:@"idref"]) {
                                     idref = obj2;
                                 } else if ([(NSString*)key2 isEqualToString:@"elementCfi"]) {
-                                    elementCfi = obj2;
+                                    if ([obj2 isKindOfClass:[NSString class]]) {
+                                        elementCfi = obj2;
+                                    } else {
+                                        elementCfi = NULL;
+                                    }
                                 }
                             }];
                         }
@@ -733,6 +750,7 @@
                     //progress
                     [[self latestLocation] setIdref:idref];
                     [[self latestLocation] setElementCfi:elementCfi];
+                    
                     //save
                     NSError *error = nil;
                     if ([[self managedObjectContext] save:&error]) {

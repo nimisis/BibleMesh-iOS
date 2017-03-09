@@ -61,6 +61,41 @@
             NSInteger userid = [defaults integerForKey:@"userid"];
             if (livesession && (userid > 0)) {
                 [appDelegate setUserid:userid];
+                
+                NSFetchRequest *request2 = [[NSFetchRequest alloc] init];
+                NSEntityDescription *entity2 = [NSEntityDescription entityForName:@"Location" inManagedObjectContext:[appDelegate managedObjectContext]];
+                [request2 setEntity:entity2];
+                
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %d", [appDelegate userid]];
+                [request2 setPredicate:predicate];
+                
+                NSError *error2 = nil;
+                NSMutableArray *mutableFetchResults2 = [[[appDelegate managedObjectContext] executeFetchRequest:request2 error:&error2] mutableCopy];
+                if (mutableFetchResults2 == nil) {
+                    // Handle the error.
+                }
+                
+                //latestLocation = [[Location alloc] init];
+                if ([mutableFetchResults2 count] > 0) {
+                    //[self setLatestLocation:[mutableFetchResults2 objectAtIndex:0]];
+                    [appDelegate setLocsArray:mutableFetchResults2];
+                    //NSLog(@"userid %d", [[self latestLocation] userid]);
+                }
+                NSLog(@"Got %lu locations", (unsigned long)[mutableFetchResults2 count]);
+                
+                for (int i = 0; i < (unsigned long)[mutableFetchResults2 count]; i++) {
+                    Location *loc = [mutableFetchResults2 objectAtIndex:i];
+                    if ([[loc locationToEpub] downloadstatus] == 1) {
+                        NSLog(@"found a title that is mid-download");
+                        [[loc locationToEpub] setDownloadstatus:0];
+                        NSError *error = nil;
+                        if (![[appDelegate managedObjectContext] save:&error]) {
+                            // Handle the error.
+                        }
+                    }
+                    //NSLog(@"downloadstatus %d", ept.downloadstatus);
+                }
+                
                 //show library view
                 ContainerListController *c = [[ContainerListController alloc] init];
                 [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
@@ -107,6 +142,27 @@
                 NSInteger userid = [defaults integerForKey:@"userid"];
                 if (livesession && (userid > 0)) {
                     [appDelegate setUserid:userid];
+                    
+                    NSFetchRequest *request2 = [[NSFetchRequest alloc] init];
+                    NSEntityDescription *entity2 = [NSEntityDescription entityForName:@"Location" inManagedObjectContext:[appDelegate managedObjectContext]];
+                    [request2 setEntity:entity2];
+                    
+                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %d", [appDelegate userid]];
+                    [request2 setPredicate:predicate];
+                    
+                    NSError *error2 = nil;
+                    NSMutableArray *mutableFetchResults2 = [[[appDelegate managedObjectContext] executeFetchRequest:request2 error:&error2] mutableCopy];
+                    if (mutableFetchResults2 == nil) {
+                        // Handle the error.
+                    }
+                    
+                    //latestLocation = [[Location alloc] init];
+                    if ([mutableFetchResults2 count] > 0) {
+                        //[self setLatestLocation:[mutableFetchResults2 objectAtIndex:0]];
+                        [appDelegate setLocsArray:mutableFetchResults2];
+                        //NSLog(@"userid %d", [[self latestLocation] userid]);
+                    }
+                    NSLog(@"Got %lu locations", (unsigned long)[mutableFetchResults2 count]);
                     //show library view
                     ContainerListController *c = [[ContainerListController alloc] init];
                     [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:c];

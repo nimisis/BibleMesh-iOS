@@ -86,6 +86,15 @@
                           otherButtonTitles:nil];
     [alert show];
     bookcell.statusLabel.text = @"Download";
+    
+    [title setDownloadstatus:0];//not downloaded
+    
+    NSError *error2 = nil;
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    if (![[appDelegate managedObjectContext] save:&error2]) {
+        // Handle the error.
+        NSLog(@"Handle the error");
+    }
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection

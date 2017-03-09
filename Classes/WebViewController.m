@@ -289,6 +289,18 @@
                     
                     [appDelegate setLocsArray:mutableFetchResults];
                     
+                    for (int i = 0; i < [[appDelegate locsArray] count]; i++) {
+                        Location *loc = [[appDelegate locsArray] objectAtIndex:i];
+                        if ([[loc locationToEpub] downloadstatus] == 1) {
+                            NSLog(@"found a title that is mid-download");
+                            [[loc locationToEpub] setDownloadstatus:0];
+                            NSError *error = nil;
+                            if (![[appDelegate managedObjectContext] save:&error]) {
+                                // Handle the error.
+                            }
+                        }
+                        //NSLog(@"downloadstatus %d", ept.downloadstatus);
+                    }
                     //while ((lep != nil) && ([lep bookid] < bookid)) {
                 }
                 //show library view
