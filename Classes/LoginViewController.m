@@ -96,9 +96,11 @@
                     //NSLog(@"downloadstatus %d", ept.downloadstatus);
                 }
                 
+                //get servertime
+                [appDelegate getServerTime];
+                
                 //show library view
-                ContainerListController *c = [[ContainerListController alloc] init];
-                [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
+                [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:[appDelegate clc]];
             } else {
                 NetworkStatus netStatus = [[appDelegate hostReachability] currentReachabilityStatus];
                 if (netStatus == NotReachable) {
@@ -163,9 +165,25 @@
                         //NSLog(@"userid %d", [[self latestLocation] userid]);
                     }
                     NSLog(@"Got %lu locations", (unsigned long)[mutableFetchResults2 count]);
+                    
+                    for (int i = 0; i < (unsigned long)[mutableFetchResults2 count]; i++) {
+                        Location *loc = [mutableFetchResults2 objectAtIndex:i];
+                        if ([[loc locationToEpub] downloadstatus] == 1) {
+                            NSLog(@"found a title that is mid-download");
+                            [[loc locationToEpub] setDownloadstatus:0];
+                            NSError *error = nil;
+                            if (![[appDelegate managedObjectContext] save:&error]) {
+                                // Handle the error.
+                            }
+                        }
+                        //NSLog(@"downloadstatus %d", ept.downloadstatus);
+                    }
+                    
+                    //get servertime
+                    [appDelegate getServerTime];
+                    
                     //show library view
-                    ContainerListController *c = [[ContainerListController alloc] init];
-                    [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
+                    [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:[appDelegate clc]];
                 } else {
                     //show login button
                     [_loginBtn setHidden:FALSE];

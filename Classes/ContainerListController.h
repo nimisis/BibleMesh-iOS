@@ -36,8 +36,10 @@
 	UITableViewDelegate>
 {
     NSMutableArray *thumbsArray;
-	@private __weak UITableView *m_table;
+	//@public __weak
+    UITableView *m_table;
 }
 
+@property (nonatomic, retain) UITableView *m_table;
 
 @end

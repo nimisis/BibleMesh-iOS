@@ -50,8 +50,8 @@
     NSString *jsonString = [webView stringByEvaluatingJavaScriptFromString:@"document.getElementsByTagName(\"pre\")[0].innerHTML"];
     NSLog(@"json: %@", jsonString);
     //header info
-    NSCachedURLResponse *resp = [[NSURLCache sharedURLCache] cachedResponseForRequest:webView.request];
-    NSLog(@"%@",[(NSHTTPURLResponse*)resp.response allHeaderFields]);
+    //NSCachedURLResponse *resp = [[NSURLCache sharedURLCache] cachedResponseForRequest:webView.request];
+    //NSLog(@"%@",[(NSHTTPURLResponse*)resp.response allHeaderFields]);
     
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
@@ -119,205 +119,14 @@
         }*/
         
         [self dismissViewControllerAnimated:NO completion:^{
-            
-            //get servertime
-            NSString *URLString = @"https://read.biblemesh.com/epub_content/epub_library.json";
-            NSURL *url = [NSURL URLWithString:URLString];
-            [AppDelegate downloadDataFromURL:url patch:nil withCompletionHandler:^(NSData *data) {
-                
-                NSLog(@"returned");
-                
-                NSError *error = nil;
-                NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
-                if (!jsonArray) {
-                    NSLog(@"Error parsing JSON: %@", error);
-                } else {
-                    //fix!
-                    //delete current local store for this user?
-                    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-                    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Location" inManagedObjectContext:[appDelegate managedObjectContext]];
-                    [request setEntity:entity];
-                    
-                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %d", [appDelegate userid]];
-                    [request setPredicate:predicate];
-                    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"bookid" ascending:YES];
-                    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
-                    [request setSortDescriptors:sortDescriptors];
-                    
-                    NSError *error = nil;
-                    NSMutableArray *mutableFetchResults = [[[appDelegate managedObjectContext] executeFetchRequest:request error:&error] mutableCopy];
-                    if (mutableFetchResults == nil) {
-                        // Handle the error.
-                    }
-                    
-                    //[self setEpubtitlesArray:mutableFetchResults];
-                    NSLog(@"Got %lu Locations", (unsigned long)[mutableFetchResults count]);
-                    /*for(Location *title in mutableFetchResults) {
-                     if (title.locationToEpub == nil) {
-                     NSLog(@"nil loc to Epub");
-                     } else {
-                     NSLog(@"bookid %d", title.locationToEpub.bookid);
-                     }
-                     }*/
-                    
-                    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-                    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-                    int localIndex = 0;
-                    for(NSDictionary *item in jsonArray) {
-                        NSLog(@"Item: %@", item);
-                        
-                        __block NSInteger bookid;
-                        __block NSDate *updatedAt;
-                        __block NSString *author;
-                        __block NSString *coverHref;
-                        __block NSString *rootUrl;
-                        __block NSString *title;
-                        [item enumerateKeysAndObjectsUsingBlock: ^(id key, id obj, BOOL *stop) {
-                            if ([(NSString *) key  isEqual: @"id"]) {
-                                bookid = [obj integerValue];
-                            } else if ([(NSString *) key  isEqual: @"author"]) {
-                                author = obj;
-                            } else if ([(NSString *) key  isEqual: @"coverHref"]) {
-                                coverHref = obj;
-                            } else if ([(NSString *) key  isEqual: @"rootUrl"]) {
-                                rootUrl = obj;
-                            } else if ([(NSString *) key  isEqual: @"title"]) {
-                                title = obj;
-                            } else if ([(NSString *) key  isEqual: @"updated_at"]) {
-                                updatedAt = [dateFormatter dateFromString:obj];
-                            }
-                        }];
-                        Location *lep = nil;
-                        if (localIndex < [mutableFetchResults count]) {
-                            lep = [mutableFetchResults objectAtIndex:localIndex];
-                        }
-                        while ((lep != nil) && ([lep bookid] < bookid)) {
-                            //delete all epub titles until we get a match
-                            [[appDelegate managedObjectContext] deleteObject:lep];
-                            //fix delete all associated highlights too.
-                            if ([[appDelegate managedObjectContext] save:&error]) {
-                                NSLog(@"saved");
-                            } else {
-                                // Handle the error.
-                                NSLog(@"Handle the error");
-                            }
-                            [mutableFetchResults removeObjectAtIndex:localIndex];
-                            if (localIndex < [mutableFetchResults count]) {
-                                lep = nil;
-                            } else {
-                                lep = [mutableFetchResults objectAtIndex:localIndex];
-                            }
-                        }
-                        Boolean insertnew = false;
-                        if (lep != nil) {
-                            if ([lep bookid] == bookid) {
-                                //test for dates
-                                //if server is newer, update with new server values
-                                /*NSLog(@"comparing %ld %lld", (long) [updatedAt timeIntervalSince1970], [lep lastUpdated]);
-                                 if ([updatedAt timeIntervalSince1970] > [lep lastUpdated]) {
-                                 [lep setAuthor:author];
-                                 [lep setTitle:title];
-                                 [lep setLastUpdated:[updatedAt timeIntervalSince1970]];
-                                 [lep setCoverHref:coverHref];
-                                 [lep setRootUrl:rootUrl];
-                                 if ([[appDelegate managedObjectContext] save:&error]) {
-                                 NSLog(@"saved");
-                                 } else {
-                                 // Handle the error.
-                                 NSLog(@"Handle the error");
-                                 }
-                                 } else {
-                                 //do nothing as local version is up-to-date
-                                 }*/
-                                localIndex++;
-                            } else {
-                                //new book
-                                insertnew = true;
-                            }
-                        } else {
-                            insertnew = true;
-                        }
-                        if (insertnew) {
-                            //insert new location
-                            Location *lo = (Location *)[NSEntityDescription insertNewObjectForEntityForName:@"Location" inManagedObjectContext:[appDelegate managedObjectContext]];
-                            [lo setBookid:[[NSNumber numberWithInt:bookid] intValue]];
-                            [lo setUserid:[[NSNumber numberWithInt:[appDelegate userid]] intValue]];
-                            //search through epubs for this book id;
-                            lo.locationToEpub = nil;
-                            for (Epubtitle* ep in [appDelegate booksArray]) {
-                                if ([ep bookid] == bookid) {
-                                    lo.locationToEpub = ep;
-                                    break;
-                                }
-                            }
-                            if (lo.locationToEpub == nil) {
-                                Epubtitle *ep = (Epubtitle *)[NSEntityDescription insertNewObjectForEntityForName:@"Epubtitle" inManagedObjectContext:[appDelegate managedObjectContext]];
-                                //[ep setUserid:[[NSNumber numberWithInt:userid] intValue]];
-                                [ep setBookid:[[NSNumber numberWithInt:bookid] intValue]];
-                                [ep setAuthor:author];
-                                [ep setTitle:title];
-                                //[ep setLastUpdated:[updatedAt timeIntervalSince1970]];
-                                [ep setCoverHref:coverHref];
-                                [ep setRootUrl:rootUrl];
-                                lo.locationToEpub = ep;
-                            }
-                            if ([[appDelegate managedObjectContext] save:&error]) {
-                                NSLog(@"saved");
-                                [mutableFetchResults insertObject:lo atIndex:localIndex];
-                                localIndex++;
-                            } else {
-                                // Handle the error.
-                                NSLog(@"Handle the error");
-                            }
-                        }
-                    }
-                    
-                    Location *lep = nil;
-                    while (localIndex < [mutableFetchResults count]) {
-                        lep = [mutableFetchResults objectAtIndex:localIndex];
-                        //delete all epub titles until we get a match
-                        [[appDelegate managedObjectContext] deleteObject:lep];
-                        //fix delete all associated highlights too.
-                        if ([[appDelegate managedObjectContext] save:&error]) {
-                            NSLog(@"saved");
-                        } else {
-                            // Handle the error.
-                            NSLog(@"Handle the error");
-                        }
-                        [mutableFetchResults removeObjectAtIndex:localIndex];
-                    }
-                    
-                    [appDelegate setLocsArray:mutableFetchResults];
-                    
-                    for (int i = 0; i < [[appDelegate locsArray] count]; i++) {
-                        Location *loc = [[appDelegate locsArray] objectAtIndex:i];
-                        if ([[loc locationToEpub] downloadstatus] == 1) {
-                            NSLog(@"found a title that is mid-download");
-                            [[loc locationToEpub] setDownloadstatus:0];
-                            NSError *error = nil;
-                            if (![[appDelegate managedObjectContext] save:&error]) {
-                                // Handle the error.
-                            }
-                        }
-                        //NSLog(@"downloadstatus %d", ept.downloadstatus);
-                    }
-                    //while ((lep != nil) && ([lep bookid] < bookid)) {
-                }
-                //show library view
-                ContainerListController *c = [[ContainerListController alloc] init];
-                [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
-            }];
-            
+            [appDelegate getLibrary:true];
         }];
     }
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     NSLog(@"did fail load");
-    //show library view? No!
-    /*AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    ContainerListController *c = [[ContainerListController alloc] init];
-    [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:c];*/
+    //fix could get stuck here if no internet
 }
 
 

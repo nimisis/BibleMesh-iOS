@@ -51,6 +51,7 @@
 @synthesize downloadQueue;
 @synthesize hostReachability;
 @synthesize lvc;
+@synthesize clc;
 @synthesize locsArray;
 @synthesize booksArray;
 @synthesize highlightsArray;
@@ -194,13 +195,10 @@
 	self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 	[self configureAppearance];
     
-    //if (true) {
-        lvc = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
-        self.window.rootViewController = lvc;//[[UINavigationController alloc] initWithRootViewController:lvc];
-    /*} else {
-        ContainerListController *c = [[ContainerListController alloc] init];
-        self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:c];
-    }*/
+    clc = [[ContainerListController alloc] init];
+    lvc = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
+    self.window.rootViewController = lvc;//[[UINavigationController alloc] initWithRootViewController:lvc];
+    
     [self.window makeKeyAndVisible];
 
 	return YES;
@@ -410,7 +408,262 @@
     [task resume];
 }
 
-- (void) refreshData:(ContainerListController*)clc ePubFile:(NSString*)ePubFile {
+- (void) getLibrary:(BOOL)launchcontainer
+{
+    NSString *URLString = @"https://read.biblemesh.com/epub_content/epub_library.json";
+    NSURL *url = [NSURL URLWithString:URLString];
+    [AppDelegate downloadDataFromURL:url patch:nil withCompletionHandler:^(NSData *data) {
+        
+        NSLog(@"returned");
+        
+        NSError *error = nil;
+        id jsonq = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+        NSArray *jsonArray = NULL;
+        if ([jsonq isKindOfClass:[NSArray class]]) {
+            jsonArray =(NSArray *)jsonq;
+        } else if ([jsonq isKindOfClass:[NSDictionary class]]) {
+            NSLog(@"%@", jsonq);//fix cause logout if we get {error = "Please login"}
+        } else {
+            NSLog(@"something else");
+        }
+        if (!jsonArray) {
+            NSLog(@"Error parsing JSON: %@", error);
+        } else {
+            //fix!
+            //delete current local store for this user?
+            NSFetchRequest *request = [[NSFetchRequest alloc] init];
+            NSEntityDescription *entity = [NSEntityDescription entityForName:@"Location" inManagedObjectContext:managedObjectContext];
+            [request setEntity:entity];
+            
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %d", userid];
+            [request setPredicate:predicate];
+            NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"bookid" ascending:YES];
+            NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
+            [request setSortDescriptors:sortDescriptors];
+            
+            NSError *error = nil;
+            NSMutableArray *mutableFetchResults = [[managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
+            if (mutableFetchResults == nil) {
+                // Handle the error.
+            }
+            
+            //[self setEpubtitlesArray:mutableFetchResults];
+            NSLog(@"Got %lu Locations", (unsigned long)[mutableFetchResults count]);
+            /*for(Location *title in mutableFetchResults) {
+             if (title.locationToEpub == nil) {
+             NSLog(@"nil loc to Epub");
+             } else {
+             NSLog(@"bookid %d", title.locationToEpub.bookid);
+             }
+             }*/
+            
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            int localIndex = 0;
+            for(NSDictionary* item in jsonArray) {
+                
+                NSLog(@"Item: %@", item);
+                //if ([ite isKindOfClass:[NSDictionary class]]) {
+                    __block NSInteger bookid;
+                    __block NSDate *updatedAt;
+                    __block NSString *author;
+                    //__block NSString *coverHref;
+                    __block NSString *rootUrl;
+                    __block NSString *title;
+                    [item enumerateKeysAndObjectsUsingBlock: ^(id key, id obj, BOOL *stop) {
+                        if ([(NSString *) key  isEqual: @"id"]) {
+                            bookid = [obj integerValue];
+                        } else if ([(NSString *) key  isEqual: @"author"]) {
+                            author = obj;
+                        } else if ([(NSString *) key  isEqual: @"coverHref"]) {
+                            //fix not used coverHref = obj;
+                        } else if ([(NSString *) key  isEqual: @"rootUrl"]) {
+                            rootUrl = obj;
+                        } else if ([(NSString *) key  isEqual: @"title"]) {
+                            title = obj;
+                        } else if ([(NSString *) key  isEqual: @"updated_at"]) {
+                            updatedAt = [dateFormatter dateFromString:obj];
+                        }
+                    }];
+                    Location *lep = nil;
+                    if (localIndex < [mutableFetchResults count]) {
+                        lep = [mutableFetchResults objectAtIndex:localIndex];
+                    }
+                    while ((lep != nil) && ([lep bookid] < bookid)) {
+                        //delete all epub titles until we get a match
+                        [managedObjectContext deleteObject:lep];
+                        //fix delete all associated highlights too.
+                        if ([managedObjectContext save:&error]) {
+                            NSLog(@"saved");
+                        } else {
+                            // Handle the error.
+                            NSLog(@"Handle the error");
+                        }
+                        [mutableFetchResults removeObjectAtIndex:localIndex];
+                        if (localIndex < [mutableFetchResults count]) {
+                            lep = nil;
+                        } else {
+                            lep = [mutableFetchResults objectAtIndex:localIndex];
+                        }
+                    }
+                    Boolean insertnew = false;
+                    if (lep != nil) {
+                        if ([lep bookid] == bookid) {
+                            //test for dates
+                            //if server is newer, update with new server values
+                            /*NSLog(@"comparing %ld %lld", (long) [updatedAt timeIntervalSince1970], [lep lastUpdated]);
+                             if ([updatedAt timeIntervalSince1970] > [lep lastUpdated]) {
+                             [lep setAuthor:author];
+                             [lep setTitle:title];
+                             [lep setLastUpdated:[updatedAt timeIntervalSince1970]];
+                             [lep setCoverHref:coverHref];
+                             [lep setRootUrl:rootUrl];
+                             if ([[appDelegate managedObjectContext] save:&error]) {
+                             NSLog(@"saved");
+                             } else {
+                             // Handle the error.
+                             NSLog(@"Handle the error");
+                             }
+                             } else {
+                             //do nothing as local version is up-to-date
+                             }*/
+                            localIndex++;
+                        } else {
+                            //new book
+                            insertnew = true;
+                        }
+                    } else {
+                        insertnew = true;
+                    }
+                    if (insertnew) {
+                        //insert new location
+                        Location *lo = (Location *)[NSEntityDescription insertNewObjectForEntityForName:@"Location" inManagedObjectContext:managedObjectContext];
+                        [lo setBookid:[[NSNumber numberWithInt:bookid] intValue]];
+                        [lo setUserid:[[NSNumber numberWithInt:userid] intValue]];
+                        //search through epubs for this book id;
+                        lo.locationToEpub = nil;
+                        for (Epubtitle* ep in booksArray) {
+                            if ([ep bookid] == bookid) {
+                                lo.locationToEpub = ep;
+                                break;
+                            }
+                        }
+                        if (lo.locationToEpub == nil) {
+                            Epubtitle *ep = (Epubtitle *)[NSEntityDescription insertNewObjectForEntityForName:@"Epubtitle" inManagedObjectContext:managedObjectContext];
+                            //[ep setUserid:[[NSNumber numberWithInt:userid] intValue]];
+                            [ep setBookid:[[NSNumber numberWithInt:bookid] intValue]];
+                            [ep setAuthor:author];
+                            [ep setTitle:title];
+                            //[ep setLastUpdated:[updatedAt timeIntervalSince1970]];
+                            //fix not used [ep setCoverHref:coverHref];
+                            [ep setRootUrl:rootUrl];
+                            lo.locationToEpub = ep;
+                        }
+                        if ([managedObjectContext save:&error]) {
+                            NSLog(@"saved");
+                            [mutableFetchResults insertObject:lo atIndex:localIndex];
+                            localIndex++;
+                        } else {
+                            // Handle the error.
+                            NSLog(@"Handle the error");
+                        }
+                    }
+                //}
+            }
+            
+            Location *lep = nil;
+            while (localIndex < [mutableFetchResults count]) {
+                lep = [mutableFetchResults objectAtIndex:localIndex];
+                //delete all epub titles until we get a match
+                [managedObjectContext deleteObject:lep];
+                //fix delete all associated highlights too.
+                if ([managedObjectContext save:&error]) {
+                    NSLog(@"saved");
+                } else {
+                    // Handle the error.
+                    NSLog(@"Handle the error");
+                }
+                [mutableFetchResults removeObjectAtIndex:localIndex];
+            }
+            
+            [self setLocsArray:mutableFetchResults];
+            
+            for (int i = 0; i < [locsArray count]; i++) {
+                Location *loc = [locsArray objectAtIndex:i];
+                if ([[loc locationToEpub] downloadstatus] == 1) {
+                    NSLog(@"found a title that is mid-download");
+                    [[loc locationToEpub] setDownloadstatus:0];
+                    NSError *error = nil;
+                    if (![managedObjectContext save:&error]) {
+                        // Handle the error.
+                    }
+                }
+                //NSLog(@"downloadstatus %d", ept.downloadstatus);
+            }
+            //while ((lep != nil) && ([lep bookid] < bookid)) {
+        }
+        //show library view
+        if (launchcontainer) {
+            self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:clc];
+        } else {
+            //refresh clc
+            [[clc m_table] reloadData];
+        }
+    }];
+}
+
+- (void) getServerTime {
+    NSString *URLString = @"https://read.biblemesh.com/usersetup.json";
+    NSURL *url = [NSURL URLWithString:URLString];
+    [AppDelegate downloadDataFromURL:url patch:nil withCompletionHandler:^(NSData *userdata) {
+        
+        __block NSInteger serverTime;
+        //check local data against data returned
+        if (userdata == nil) {
+            NSLog(@"no data");
+            //return;
+        } else {
+            NSError *error = nil;
+            id jsonObject = [NSJSONSerialization JSONObjectWithData:userdata options:NSJSONReadingMutableContainers error:&error];
+            if (error) {
+                NSLog(@"Error parsing JSON: %@", error);
+                return;
+            }
+            if ([jsonObject isKindOfClass:[NSArray class]]) {
+                NSLog(@"is array");
+                return;
+            }
+            
+            NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970])];
+            NSLog(@"unix time is %lld", [unixtime longLongValue]);
+            [jsonObject enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                if ([(NSString *) key isEqualToString:@"currentServerTime"]) {
+                    serverTime = [(NSNumber *) obj longLongValue];
+                    NSLog(@"servertime %ld diff:%lld", serverTime, (serverTime - [unixtime longLongValue]));
+                    [self setServerTimeOffset:(serverTime - [unixtime longLongValue])];
+                } else if ([(NSString *) key isEqualToString:@"userInfo"]) {
+                    NSDictionary *dic = (NSDictionary *)obj;
+                    NSLog(@"userID is %ld", [[dic valueForKey:@"id"] integerValue]);
+                    if (userid != [[dic valueForKey:@"id"] integerValue]) {
+                        NSLog(@"userid mismatch!");
+                    }
+                    //fix
+                    /*[self setUserid: [[dic valueForKey:@"id"] integerValue]];
+                    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                    [defaults setInteger:[[dic valueForKey:@"id"] integerValue] forKey:@"userid"];
+                    [defaults synchronize];*/
+                } else if ([(NSString *) key isEqualToString:@"gaCode"]) {//fix todo
+                } else if ([(NSString *) key isEqualToString:@"error"]) {//fix todo
+                } else {
+                    NSLog(@"other usersetup value");
+                }
+            }];
+        }
+        
+    }];
+}
+
+- (void) refreshData:(NSString*)ePubFile {
     
     //Location *ep = [self latestLocation];
     NSError *error = nil;
@@ -669,7 +922,6 @@
                                 NSLog(@"Handle the error");
                             }
                         }
-                        
                     }
                     //remove unmatched
                     for (int i = 0; i < validHighlights.count; i++) {
@@ -764,7 +1016,9 @@
                     //fix update server?
                 }
             }
-            if (clc != nil) {
+            if (clc == nil) {
+                NSLog(@"clc is null!");
+            } else {
                 RDContainer *m_container = [[RDContainer alloc] initWithDelegate:clc path:ePubFile];
                 RDPackage *m_package = m_container.firstPackage;
                 //[self popErrorMessage];

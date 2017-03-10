@@ -44,6 +44,8 @@
 
 @implementation ContainerListController
 
+@synthesize m_table;
+
 - (BOOL)container:(RDContainer *)container handleSdkError:(NSString *)message isSevereEpubError:(BOOL)isSevereEpubError {
     
     NSLog(@"READIUM SDK: %@\n", message);
@@ -88,6 +90,14 @@
     
     UIBarButtonItem *logoutButton = [[UIBarButtonItem alloc] initWithTitle:@"logout" style:UIBarButtonItemStylePlain target:self action:@selector(logout)];
     self.navigationItem.rightBarButtonItem = logoutButton;
+    
+    UIBarButtonItem *refreshButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refresh)];
+    self.navigationItem.leftBarButtonItem = refreshButton;
+}
+
+- (void) refresh {
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [appDelegate getLibrary:NO];
 }
 
 - (void) logout {
@@ -322,7 +332,7 @@
                         downloadit = true;
                     } else {
                         //open epub
-                        [appDelegate refreshData:self ePubFile:ePubFile];
+                        [appDelegate refreshData:ePubFile];
                     }
                 } else {
                     downloadit = true;

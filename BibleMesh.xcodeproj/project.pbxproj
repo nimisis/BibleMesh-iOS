@@ -102,6 +102,11 @@
 		83919F161A1E074200FC8118 /* epubReadingSystem.js in Resources */ = {isa = PBXBuildFile; fileRef = A250D199754564056CB0267E /* epubReadingSystem.js */; };
 		83EBB4A419F56C1C0083E8F1 /* annotations.css in Resources */ = {isa = PBXBuildFile; fileRef = 83EBB4A319F56C1C0083E8F1 /* annotations.css */; };
 		840239701E2EB8FB004B36AF /* Download.m in Sources */ = {isa = PBXBuildFile; fileRef = 8402396F1E2EB8FB004B36AF /* Download.m */; };
+		840274271E72F54300272944 /* NSString+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = 8402741F1E72F54300272944 /* NSString+FontAwesome.m */; };
+		840274281E72F54300272944 /* fontawesome-github.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 840274211E72F54300272944 /* fontawesome-github.jpg */; };
+		840274291E72F54300272944 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 840274221E72F54300272944 /* FontAwesome.ttf */; };
+		8402742A1E72F54300272944 /* UIFont+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = 840274241E72F54300272944 /* UIFont+FontAwesome.m */; };
+		8402742B1E72F54300272944 /* UIImage+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = 840274261E72F54300272944 /* UIImage+FontAwesome.m */; };
 		8464BD011E16D24A001FA042 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8464BD001E16D24A001FA042 /* CoreData.framework */; };
 		849BE1CA1E1BD03E00D7F283 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 849BE1C51E1BD03E00D7F283 /* LoginViewController.m */; };
 		849BE1CB1E1BD03E00D7F283 /* LoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849BE1C61E1BD03E00D7F283 /* LoginViewController.xib */; };
@@ -313,6 +318,14 @@
 		83EBB4A319F56C1C0083E8F1 /* annotations.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = annotations.css; sourceTree = "<group>"; };
 		8402396E1E2EB8FB004B36AF /* Download.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Download.h; sourceTree = "<group>"; };
 		8402396F1E2EB8FB004B36AF /* Download.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Download.m; sourceTree = "<group>"; };
+		8402741E1E72F54300272944 /* NSString+FontAwesome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FontAwesome.h"; sourceTree = "<group>"; };
+		8402741F1E72F54300272944 /* NSString+FontAwesome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FontAwesome.m"; sourceTree = "<group>"; };
+		840274211E72F54300272944 /* fontawesome-github.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "fontawesome-github.jpg"; sourceTree = "<group>"; };
+		840274221E72F54300272944 /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome.ttf; sourceTree = "<group>"; };
+		840274231E72F54300272944 /* UIFont+FontAwesome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+FontAwesome.h"; sourceTree = "<group>"; };
+		840274241E72F54300272944 /* UIFont+FontAwesome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+FontAwesome.m"; sourceTree = "<group>"; };
+		840274251E72F54300272944 /* UIImage+FontAwesome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+FontAwesome.h"; sourceTree = "<group>"; };
+		840274261E72F54300272944 /* UIImage+FontAwesome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+FontAwesome.m"; sourceTree = "<group>"; };
 		8464BD001E16D24A001FA042 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		849BE1C41E1BD03E00D7F283 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		849BE1C51E1BD03E00D7F283 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
@@ -432,6 +445,7 @@
 		340FC15016BC3B4600346A59 = {
 			isa = PBXGroup;
 			children = (
+				8402741D1E72F54300272944 /* FontAwesome */,
 				849BE45A1E1BEFDC00D7F283 /* GoogleAnalyticsServicesiOS_3.10 */,
 				84BAD06B1E00263A0087B00B /* ASIHTTPRequest-With-ARC-master */,
 				84BAD03A1DFF5A020087B00B /* Reachability2 */,
@@ -740,6 +754,29 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		8402741D1E72F54300272944 /* FontAwesome */ = {
+			isa = PBXGroup;
+			children = (
+				8402741E1E72F54300272944 /* NSString+FontAwesome.h */,
+				8402741F1E72F54300272944 /* NSString+FontAwesome.m */,
+				840274201E72F54300272944 /* Resources */,
+				840274231E72F54300272944 /* UIFont+FontAwesome.h */,
+				840274241E72F54300272944 /* UIFont+FontAwesome.m */,
+				840274251E72F54300272944 /* UIImage+FontAwesome.h */,
+				840274261E72F54300272944 /* UIImage+FontAwesome.m */,
+			);
+			path = FontAwesome;
+			sourceTree = "<group>";
+		};
+		840274201E72F54300272944 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				840274211E72F54300272944 /* fontawesome-github.jpg */,
+				840274221E72F54300272944 /* FontAwesome.ttf */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		849BE45A1E1BEFDC00D7F283 /* GoogleAnalyticsServicesiOS_3.10 */ = {
 			isa = PBXGroup;
 			children = (
@@ -942,6 +979,7 @@
 				835846F31B42D997002DA99D /* reader_RequireJS-multiple-bundles.html in Resources */,
 				849BE4781E1BEFDC00D7F283 /* Readme.txt in Resources */,
 				835847151B42DB09002DA99D /* readium-shared-js.js in Resources */,
+				840274281E72F54300272944 /* fontawesome-github.jpg in Resources */,
 				849BE1CB1E1BD03E00D7F283 /* LoginViewController.xib in Resources */,
 				835846F51B42D997002DA99D /* reader_RequireJS-single-bundle.html in Resources */,
 				3462FBC816BC3C8F003C79E1 /* Localizable.strings in Resources */,
@@ -953,6 +991,7 @@
 				8358470D1B42DB09002DA99D /* readium-cfi-js.js.bundles.js in Resources */,
 				849BE4771E1BEFDC00D7F283 /* Changelog.txt in Resources */,
 				835846FB1B42DAF6002DA99D /* readium-shared-js_all.js in Resources */,
+				840274291E72F54300272944 /* FontAwesome.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1025,11 +1064,13 @@
 				34212FC918F0649500A9109F /* HTTPDynamicFileResponse.m in Sources */,
 				34212FB818F0649500A9109F /* RDPackageResourceConnection.m in Sources */,
 				80382A081CD3F222004541FF /* NSDate+RDDateAsString.m in Sources */,
+				840274271E72F54300272944 /* NSString+FontAwesome.m in Sources */,
 				34212FBB18F0649500A9109F /* RDSmilData.mm in Sources */,
 				34212FCD18F0649500A9109F /* WebSocket.m in Sources */,
 				3462FBBE16BC3C43003C79E1 /* main.m in Sources */,
 				835847111B42DB09002DA99D /* readium-external-libs.js.map in Sources */,
 				34212FBE18F0649500A9109F /* DDNumber.m in Sources */,
+				8402742B1E72F54300272944 /* UIImage+FontAwesome.m in Sources */,
 				34212FB518F0649500A9109F /* RDNavigationElement.mm in Sources */,
 				34CE0B1F1720D8FE00F55192 /* NavigationElementController.m in Sources */,
 				34212FC218F0649500A9109F /* HTTPMessage.m in Sources */,
@@ -1046,6 +1087,7 @@
 				34212FD718F0649500A9109F /* DispatchQueueLogFormatter.m in Sources */,
 				34B56B4F1722E54A00A5A4B8 /* Settings.m in Sources */,
 				84BAD0801E00263A0087B00B /* ASINSStringAdditions.m in Sources */,
+				8402742A1E72F54300272944 /* UIFont+FontAwesome.m in Sources */,
 				341652A816C2F9E700AFDB8B /* SpineItemListController.m in Sources */,
 				8358470E1B42DB09002DA99D /* readium-cfi-js.js.map in Sources */,
 				342817DD18DBC48700C8434E /* NavigationElementItem.m in Sources */,

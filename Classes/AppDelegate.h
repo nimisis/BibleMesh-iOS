@@ -38,6 +38,7 @@
     Reachability  *hostReachability;
     NSOperationQueue *downloadQueue;
     LoginViewController *lvc;
+    ContainerListController *clc;
     
     NSManagedObjectModel *managedObjectModel;
     NSManagedObjectContext *managedObjectContext;
@@ -53,6 +54,7 @@
 @property (nonatomic, retain) NSOperationQueue *downloadQueue;
 
 @property (nonatomic, retain) LoginViewController *lvc;
+@property (nonatomic, retain) ContainerListController *clc;
 @property (nonatomic, strong) UIWindow *window;
 
 @property NSInteger userid;
@@ -62,7 +64,9 @@
 @property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
-- (void) refreshData:(ContainerListController*)clc ePubFile:(NSString*)ePubFile;
+- (void) getServerTime;
+- (void) getLibrary:(BOOL)launchcontainer;
+- (void) refreshData:(NSString*)ePubFile;
 +(void)downloadDataFromURL:(NSURL *)url patch:(NSString *)patch withCompletionHandler:(void (^)(NSData *))completionHandler;//for requesting json
 
 @end

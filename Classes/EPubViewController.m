@@ -42,6 +42,7 @@
 #import "GAIDictionaryBuilder.h"
 #import "GAIFields.h"
 #import "AppDelegate.h"
+#import "NSString+FontAwesome.h"
 
 @interface EPubViewController () <
 	RDPackageResourceServerDelegate,
@@ -836,11 +837,11 @@
 		target:self
 		action:@selector(onClickSettings)];
     
-    self.navigationItem.rightBarButtonItem.title = @"\u2699";
-    UIFont *f1 = [UIFont fontWithName:@"Helvetica" size:24.0];
-    NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:f1, UITextAttributeFont, nil];
+    UIFont *f1 = [UIFont fontWithName:kFontAwesomeFamilyName size:24];
+    NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:f1, NSFontAttributeName, nil];
     [self.navigationItem.rightBarButtonItem setTitleTextAttributes:dict forState:UIControlStateNormal];
     
+    self.navigationItem.rightBarButtonItem.title = [NSString fontAwesomeIconStringForEnum:FACog];
 }
 
 - (void)updateHighlights:(NSString *)idref {//fix could have more than one idref
@@ -971,8 +972,21 @@
              
              [[appDelegate latestLocation] setLastUpdated:[unixtime longLongValue]];
              [[appDelegate latestLocation] setIdref:[dict valueForKey:@"idref"]];
-             //[[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"contentCFI"]];
-             [[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"elementCfi"]];
+             
+             //fix changed back to contentCFI on 9th March as not saving the progress within a chapter when navigating through page. Why was it changed to @"elementCfi" before though??
+             
+             if ([dict valueForKey:@"contentCFI"] == NULL) {
+                 NSLog(@"getting null for contentCFI");
+             } else {
+                 NSLog(@"getting value for contentCFI");
+             }
+             if ([dict valueForKey:@"contentCfi"] == NULL) {
+                 NSLog(@"getting null for contentCfi");
+             } else {
+                 NSLog(@"getting value for contentCfi");
+             }
+             [[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"contentCFI"]];
+             //[[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"elementCfi"]];
              
              NSError *error = nil;
              if ([[appDelegate managedObjectContext] save:&error]) {
