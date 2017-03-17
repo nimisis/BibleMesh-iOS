@@ -41,6 +41,7 @@
 #import "BibleMesh-swift.h" //required for new CoreData codegen
 #import "Download.h"
 #import "RDSpineItem.h"
+#import "NSString+FontAwesome.h"
 
 @implementation ContainerListController
 
@@ -90,9 +91,16 @@
     
     UIBarButtonItem *logoutButton = [[UIBarButtonItem alloc] initWithTitle:@"logout" style:UIBarButtonItemStylePlain target:self action:@selector(logout)];
     self.navigationItem.rightBarButtonItem = logoutButton;
-    
-    UIBarButtonItem *refreshButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refresh)];
+    UIBarButtonItem *refreshButton = [[UIBarButtonItem alloc] initWithTitle:@"refresh" style:UIBarButtonItemStylePlain target:self action:@selector(refresh)];
     self.navigationItem.leftBarButtonItem = refreshButton;
+    
+    UIFont *f1 = [UIFont fontWithName:kFontAwesomeFamilyName size:24];
+    NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:f1, NSFontAttributeName, nil];
+    [self.navigationItem.rightBarButtonItem setTitleTextAttributes:dict forState:UIControlStateNormal];
+    self.navigationItem.rightBarButtonItem.title = [NSString fontAwesomeIconStringForEnum:FASignOut];
+    
+    [self.navigationItem.leftBarButtonItem setTitleTextAttributes:dict forState:UIControlStateNormal];
+    self.navigationItem.leftBarButtonItem.title = [NSString fontAwesomeIconStringForEnum:FARefresh];
 }
 
 - (void) refresh {
