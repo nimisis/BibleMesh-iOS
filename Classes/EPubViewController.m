@@ -43,6 +43,7 @@
 #import "GAIFields.h"
 #import "AppDelegate.h"
 #import "NSString+FontAwesome.h"
+#import "NavigationElementController.h"
 
 @interface EPubViewController () <
 	RDPackageResourceServerDelegate,
@@ -51,7 +52,9 @@
 	UIWebViewDelegate,
     UIGestureRecognizerDelegate,
 	WKScriptMessageHandler,
-    UITextViewDelegate
+    UITextViewDelegate,
+    UITableViewDelegate,
+    UITableViewDataSource
 >
 {
 	@private UIAlertView *m_alertAddBookmark;
@@ -73,8 +76,10 @@
 	@private __weak WKWebView *m_webViewWK;
     @private NSTimer *hideTimer;
     @private UIProgressView *progress;
+    @private UITableView *tableView;
 }
 
+//@property (strong, nonatomic) UITableView *tableView;
 @end
 
 @implementation EPubViewController
@@ -500,6 +505,12 @@
 		[webView loadRequest:[NSURLRequest requestWithURL:url]];
 	}
     
+    tableView = [[UITableView alloc] initWithFrame:CGRectNull];
+    
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panned:)];
+    //[tap setDelegate:self];
+    [tableView addGestureRecognizer:pan];
+    
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)];
     //[tap setDelegate:self];
     [[self view] addGestureRecognizer:tap];
@@ -590,9 +601,9 @@
     NSLog(@"tap2");
 }*/
 
--(void)panned:(UIPanGestureRecognizer *) pan {
+/*-(void)panned:(UIPanGestureRecognizer *) pan {
     NSLog(@"pan");
-}
+}*/
 
 -(void)pressed:(UILongPressGestureRecognizer *) press {
     NSLog(@"press");
@@ -832,16 +843,22 @@
 }
 
 - (void)updateNavigationItems {
-	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
-		initWithTitle:@"Settings" style:UIBarButtonItemStylePlain
-		target:self
-		action:@selector(onClickSettings)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
+                                              initWithTitle:@"Settings" style:UIBarButtonItemStylePlain
+                                              target:self
+                                              action:@selector(onClickSettings)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]
+                                              initWithTitle:@"Menu" style:UIBarButtonItemStylePlain
+                                              target:self
+                                              action:@selector(onClickMenu)];
     
     UIFont *f1 = [UIFont fontWithName:kFontAwesomeFamilyName size:24];
     NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:f1, NSFontAttributeName, nil];
     [self.navigationItem.rightBarButtonItem setTitleTextAttributes:dict forState:UIControlStateNormal];
+    [self.navigationItem.leftBarButtonItem setTitleTextAttributes:dict forState:UIControlStateNormal];
     
     self.navigationItem.rightBarButtonItem.title = [NSString fontAwesomeIconStringForEnum:FACog];
+    self.navigationItem.leftBarButtonItem.title = [NSString fontAwesomeIconStringForEnum:FABars];
 }
 
 - (void)updateHighlights:(NSString *)idref {//fix could have more than one idref
@@ -985,7 +1002,11 @@
              } else {
                  NSLog(@"getting value for contentCfi");
              }
-             [[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"contentCFI"]];
+             if ([[dict valueForKey:@"contentCFI"] isKindOfClass:[NSNull class]]) {
+                 NSLog(@"got a null contentCFI");
+             } else {
+                 [[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"contentCFI"]];
+             }
              //[[appDelegate latestLocation] setElementCfi:[dict valueForKey:@"elementCfi"]];
              
              NSError *error = nil;
@@ -1456,5 +1477,167 @@
     [m_resourceServer startHTTPServer];
 }
 
+
+- (void) onClickMenu {
+    NSLog(@"showing menu");
+    
+    CGRect frameend = self.view.bounds;
+    frameend.size.width = 0.5 * self.view.bounds.size.width;
+    frameend.origin.x = 0;//0.5 * self.view.bounds.size.width;
+    CGRect framestart = frameend;
+    framestart.origin.x -= frameend.size.width;
+    [tableView setFrame:framestart];
+    tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
+    
+    tableView.rowHeight = 45;
+    tableView.sectionFooterHeight = 22;
+    tableView.sectionHeaderHeight = 60;
+    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    tableView.delegate = self;
+    tableView.dataSource = self;
+    tableView.backgroundColor = [UIColor grayColor];
+    //tableView.se
+    
+    [self.navigationController.view addSubview:tableView];
+    
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDidStopSelector:@selector( animationFinished:finished:context: )];
+    [UIView beginAnimations:@"slideMenu" context:(__bridge void * _Nullable)(self.view)];
+    
+    tableView.frame = frameend;
+    //self.view.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:0.5];
+    
+    [UIView commitAnimations];
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    UIView *hview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 60)];
+    hview.backgroundColor = [UIColor grayColor];
+    return hview;
+}
+
+- (void)animationFinished:(NSString *)animationID finished:(BOOL)finished context:(void*)context {
+    //[self done];
+}
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return @" ";
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
+
+{
+    return 2;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *CellIdentifier = @"Cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
+        cell.backgroundColor = [UIColor grayColor];
+        cell.textLabel.textColor = [UIColor whiteColor];
+    }
+    
+    switch(indexPath.row) {
+        case 0:
+            //cell.textLabel.text = @"Library";
+        {
+            cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", [NSString fontAwesomeIconStringForEnum:FAFolderOpen], @"Library"];
+            NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@", [NSString fontAwesomeIconStringForEnum:FAFolderOpen], @"Library"]];
+            [attributedString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:16] range:NSMakeRange(1, [cell.textLabel.text length] - 1)];
+            [attributedString addAttribute:NSFontAttributeName value:[UIFont fontWithName:kFontAwesomeFamilyName size:22] range:NSMakeRange(0, 1)];
+            [cell.textLabel setAttributedText:attributedString];
+        }
+            break;
+        case 1:
+        {
+            cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", [NSString fontAwesomeIconStringForEnum:FAFileTextO], @"Table of Contents"];
+            NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@", [NSString fontAwesomeIconStringForEnum:FAFileTextO], @"Table of Contents"]];
+            [attributedString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:16] range:NSMakeRange(1, [cell.textLabel.text length] - 1)];
+            [attributedString addAttribute:NSFontAttributeName value:[UIFont fontWithName:kFontAwesomeFamilyName size:22] range:NSMakeRange(0, 1)];
+            [cell.textLabel setAttributedText:attributedString];
+        }
+            break;
+    }
+    return cell;
+}
+
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    switch (indexPath.row) {
+        case 0:
+            [self dismissViewControllerAnimated:YES completion:nil];
+            break;
+        case 1:
+            NSLog(@"Do ToC");
+            [self dismissViewControllerAnimated:YES completion:^(){
+                //NSString ePubFile = @"";
+                AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                //RDContainer *m_container = [[RDContainer alloc] initWithDelegate:[appDelegate clc] path:ePubFile];
+                //RDPackage *m_package = m_container.firstPackage;
+                /*SpineItemListController *c = [[SpineItemListController alloc]
+                                              initWithContainer:m_container package:m_package];*/
+                
+                NavigationElementController *c = [[NavigationElementController alloc]
+                     initWithNavigationElement:m_package.tableOfContents
+                     container:m_container
+                     package:m_package
+                     title:@"Table of Contents"];
+                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:c];
+                [[appDelegate clc].navigationController presentViewController:nav animated:YES completion:nil];
+                //[self.navigationController pushViewController:c animated:YES];
+            }];
+            
+            break;
+    };
+}
+
+- (void)panned:(UIPanGestureRecognizer *)recognizer {
+    CGPoint translation = [recognizer translationInView:tableView];
+    
+    //NSLog(@"x: %.0f tran: %.0f width:%.0f", recognizer.view.center.x + translation.x, translation.x, self.tableView.frame.size.width);
+    
+    if (recognizer.view.center.x + translation.x >= 0.5*tableView.frame.size.width) {
+        
+        recognizer.view.center = CGPointMake(0.5*tableView.frame.size.width,
+                                             recognizer.view.center.y);
+    } else {
+        recognizer.view.center = CGPointMake(recognizer.view.center.x + translation.x,
+                                             recognizer.view.center.y);
+    }
+    if (recognizer.state == UIGestureRecognizerStateEnded) {
+        CGPoint velocity = [recognizer velocityInView:self.view];
+        CGFloat magnitude = sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y));
+        CGFloat slideMult = magnitude / 200;
+        
+        float slideFactor = 0.1 * slideMult;
+        NSLog(@"ended");
+        CGPoint finalPoint;
+        if (recognizer.view.center.x < 0.125*self.view.frame.size.width) {
+            NSLog(@"close");
+            finalPoint = CGPointMake(self.view.frame.origin.x-0.25*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
+        } else {
+            NSLog(@"open");
+            finalPoint = CGPointMake(self.view.frame.origin.x+0.25*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
+        }
+        [UIView animateWithDuration: slideFactor
+                              delay: 0
+                            options: UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             recognizer.view.center = finalPoint; }
+                         completion:nil];
+        
+    }
+    
+    
+    [recognizer setTranslation:CGPointMake(0, 0) inView:tableView];
+    
+}
 
 @end

@@ -34,7 +34,7 @@
 #import "RDNavigationElement.h"
 #import "RDPackage.h"
 #import "RDSpineItem.h"
-
+#import "AppDelegate.h"
 
 @interface NavigationElementController () {
 	@private NSMutableArray *m_items;
@@ -118,7 +118,7 @@
 		cell.textLabel.textColor = [UIColor colorWithWhite:0 alpha:0.5];
 	}
 	else {
-		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		//cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	}
 
 	return cell;
@@ -138,7 +138,12 @@
 			navElement:item.element];
 
 		if (c != nil) {
-			[self.navigationController pushViewController:c animated:YES];
+			//[self.navigationController pushViewController:c animated:YES];
+            [self dismissViewControllerAnimated:YES completion:^() {
+                AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:c];
+                [[appDelegate clc] presentViewController:nav animated:YES completion:nil];
+            }];
 		}
 	}
 }

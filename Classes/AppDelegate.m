@@ -1054,7 +1054,10 @@
                 }
                 if (c != nil) {
                     //[c setLoc:[self latestLocation]];
-                    [clc.navigationController pushViewController:c animated:YES];
+                    //[clc.navigationController pushViewController:c animated:YES];
+                    
+                    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:c];
+                    [clc.navigationController presentViewController:nav animated:YES completion:nil];
                 } else {
                     //fix error
                 }
