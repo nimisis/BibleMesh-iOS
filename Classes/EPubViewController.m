@@ -1575,25 +1575,41 @@
             [self dismissViewControllerAnimated:YES completion:nil];
             break;
         case 1:
-            NSLog(@"Do ToC");
-            [self dismissViewControllerAnimated:YES completion:^(){
-                //NSString ePubFile = @"";
+            if (true) //fix have method that doesn't show libary flash
+        {
+            [self dismissViewControllerAnimated:NO completion:^(){
                 AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-                //RDContainer *m_container = [[RDContainer alloc] initWithDelegate:[appDelegate clc] path:ePubFile];
-                //RDPackage *m_package = m_container.firstPackage;
-                /*SpineItemListController *c = [[SpineItemListController alloc]
-                                              initWithContainer:m_container package:m_package];*/
-                
                 NavigationElementController *c = [[NavigationElementController alloc]
                      initWithNavigationElement:m_package.tableOfContents
                      container:m_container
                      package:m_package
                      title:@"Table of Contents"];
                 UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:c];
-                [[appDelegate clc].navigationController presentViewController:nav animated:YES completion:nil];
+                [[appDelegate clc].navigationController presentViewController:nav animated:NO completion:nil];
                 //[self.navigationController pushViewController:c animated:YES];
             }];
+        } else {
             
+            //[self dismissViewControllerAnimated:NO completion:^(){
+            //AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+            NavigationElementController *c = [[NavigationElementController alloc]
+                                              initWithNavigationElement:m_package.tableOfContents
+                                              container:m_container
+                                              package:m_package
+                                              title:@"Table of Contents"];
+            
+            /*CATransition *transition = [[CATransition alloc] init];
+             transition.duration = 0.5;
+             transition.type = kCATransitionPush;
+             transition.subtype = kCATransitionFromRight;
+             [self.view.window.layer addAnimation:transition forKey:kCATransition];*/
+            
+            /*[[appDelegate clc].navigationController presentViewController:nav animated:YES completion:^(){
+             //[self dismissViewControllerAnimated:YES completion:nil];
+             }];*/
+            [self.navigationController setNavigationBarHidden:NO animated:YES];
+            [self.navigationController pushViewController:c animated:YES];
+        }
             break;
     };
 }

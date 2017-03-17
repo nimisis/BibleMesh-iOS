@@ -139,10 +139,10 @@
 
 		if (c != nil) {
 			//[self.navigationController pushViewController:c animated:YES];
-            [self dismissViewControllerAnimated:YES completion:^() {
+            [self dismissViewControllerAnimated:NO completion:^() {
                 AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
                 UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:c];
-                [[appDelegate clc] presentViewController:nav animated:YES completion:nil];
+                [[appDelegate clc] presentViewController:nav animated:NO completion:nil];
             }];
 		}
 	}
