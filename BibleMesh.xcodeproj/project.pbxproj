@@ -108,6 +108,7 @@
 		8402742A1E72F54300272944 /* UIFont+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = 840274241E72F54300272944 /* UIFont+FontAwesome.m */; };
 		8402742B1E72F54300272944 /* UIImage+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = 840274261E72F54300272944 /* UIImage+FontAwesome.m */; };
 		8464BD011E16D24A001FA042 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8464BD001E16D24A001FA042 /* CoreData.framework */; };
+		847F3F641E7DC9ED0021076F /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 847F3F631E7DC9ED0021076F /* Social.framework */; };
 		849BE1CA1E1BD03E00D7F283 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 849BE1C51E1BD03E00D7F283 /* LoginViewController.m */; };
 		849BE1CB1E1BD03E00D7F283 /* LoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849BE1C61E1BD03E00D7F283 /* LoginViewController.xib */; };
 		849BE1CC1E1BD03E00D7F283 /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 849BE1C81E1BD03E00D7F283 /* WebViewController.m */; };
@@ -327,6 +328,7 @@
 		840274251E72F54300272944 /* UIImage+FontAwesome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+FontAwesome.h"; sourceTree = "<group>"; };
 		840274261E72F54300272944 /* UIImage+FontAwesome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+FontAwesome.m"; sourceTree = "<group>"; };
 		8464BD001E16D24A001FA042 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		847F3F631E7DC9ED0021076F /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		849BE1C41E1BD03E00D7F283 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		849BE1C51E1BD03E00D7F283 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		849BE1C61E1BD03E00D7F283 /* LoginViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginViewController.xib; sourceTree = "<group>"; };
@@ -390,6 +392,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				847F3F641E7DC9ED0021076F /* Social.framework in Frameworks */,
 				849BE2A11E1BEA7300D7F283 /* libsqlite3.tbd in Frameworks */,
 				8464BD011E16D24A001FA042 /* CoreData.framework in Frameworks */,
 				84BAD0401DFF5C630087B00B /* SystemConfiguration.framework in Frameworks */,
@@ -470,6 +473,7 @@
 		340FC15B16BC3B4600346A59 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				847F3F631E7DC9ED0021076F /* Social.framework */,
 				849BE2A01E1BEA7300D7F283 /* libsqlite3.tbd */,
 				8464BD001E16D24A001FA042 /* CoreData.framework */,
 				84BAD03F1DFF5C620087B00B /* SystemConfiguration.framework */,

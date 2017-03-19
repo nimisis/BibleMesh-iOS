@@ -44,6 +44,9 @@
 #import "AppDelegate.h"
 #import "NSString+FontAwesome.h"
 #import "NavigationElementController.h"
+#import <Social/Social.h>
+#import <Accounts/Accounts.h>
+#import <MessageUI/MessageUI.h>
 
 @interface EPubViewController () <
 	RDPackageResourceServerDelegate,
@@ -54,7 +57,8 @@
 	WKScriptMessageHandler,
     UITextViewDelegate,
     UITableViewDelegate,
-    UITableViewDataSource
+    UITableViewDataSource,
+    UIActionSheetDelegate
 >
 {
 	@private UIAlertView *m_alertAddBookmark;
@@ -77,9 +81,9 @@
     @private NSTimer *hideTimer;
     @private UIProgressView *progress;
     @private UITableView *tableView;
+    @private Highlight *thl;
 }
 
-//@property (strong, nonatomic) UITableView *tableView;
 @end
 
 @implementation EPubViewController
@@ -1277,7 +1281,8 @@
             AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
             tv.text = @"Notes";
             tv.textColor = [UIColor lightGrayColor];
-            Highlight *thl = nil;
+            //Highlight *
+            thl = nil;
             for (Highlight *hl in [appDelegate highlightsArray]) {
                 NSLog(@"matching %d with %@", [hl annotationID], body[1]);
                 if ([[NSString stringWithFormat:@"\"%d\"", [hl annotationID]] isEqualToString:body[1]]) {
@@ -1344,6 +1349,40 @@
                                           style:UIAlertActionStyleDefault
                                           handler:^(UIAlertAction * action) {
                                               NSLog(@"Shared");//fix todo
+                                              
+                                              
+                                              
+                                              //- (void)share {
+                                                  //NSLog(@"share");
+                                                  NSString *actionSheetTitle = @"Share"; //Action Sheet Title
+                                                  //NSString *destructiveTitle = @"Destructive Button"; //Action Sheet Button Titles
+                                                  NSString *other1 = @"Twitter";
+                                                  NSString *other2 = @"Facebook";
+                                                  NSString *other3 = @"Email";
+                                                  NSString *cancelTitle = @"Cancel";
+                                                  UIActionSheet *actionSheet = [[UIActionSheet alloc]
+                                                                                initWithTitle:actionSheetTitle
+                                                                                delegate:self
+                                                                                cancelButtonTitle:cancelTitle
+                                                                                destructiveButtonTitle:nil //destructiveTitle
+                                                                                otherButtonTitles:other1, other2, other3, nil];
+                                                  [actionSheet showInView:self.view];
+                                              
+                                              /*
+                                                  id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+                                                  
+                                                  [tracker send:[[GAIDictionaryBuilder createEventWithCategory:@"talk"     // Event category (required)
+                                                                                                        action:@"share"  // Event action (required)
+                                                                                                         label:nil          // Event label
+                                                                                                         value:nil] build]];    // Event value
+                                              */
+                                                  
+                                              //}
+                                              
+                                              
+                                              
+                                              
+                                              
                                           }];
             
             [alert addAction:shareButton];
@@ -1368,6 +1407,72 @@
         NSLog(@"messageName %@", messageName);
     }
     
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString *buttonTitle = [actionSheet buttonTitleAtIndex:buttonIndex];
+    /*if  ([buttonTitle isEqualToString:@"Destructive Button"]) {
+     NSLog(@"Destructive pressed --> Delete Something");
+     }*/
+    NSString *shareText = @"Share";//[NSString stringWithFormat:@"Listen to \"%@\"", ptitle];
+    //NSLog(@"text %@", shareText);
+    NSString *go = [NSString stringWithFormat:@"{\"idref\":\"%@\",\"elementCfi\":\"%@\"}", [thl idref], [thl cfi]];
+    [go stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    NSString *shareURL = [NSString stringWithFormat:@"https://read.biblemesh.com/book/7?goto=%@", [go stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]];
+    //NSLog(@"url %@", shareURL);
+    if ([buttonTitle isEqualToString:@"Twitter"]) {
+        //NSLog(@"Twitter");
+        if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
+            
+            SLComposeViewController *mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
+            
+            [mySLComposerSheet setInitialText:shareText];
+            [mySLComposerSheet addURL:[NSURL URLWithString:shareURL]];
+            
+            [self presentViewController:mySLComposerSheet animated:YES completion:nil];
+        } else {
+            UIAlertView * errorAlert = [[UIAlertView alloc] initWithTitle:@"Can't tweet" message:@"Your Twitter account is not set up on this device" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            //[errorAlert show];
+            [errorAlert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
+        }
+    }
+    if ([buttonTitle isEqualToString:@"Facebook"]) {
+        //NSLog(@"Facebook");
+        if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
+            
+            SLComposeViewController *mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
+            
+            [mySLComposerSheet setInitialText:shareText];
+            [mySLComposerSheet addURL:[NSURL URLWithString:shareURL]];
+            
+            [self presentViewController:mySLComposerSheet animated:YES completion:nil];
+        } else {
+            UIAlertView * errorAlert = [[UIAlertView alloc] initWithTitle:@"Can't share" message:@"Your Facebook account is not set up on this device" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            //[errorAlert show];
+            [errorAlert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
+        }
+    }
+    if ([buttonTitle isEqualToString:@"Email"]) {
+        //NSLog(@"Email");
+        if ([MFMailComposeViewController canSendMail]) {
+            MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
+            //mailer.mailComposeDelegate = self;
+            [mailer setMailComposeDelegate:self];
+            [mailer setSubject:shareText];
+            NSString *emailBody = shareURL;
+            [mailer setMessageBody:emailBody isHTML:NO];
+            [self presentViewController:mailer animated:YES completion:nil];
+            //[mailer release];
+        } else {
+            UIAlertView * errorAlert = [[UIAlertView alloc] initWithTitle:@"Can't share" message:@"Your email is not set up on this device" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            //[errorAlert show];
+            [errorAlert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
+        }
+    }
+    if ([buttonTitle isEqualToString:@"Cancel"]) {
+        //NSLog(@"Cancel pressed --> Cancel ActionSheet");
+    }
 }
 
 - (void)viewDidLayoutSubviews {
@@ -1558,8 +1663,8 @@
             break;
         case 1:
         {
-            cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", [NSString fontAwesomeIconStringForEnum:FAFileTextO], @"Table of Contents"];
-            NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@", [NSString fontAwesomeIconStringForEnum:FAFileTextO], @"Table of Contents"]];
+            cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", [NSString fontAwesomeIconStringForEnum:FAListUl], @"Table of Contents"];
+            NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@", [NSString fontAwesomeIconStringForEnum:FAListUl], @"Table of Contents"]];
             [attributedString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:16] range:NSMakeRange(1, [cell.textLabel.text length] - 1)];
             [attributedString addAttribute:NSFontAttributeName value:[UIFont fontWithName:kFontAwesomeFamilyName size:22] range:NSMakeRange(0, 1)];
             [cell.textLabel setAttributedText:attributedString];
