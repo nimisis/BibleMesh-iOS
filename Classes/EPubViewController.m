@@ -81,7 +81,7 @@
     @private NSTimer *hideTimer;
     @private UIProgressView *progress;
     @private UITableView *tableView;
-    @private Highlight *thl;
+    //@private Highlight *thl;
 }
 
 @end
@@ -1281,8 +1281,7 @@
             AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
             tv.text = @"Notes";
             tv.textColor = [UIColor lightGrayColor];
-            //Highlight *
-            thl = nil;
+            Highlight *thl = nil;
             for (Highlight *hl in [appDelegate highlightsArray]) {
                 NSLog(@"matching %d with %@", [hl annotationID], body[1]);
                 if ([[NSString stringWithFormat:@"\"%d\"", [hl annotationID]] isEqualToString:body[1]]) {
@@ -1348,40 +1347,32 @@
                                           actionWithTitle:@"Share"
                                           style:UIAlertActionStyleDefault
                                           handler:^(UIAlertAction * action) {
-                                              NSLog(@"Shared");//fix todo
+                                              NSLog(@"Shared");
                                               
+                                              NSString *go = [NSString stringWithFormat:@"{\"idref\":\"%@\",\"elementCfi\":\"%@\"}", [thl idref], [thl cfi]];
+                                              [go stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+                                              NSString *shareURL = [NSString stringWithFormat:@"https://read.biblemesh.com/book/7?goto=%@", [go stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]];
+                                              //NSString *shareURL = [NSString stringWithFormat:@"%@", mp3FileName];
+                                              //NSLog(@"url %@", shareURL);
                                               
+                                              NSURL *talkURL = [NSURL URLWithString:shareURL];
                                               
-                                              //- (void)share {
-                                                  //NSLog(@"share");
-                                                  NSString *actionSheetTitle = @"Share"; //Action Sheet Title
-                                                  //NSString *destructiveTitle = @"Destructive Button"; //Action Sheet Button Titles
-                                                  NSString *other1 = @"Twitter";
-                                                  NSString *other2 = @"Facebook";
-                                                  NSString *other3 = @"Email";
-                                                  NSString *cancelTitle = @"Cancel";
-                                                  UIActionSheet *actionSheet = [[UIActionSheet alloc]
-                                                                                initWithTitle:actionSheetTitle
-                                                                                delegate:self
-                                                                                cancelButtonTitle:cancelTitle
-                                                                                destructiveButtonTitle:nil //destructiveTitle
-                                                                                otherButtonTitles:other1, other2, other3, nil];
-                                                  [actionSheet showInView:self.view];
+                                              NSMutableArray *activityItems= [NSMutableArray arrayWithObjects:talkURL, //shareText,
+                                                                              nil];
                                               
-                                              /*
-                                                  id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
-                                                  
-                                                  [tracker send:[[GAIDictionaryBuilder createEventWithCategory:@"talk"     // Event category (required)
-                                                                                                        action:@"share"  // Event action (required)
-                                                                                                         label:nil          // Event label
-                                                                                                         value:nil] build]];    // Event value
-                                              */
-                                                  
-                                              //}
+                                              UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+                                              /*activityViewController.excludedActivityTypes = @[UIActivityTypePostToWeibo,UIActivityTypePrint,
+                                               UIActivityTypeCopyToPasteboard,UIActivityTypeAssignToContact,
+                                               UIActivityTypeSaveToCameraRoll,UIActivityTypeAddToReadingList,
+                                               UIActivityTypePostToFlickr,UIActivityTypePostToVimeo,
+                                               UIActivityTypePostToTencentWeibo,UIActivityTypeAirDrop];*/
                                               
-                                              
-                                              
-                                              
+                                              if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+                                                  [self presentViewController:activityViewController animated:YES completion:nil];
+                                              } else {
+                                                  UIPopoverController *popup = [[UIPopoverController alloc] initWithContentViewController:activityViewController];
+                                                  [popup presentPopoverFromRect:CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0)inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+                                              }
                                               
                                           }];
             
@@ -1405,73 +1396,6 @@
     } else if ([messageName isEqualToString:@"settingsDidApply"]) {
     } else {
         NSLog(@"messageName %@", messageName);
-    }
-    
-}
-
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    NSString *buttonTitle = [actionSheet buttonTitleAtIndex:buttonIndex];
-    /*if  ([buttonTitle isEqualToString:@"Destructive Button"]) {
-     NSLog(@"Destructive pressed --> Delete Something");
-     }*/
-    NSString *shareText = @"Share";//[NSString stringWithFormat:@"Listen to \"%@\"", ptitle];
-    //NSLog(@"text %@", shareText);
-    NSString *go = [NSString stringWithFormat:@"{\"idref\":\"%@\",\"elementCfi\":\"%@\"}", [thl idref], [thl cfi]];
-    [go stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-    NSString *shareURL = [NSString stringWithFormat:@"https://read.biblemesh.com/book/7?goto=%@", [go stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]];
-    //NSLog(@"url %@", shareURL);
-    if ([buttonTitle isEqualToString:@"Twitter"]) {
-        //NSLog(@"Twitter");
-        if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
-            
-            SLComposeViewController *mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
-            
-            [mySLComposerSheet setInitialText:shareText];
-            [mySLComposerSheet addURL:[NSURL URLWithString:shareURL]];
-            
-            [self presentViewController:mySLComposerSheet animated:YES completion:nil];
-        } else {
-            UIAlertView * errorAlert = [[UIAlertView alloc] initWithTitle:@"Can't tweet" message:@"Your Twitter account is not set up on this device" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            //[errorAlert show];
-            [errorAlert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
-        }
-    }
-    if ([buttonTitle isEqualToString:@"Facebook"]) {
-        //NSLog(@"Facebook");
-        if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
-            
-            SLComposeViewController *mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
-            
-            [mySLComposerSheet setInitialText:shareText];
-            [mySLComposerSheet addURL:[NSURL URLWithString:shareURL]];
-            
-            [self presentViewController:mySLComposerSheet animated:YES completion:nil];
-        } else {
-            UIAlertView * errorAlert = [[UIAlertView alloc] initWithTitle:@"Can't share" message:@"Your Facebook account is not set up on this device" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            //[errorAlert show];
-            [errorAlert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
-        }
-    }
-    if ([buttonTitle isEqualToString:@"Email"]) {
-        //NSLog(@"Email");
-        if ([MFMailComposeViewController canSendMail]) {
-            MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
-            //mailer.mailComposeDelegate = self;
-            [mailer setMailComposeDelegate:self];
-            [mailer setSubject:shareText];
-            NSString *emailBody = shareURL;
-            [mailer setMessageBody:emailBody isHTML:NO];
-            [self presentViewController:mailer animated:YES completion:nil];
-            //[mailer release];
-        } else {
-            UIAlertView * errorAlert = [[UIAlertView alloc] initWithTitle:@"Can't share" message:@"Your email is not set up on this device" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            //[errorAlert show];
-            [errorAlert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
-        }
-    }
-    if ([buttonTitle isEqualToString:@"Cancel"]) {
-        //NSLog(@"Cancel pressed --> Cancel ActionSheet");
     }
 }
 
