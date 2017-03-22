@@ -81,6 +81,7 @@
     @private NSTimer *hideTimer;
     @private UIProgressView *progress;
     @private UITableView *tableView;
+    @private UIButton *highlightbtn;
     //@private Highlight *thl;
 }
 
@@ -520,6 +521,18 @@
     [[self view] addGestureRecognizer:tap];
     //[[m_webViewWK scrollView] addGestureRecognizer:tap];
     
+    highlightbtn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [highlightbtn addTarget:self action:@selector(onClickAddHighlight) forControlEvents:UIControlEventTouchUpInside];
+    [highlightbtn setFrame:CGRectNull];
+    
+    [highlightbtn setTitle:@"highlight" forState:UIControlStateNormal];
+    [highlightbtn setExclusiveTouch:YES];
+    
+    // if you like to add backgroundImage else no need
+    //[but setbackgroundImage:[UIImage imageNamed:@"XXX.png"] forState:UIControlStateNormal];
+    
+    [self.view addSubview:highlightbtn];
+    
     /*UITapGestureRecognizer *tap2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped2:)];
     [tap2 setDelegate:self];
     //[[self view] addGestureRecognizer:tap];
@@ -621,7 +634,7 @@
     [self executeJavaScript:@"ReadiumSDK.reader.openPagePrev()" completionHandler:nil];
 }
 
-- (void)onClickAddHighlight {    
+- (void)onClickAddHighlight {
     [self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.getCurrentSelectionCfi()" completionHandler:^(id response, NSError *error){
         if (!response) {
             NSLog(@"no selection");
@@ -863,6 +876,7 @@
     
     self.navigationItem.rightBarButtonItem.title = [NSString fontAwesomeIconStringForEnum:FACog];
     self.navigationItem.leftBarButtonItem.title = [NSString fontAwesomeIconStringForEnum:FABars];
+    
 }
 
 - (void)updateHighlights:(NSString *)idref {//fix could have more than one idref
@@ -1193,12 +1207,12 @@
 			[items addObject:itemFixed];
 		}
 
-		[items addObject:[[UIBarButtonItem alloc]
+		/*[items addObject:[[UIBarButtonItem alloc]
 			initWithTitle:@"highlight"
             style:UIBarButtonItemStylePlain
 			target:self
 			action:@selector(onClickAddHighlight)]
-		];
+		];*/
 
 		self.toolbarItems = items;
 	}];
@@ -1423,6 +1437,8 @@
 		m_webViewWK.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
         
         progress.frame = CGRectMake(10, size.height - 10, size.width-20, 10);
+        
+        [highlightbtn setFrame:CGRectMake(size.width-80, size.height-35, 80, 20)];
     }
 }
 

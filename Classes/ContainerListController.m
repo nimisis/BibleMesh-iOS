@@ -128,6 +128,11 @@
                                         {
                                             [storage deleteCookie:cookie];
                                         }
+                                        /*NSHTTPCookieStorage *storage2 = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+                                        for (NSHTTPCookie *cookie in [storage2 cookies])
+                                        {
+                                            [storage deleteCookie:cookie];
+                                        }*/
                                         
                                         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
                                         [[appDelegate lvc] setFirstload:YES];

@@ -17,6 +17,7 @@
 @implementation LoginViewController
 
 @synthesize firstload;
+@synthesize loginBtn;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -105,7 +106,7 @@
                 NetworkStatus netStatus = [[appDelegate hostReachability] currentReachabilityStatus];
                 if (netStatus == NotReachable) {
                     //show login button
-                    [_loginBtn setHidden:FALSE];
+                    [loginBtn setHidden:FALSE];
                     UIAlertView *alert = [[UIAlertView alloc]
                                           initWithTitle:@"No connectivity"
                                           message:@"Please connect to the internet to authenticate your device."
@@ -116,7 +117,8 @@
                 } else {
                     NSLog(@"presenting webview for log in");
                     WebViewController *wvc = [[WebViewController alloc] initWithNibName:@"WebViewController" bundle:nil];
-                    [self presentViewController:wvc animated:YES completion:nil];
+                    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:wvc];
+                    [self presentViewController:nav animated:YES completion:nil];
                 }
             }
         } else {
@@ -186,7 +188,7 @@
                     [appDelegate window].rootViewController = [[UINavigationController alloc] initWithRootViewController:[appDelegate clc]];
                 } else {
                     //show login button
-                    [_loginBtn setHidden:FALSE];
+                    [loginBtn setHidden:FALSE];
                     UIAlertView *alert = [[UIAlertView alloc]
                                           initWithTitle:@"No connectivity"
                                           message:@"Please connect to the internet to authenticate your device."
@@ -198,7 +200,8 @@
             } else {
                 NSLog(@"presenting webview for log in");
                 WebViewController *wvc = [[WebViewController alloc] initWithNibName:@"WebViewController" bundle:nil];
-                [self presentViewController:wvc animated:YES completion:nil];
+                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:wvc];
+                [self presentViewController:nav animated:YES completion:nil];
             }
         }
     }
@@ -222,9 +225,10 @@
                               otherButtonTitles:nil];
         [alert show];
     } else {
-        [_loginBtn setHidden:TRUE];
+        [loginBtn setHidden:TRUE];
         WebViewController *wvc = [[WebViewController alloc] initWithNibName:@"WebViewController" bundle:nil];
-        [self presentViewController:wvc animated:YES completion:nil];
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:wvc];
+        [self presentViewController:nav animated:YES completion:nil];
     }
 }
 

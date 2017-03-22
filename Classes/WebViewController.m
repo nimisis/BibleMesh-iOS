@@ -19,11 +19,24 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancel)];
+    self.navigationItem.leftBarButtonItem = cancelButton;
     
     NSMutableURLRequest* urlRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://read.biblemesh.com/usersetup.json"]];
     [urlRequest setValue:@"true" forHTTPHeaderField:@"App-Request"];
     
     [_webView loadRequest:urlRequest];
+}
+
+- (void) cancel {
+    /*NSHTTPCookieStorage *storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    for (NSHTTPCookie *cookie in [storage cookies])
+    {
+        [storage deleteCookie:cookie];
+    }*/
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [[[appDelegate lvc] loginBtn] setHidden:NO];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)didReceiveMemoryWarning {
