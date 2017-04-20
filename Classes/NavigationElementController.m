@@ -87,10 +87,14 @@
 	return self;
 }
 
-
 - (void)loadView {
 	self.view = [[UIView alloc] init];
-
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
+                                              initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain
+                                              target:self
+                                              action:@selector(cancel)];
+    
 	UITableView *table = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
 	m_table = table;
 	table.dataSource = self;
@@ -98,6 +102,10 @@
 	[self.view addSubview:table];
 }
 
+- (void) cancel {
+    [self dismissViewControllerAnimated:NO completion:^() {
+    }];
+}
 
 - (UITableViewCell *)
 	tableView:(UITableView *)tableView

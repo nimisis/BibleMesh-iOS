@@ -1144,7 +1144,7 @@
         NSString* totalPages = [NSString stringWithFormat:@"%d", pageCount];
         
         //label.text = LocStr(@"PAGE_X_OF_Y", [currentPages UTF8String], [totalPages UTF8String], m_currentPageIsFixedLayout?[@"FXL" UTF8String]:[@"reflow" UTF8String]);
-        label.text = LocStr(@"PAGE_X_OF_Y", [currentPages UTF8String], [totalPages UTF8String]);
+        //label.text = LocStr(@"PAGE_X_OF_Y", [currentPages UTF8String], [totalPages UTF8String]);
 	}
 
 	[label sizeToFit];
@@ -1454,7 +1454,8 @@
     
     if (self.navigationController != nil) {
         [self.navigationController setNavigationBarHidden:NO animated:YES];
-        [self.navigationController setToolbarHidden:NO animated:YES];
+        [self.navigationController setToolbarHidden:YES animated:YES];
+        //[self.navigationController setToolbarHidden:NO animated:YES];
         if (hideTimer != nil) {
             [hideTimer invalidate];
         }
