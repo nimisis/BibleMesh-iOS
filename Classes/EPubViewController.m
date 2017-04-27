@@ -606,7 +606,7 @@
     NSLog(@"tap");
     if (self.navigationController != nil) {
         [self.navigationController setNavigationBarHidden:NO animated:YES];
-        [self.navigationController setToolbarHidden:NO animated:YES];
+        //[self.navigationController setToolbarHidden:NO animated:YES];
         if (hideTimer != nil) {
             [hideTimer invalidate];
         }
@@ -1365,7 +1365,8 @@
                                               
                                               NSString *go = [NSString stringWithFormat:@"{\"idref\":\"%@\",\"elementCfi\":\"%@\"}", [thl idref], [thl cfi]];
                                               [go stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-                                              NSString *shareURL = [NSString stringWithFormat:@"https://read.biblemesh.com/book/7?goto=%@", [go stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]];
+                                              //fix
+                                              NSString *shareURL = [NSString stringWithFormat:@"https://read.biblemesh.com/book/%d?goto=%@&highlight=%20", [[appDelegate latestLocation] bookid], [go stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]];
                                               //NSString *shareURL = [NSString stringWithFormat:@"%@", mp3FileName];
                                               //NSLog(@"url %@", shareURL);
                                               
@@ -1399,6 +1400,7 @@
                                           }];
             
             [alert addAction:cancelButton];
+            
             [self presentViewController:alert animated:YES completion:^{
                 NSInteger margin = 5;
                 tv.frame = CGRectMake(margin, margin, alert.view.frame.size.width-2*margin, alert.view.frame.size.height-4*46-margin);

@@ -905,8 +905,9 @@
 				ORGANIZATIONNAME = "The Readium Foundation";
 				TargetAttributes = {
 					340FC15816BC3B4600346A59 = {
-						DevelopmentTeam = JUZJ695LJ6;
+						DevelopmentTeam = UY7F743F6D;
 						LastSwiftMigration = 0820;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -1220,7 +1221,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = JUZJ695LJ6;
+				DEVELOPMENT_TEAM = UY7F743F6D;
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				HEADER_SEARCH_PATHS = (
@@ -1233,9 +1234,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS_3.10",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.nimisis.biblemesh;
+				PRODUCT_BUNDLE_IDENTIFIER = com.biblemesh.ereader;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "9712e36a-62cb-4cc7-bd1c-4d6f971dbe28";
+				PROVISIONING_PROFILE_SPECIFIER = BiblemeshDev;
 				SWIFT_OBJC_BRIDGING_HEADER = "BibleMesh-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -1250,8 +1252,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = JUZJ695LJ6;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				DEVELOPMENT_TEAM = UY7F743F6D;
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				HEADER_SEARCH_PATHS = (
@@ -1264,9 +1266,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/GoogleAnalyticsServicesiOS_3.10",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.nimisis.biblemesh;
+				PRODUCT_BUNDLE_IDENTIFIER = com.biblemesh.ereader;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "18fdad88-2a5f-431f-80ad-7c13b9dd8e46";
+				PROVISIONING_PROFILE_SPECIFIER = BiblemeshDist;
 				SWIFT_OBJC_BRIDGING_HEADER = "BibleMesh-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = app;
