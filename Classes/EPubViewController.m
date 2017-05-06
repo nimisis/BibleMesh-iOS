@@ -627,11 +627,33 @@
 }
 
 -(void)swipeLeftAction:(UISwipeGestureRecognizer *) swipe {
-    [self executeJavaScript:@"ReadiumSDK.reader.openPageNext()" completionHandler:nil];
+    CGRect was = m_webViewWK.frame;
+    CGRect now = m_webViewWK.frame;
+    now.origin.x -= 50;
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.2];
+    
+    [m_webViewWK setFrame:now];
+    
+    [UIView commitAnimations];
+    [self executeJavaScript:@"ReadiumSDK.reader.openPageNext()" completionHandler:^(id response, NSError *error) {
+        [m_webViewWK setFrame:was];
+    }];
 }
 
 -(void)swipeRightAction:(UISwipeGestureRecognizer *) swipe {
-    [self executeJavaScript:@"ReadiumSDK.reader.openPagePrev()" completionHandler:nil];
+    CGRect was = m_webViewWK.frame;
+    CGRect now = m_webViewWK.frame;
+    now.origin.x += 50;
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.2];
+    
+    [m_webViewWK setFrame:now];
+    
+    [UIView commitAnimations];
+    [self executeJavaScript:@"ReadiumSDK.reader.openPagePrev()" completionHandler:^(id response, NSError *error) {
+        [m_webViewWK setFrame:was];
+    }];
 }
 
 - (void)onClickAddHighlight {
@@ -1283,7 +1305,7 @@
             NSLog(@"The annotationClick payload is invalid!");
         }
         else {
-            NSLog(@"annotation clicked!");//, body[1]);
+            NSLog(@"annotation clicked!");
             
             NSError* error;
             
@@ -1292,125 +1314,129 @@
             NSDictionary *s = [NSJSONSerialization JSONObjectWithData:data
                                                                  options:0 error:&error];
             
-            UIAlertController * alert = [UIAlertController
-                                         alertControllerWithTitle:@" "
-                                         message:@" "//[NSString stringWithFormat:@"annotation clicked %@", body[1]]
-                                         preferredStyle:UIAlertControllerStyleAlert];
-            
-            UITextView *tv = [[UITextView alloc] initWithFrame:CGRectNull];
-            
-            AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-            tv.text = @"Notes";
-            tv.textColor = [UIColor lightGrayColor];
-            Highlight *thl = nil;
-            for (Highlight *hl in [appDelegate highlightsArray]) {
-                NSLog(@"matching %d with %@", [hl annotationID], [s valueForKey:@"id"]);
-                if ([[NSString stringWithFormat:@"\"%d\"", [hl annotationID]] isEqualToString:[s valueForKey:@"id"]]) {
-                    NSLog(@"matched!");
-                    thl = hl;
-                    tv.text = [hl note];
-                    tv.textColor = [UIColor blackColor];
-                    break;
-                } else {
-                    NSLog(@"no match");
+            if (error != nil) {
+                NSLog(@"annotation click error");//fix
+            } else {
+                UIAlertController * alert = [UIAlertController
+                                             alertControllerWithTitle:@" "
+                                             message:@" "//[NSString stringWithFormat:@"annotation clicked %@", body[1]]
+                                             preferredStyle:UIAlertControllerStyleAlert];
+                
+                UITextView *tv = [[UITextView alloc] initWithFrame:CGRectNull];
+                
+                AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                tv.text = @"Notes";
+                tv.textColor = [UIColor lightGrayColor];
+                Highlight *thl = nil;
+                for (Highlight *hl in [appDelegate highlightsArray]) {
+                    NSLog(@"matching %d with %@", [hl annotationID], [s valueForKey:@"id"]);
+                    if ([[NSString stringWithFormat:@"\"%d\"", [hl annotationID]] isEqualToString:[s valueForKey:@"id"]]) {
+                        NSLog(@"matched!");
+                        thl = hl;
+                        tv.text = [hl note];
+                        tv.textColor = [UIColor blackColor];
+                        break;
+                    } else {
+                        NSLog(@"no match");
+                    }
                 }
+                tv.delegate = self;
+                tv.layer.cornerRadius = 8;
+                tv.layer.borderColor = [[UIColor grayColor] CGColor];
+                tv.layer.borderWidth = 1.0f;
+                 
+                [[alert view] addSubview:tv];
+                
+                /*[alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+                    textField.placeholder = @"Notes";
+                    textField.text = @"Hello";
+                    textField.num
+                    //textField.textColor = [UIColor blueColor];
+                    textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+                    textField.borderStyle = UITextBorderStyleNone;
+                    //textField.secureTextEntry = YES;
+                }];*/
+                
+                /*NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:alert.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:self.view.frame.size.height*1.8f];
+                [alert.view addConstraint:constraint];*/
+            
+                UIAlertAction* saveButton = [UIAlertAction
+                                           actionWithTitle:@"Save"
+                                           style:UIAlertActionStyleDefault
+                                           handler:^(UIAlertAction * action) {
+                                               NSLog(@"Saved");
+                                               [thl setNote:tv.text];
+                                               NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970]) + [appDelegate serverTimeOffset]];
+                                               [thl setLastUpdated:[unixtime longLongValue]];
+                                               NSError *error = nil;
+                                               if ([[appDelegate managedObjectContext] save:&error]) {
+                                                   NSLog(@"saved highlight");
+                                               } else {
+                                                   // Handle the error.
+                                                   NSLog(@"Handle the error");
+                                               }
+                                               [self updateLocation:[NSNumber numberWithLong:[[appDelegate latestLocation] lastUpdated]] highlight:thl delete:NO];
+                                           }];
+                 
+                [alert addAction:saveButton];
+                UIAlertAction* deleteButton = [UIAlertAction
+                                           actionWithTitle:@"Delete"
+                                           style:UIAlertActionStyleDestructive
+                                           handler:^(UIAlertAction * action) {
+                                               NSLog(@"Deleted");
+                                               
+                                               [self updateLocation:[NSNumber numberWithLong:[[appDelegate latestLocation] lastUpdated]] highlight:thl delete:YES];
+                                           }];
+                
+                [alert addAction:deleteButton];
+                UIAlertAction* shareButton = [UIAlertAction
+                                              actionWithTitle:@"Share"
+                                              style:UIAlertActionStyleDefault
+                                              handler:^(UIAlertAction * action) {
+                                                  NSLog(@"Shared");
+                                                  
+                                                  NSString *go = [NSString stringWithFormat:@"{\"idref\":\"%@\",\"elementCfi\":\"%@\"}", [thl idref], [thl cfi]];
+                                                  [go stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+                                                  //fix
+                                                  NSString *shareURL = [NSString stringWithFormat:@"https://read.biblemesh.com/book/%d?goto=%@&highlight=%@", [[appDelegate latestLocation] bookid], [go stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]], [[s objectForKey:@"selectedText"] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]];
+                                                  
+                                                  NSURL *talkURL = [NSURL URLWithString:shareURL];
+                                                  
+                                                  NSMutableArray *activityItems= [NSMutableArray arrayWithObjects:talkURL, //shareText,
+                                                                                  nil];
+                                                  
+                                                  UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+                                                  /*activityViewController.excludedActivityTypes = @[UIActivityTypePostToWeibo,UIActivityTypePrint,
+                                                   UIActivityTypeCopyToPasteboard,UIActivityTypeAssignToContact,
+                                                   UIActivityTypeSaveToCameraRoll,UIActivityTypeAddToReadingList,
+                                                   UIActivityTypePostToFlickr,UIActivityTypePostToVimeo,
+                                                   UIActivityTypePostToTencentWeibo,UIActivityTypeAirDrop];*/
+                                                  
+                                                  if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+                                                      [self presentViewController:activityViewController animated:YES completion:nil];
+                                                  } else {
+                                                      UIPopoverController *popup = [[UIPopoverController alloc] initWithContentViewController:activityViewController];
+                                                      [popup presentPopoverFromRect:CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0)inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+                                                  }
+                                                  
+                                              }];
+                
+                [alert addAction:shareButton];
+                UIAlertAction* cancelButton = [UIAlertAction
+                                              actionWithTitle:@"Cancel"
+                                              style:UIAlertActionStyleCancel
+                                              handler:^(UIAlertAction * action) {
+                                                  NSLog(@"Cancel");
+                                              }];
+                
+                [alert addAction:cancelButton];
+                
+                [self presentViewController:alert animated:YES completion:^{
+                    NSInteger margin = 5;
+                    tv.frame = CGRectMake(margin, margin, alert.view.frame.size.width-2*margin, alert.view.frame.size.height-4*46-margin);
+                
+                 }];
             }
-            tv.delegate = self;
-            tv.layer.cornerRadius = 8;
-            tv.layer.borderColor = [[UIColor grayColor] CGColor];
-            tv.layer.borderWidth = 1.0f;
-             
-            [[alert view] addSubview:tv];
-            
-            /*[alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-                textField.placeholder = @"Notes";
-                textField.text = @"Hello";
-                textField.num
-                //textField.textColor = [UIColor blueColor];
-                textField.clearButtonMode = UITextFieldViewModeWhileEditing;
-                textField.borderStyle = UITextBorderStyleNone;
-                //textField.secureTextEntry = YES;
-            }];*/
-            
-            /*NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:alert.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:self.view.frame.size.height*1.8f];
-            [alert.view addConstraint:constraint];*/
-        
-            UIAlertAction* saveButton = [UIAlertAction
-                                       actionWithTitle:@"Save"
-                                       style:UIAlertActionStyleDefault
-                                       handler:^(UIAlertAction * action) {
-                                           NSLog(@"Saved");
-                                           [thl setNote:tv.text];
-                                           NSNumber *unixtime = [NSNumber numberWithLongLong:(1000*[[NSDate date] timeIntervalSince1970]) + [appDelegate serverTimeOffset]];
-                                           [thl setLastUpdated:[unixtime longLongValue]];
-                                           NSError *error = nil;
-                                           if ([[appDelegate managedObjectContext] save:&error]) {
-                                               NSLog(@"saved highlight");
-                                           } else {
-                                               // Handle the error.
-                                               NSLog(@"Handle the error");
-                                           }
-                                           [self updateLocation:[NSNumber numberWithLong:[[appDelegate latestLocation] lastUpdated]] highlight:thl delete:NO];
-                                       }];
-             
-            [alert addAction:saveButton];
-            UIAlertAction* deleteButton = [UIAlertAction
-                                       actionWithTitle:@"Delete"
-                                       style:UIAlertActionStyleDestructive
-                                       handler:^(UIAlertAction * action) {
-                                           NSLog(@"Deleted");
-                                           
-                                           [self updateLocation:[NSNumber numberWithLong:[[appDelegate latestLocation] lastUpdated]] highlight:thl delete:YES];
-                                       }];
-            
-            [alert addAction:deleteButton];
-            UIAlertAction* shareButton = [UIAlertAction
-                                          actionWithTitle:@"Share"
-                                          style:UIAlertActionStyleDefault
-                                          handler:^(UIAlertAction * action) {
-                                              NSLog(@"Shared");
-                                              
-                                              NSString *go = [NSString stringWithFormat:@"{\"idref\":\"%@\",\"elementCfi\":\"%@\"}", [thl idref], [thl cfi]];
-                                              [go stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-                                              //fix
-                                              NSString *shareURL = [NSString stringWithFormat:@"https://read.biblemesh.com/book/%d?goto=%@&highlight=%@", [[appDelegate latestLocation] bookid], [go stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]], [[s objectForKey:@"selectedText"] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]];
-                                              
-                                              NSURL *talkURL = [NSURL URLWithString:shareURL];
-                                              
-                                              NSMutableArray *activityItems= [NSMutableArray arrayWithObjects:talkURL, //shareText,
-                                                                              nil];
-                                              
-                                              UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
-                                              /*activityViewController.excludedActivityTypes = @[UIActivityTypePostToWeibo,UIActivityTypePrint,
-                                               UIActivityTypeCopyToPasteboard,UIActivityTypeAssignToContact,
-                                               UIActivityTypeSaveToCameraRoll,UIActivityTypeAddToReadingList,
-                                               UIActivityTypePostToFlickr,UIActivityTypePostToVimeo,
-                                               UIActivityTypePostToTencentWeibo,UIActivityTypeAirDrop];*/
-                                              
-                                              if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-                                                  [self presentViewController:activityViewController animated:YES completion:nil];
-                                              } else {
-                                                  UIPopoverController *popup = [[UIPopoverController alloc] initWithContentViewController:activityViewController];
-                                                  [popup presentPopoverFromRect:CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0)inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-                                              }
-                                              
-                                          }];
-            
-            [alert addAction:shareButton];
-            UIAlertAction* cancelButton = [UIAlertAction
-                                          actionWithTitle:@"Cancel"
-                                          style:UIAlertActionStyleCancel
-                                          handler:^(UIAlertAction * action) {
-                                              NSLog(@"Cancel");
-                                          }];
-            
-            [alert addAction:cancelButton];
-            
-            [self presentViewController:alert animated:YES completion:^{
-                NSInteger margin = 5;
-                tv.frame = CGRectMake(margin, margin, alert.view.frame.size.width-2*margin, alert.view.frame.size.height-4*46-margin);
-        
-             }];
         }
     } else if ([messageName isEqualToString:@"context"]) {
         NSLog(@"context");
