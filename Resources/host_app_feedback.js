@@ -212,7 +212,7 @@ $(document).ready(function ()
                         console.log("ANNOTATION CLICK: " + id);
                         //reader.plugins.highlights.removeHighlight(id);
                                                  
-                        var payload = JSON.stringify(id);
+                        var payload = JSON.stringify(reader.plugins.highlights.getHighlight(id));
                         if (window.useWKWebView) {
                             window.webkit.messageHandlers.readium.postMessage(['annotationClicked', payload]);
                         } else {
