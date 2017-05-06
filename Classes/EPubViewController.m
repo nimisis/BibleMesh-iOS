@@ -552,21 +552,25 @@
     
     [tap requireGestureRecognizerToFail:press];*/
     
-    UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self  action:@selector(swipeRightAction:)];
+    UIPanGestureRecognizer *pagepan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pagepanned:)];
+    [pagepan setDelegate:self];
+    [m_webViewWK addGestureRecognizer:pagepan];
+    
+    /*UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self  action:@selector(swipeRightAction:)];
     [swipeRight setDirection:UISwipeGestureRecognizerDirectionRight];
     [m_webViewUI addGestureRecognizer:swipeRight];
-    [m_webViewWK addGestureRecognizer:swipeRight];
+    [m_webViewWK addGestureRecognizer:swipeRight];*/
     
-    UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeLeftAction:)];
+    /*UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeLeftAction:)];
     [swipeLeft setDirection:UISwipeGestureRecognizerDirectionLeft];
     [m_webViewUI addGestureRecognizer:swipeLeft];
-    [m_webViewWK addGestureRecognizer:swipeLeft];
+    [m_webViewWK addGestureRecognizer:swipeLeft];*/
 }
 
-/*- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldRecognizeSimultaneouslyWithGestureRecognizer:(nonnull UIGestureRecognizer *)otherGestureRecognizer {
     
-    if (gestureRecognizer.view == m_webViewWK.scrollView) {
+    /*if (gestureRecognizer.view == m_webViewWK.scrollView) {
         NSLog(@"a %ld", (long)gestureRecognizer.state);
     } else {
         NSLog(@"b");
@@ -575,11 +579,11 @@
         NSLog(@"c %ld", (long)otherGestureRecognizer.state);
     } else {
         NSLog(@"d");
-    }
+    }*/
     return YES;
 }
 
--(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+/*-(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
     //CGPoint touchLocation = [_tileMap convertTouchToNodeSpace: touch];
     // use your CGPoint
@@ -626,7 +630,7 @@
     NSLog(@"press");
 }
 
--(void)swipeLeftAction:(UISwipeGestureRecognizer *) swipe {
+/*-(void)swipeLeftAction:(UISwipeGestureRecognizer *) swipe {
     CGRect was = m_webViewWK.frame;
     CGRect now = m_webViewWK.frame;
     now.origin.x -= 50;
@@ -654,7 +658,7 @@
     [self executeJavaScript:@"ReadiumSDK.reader.openPagePrev()" completionHandler:^(id response, NSError *error) {
         [m_webViewWK setFrame:was];
     }];
-}
+}*/
 
 - (void)onClickAddHighlight {
     [self executeJavaScript:@"ReadiumSDK.reader.plugins.highlights.getCurrentSelectionCfi()" completionHandler:^(id response, NSError *error){
@@ -1733,6 +1737,64 @@
     
     
     [recognizer setTranslation:CGPointMake(0, 0) inView:tableView];
+    
+}
+
+- (void)pagepanned:(UIPanGestureRecognizer *)recognizer {
+    CGPoint translation = [recognizer translationInView:m_webViewWK];
+    
+    NSLog(@"x: %.0f tran: %.0f width:%.0f", recognizer.view.center.x + translation.x, translation.x, m_webViewWK.frame.size.width);
+    
+    /*if (recognizer.view.center.x + translation.x >= 0.5*m_webViewWK.frame.size.width) {
+        NSLog(@"a");
+        recognizer.view.center = CGPointMake(0.5*m_webViewWK.frame.size.width,
+                                             recognizer.view.center.y);
+    } else*/
+    {
+        //NSLog(@"b");
+        recognizer.view.center = CGPointMake(recognizer.view.center.x + translation.x,
+                                             recognizer.view.center.y);
+    }
+    if (recognizer.state == UIGestureRecognizerStateEnded) {
+        CGPoint velocity = [recognizer velocityInView:self.view];
+        CGFloat magnitude = sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y));
+        CGFloat slideMult = magnitude / 200;
+        
+        float slideFactor = 0.1 * slideMult;
+        NSLog(@"ended");
+        CGPoint finalPoint = CGPointMake(self.view.frame.origin.x+0.5*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
+        CGFloat finalAlpha = 1.0f;
+        if (recognizer.view.center.x < 0.15*self.view.frame.size.width) {
+            NSLog(@"next");
+            finalPoint = CGPointMake(self.view.frame.origin.x-0.5*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
+            finalAlpha = -1.0f;
+            [self executeJavaScript:@"ReadiumSDK.reader.openPageNext()" completionHandler:^(id response, NSError *error) {
+            }];
+        } else if (recognizer.view.center.x > 0.85*self.view.frame.size.width) {
+            NSLog(@"prev");
+            finalAlpha = -1.0f;
+            finalPoint = CGPointMake(self.view.frame.origin.x+1.5*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
+            [self executeJavaScript:@"ReadiumSDK.reader.openPagePrev()" completionHandler:^(id response, NSError *error) {
+            }];
+        } else {
+            NSLog(@"stay");
+            //finalPoint = CGPointMake(self.view.frame.origin.x+0.25*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
+        }
+        [UIView animateWithDuration: slideFactor
+                              delay: 0
+                            options: UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             recognizer.view.center = finalPoint;
+                             recognizer.view.alpha = finalAlpha;
+                         }
+                         completion:^(BOOL param){
+                             recognizer.view.center = CGPointMake(self.view.frame.origin.x+0.5*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
+                             recognizer.view.alpha = 1.0f;
+                         }];
+     
+    }
+    
+    [recognizer setTranslation:CGPointMake(0, 0) inView:m_webViewWK];
     
 }
 
