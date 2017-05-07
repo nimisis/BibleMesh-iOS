@@ -977,7 +977,8 @@
                                                               options:0 error:&error];
          
          if (del) {
-         [self executeJavaScript:[NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.removeHighlight(%d)", hl.annotationID] completionHandler:^(id response2, NSError *error2)
+             NSString *js = [NSString stringWithFormat:@"ReadiumSDK.reader.plugins.highlights.removeHighlight(%d)", hl.annotationID];
+         [self executeJavaScript:js completionHandler:^(id response2, NSError *error2)
           {
               NSString *s2 = response;
               NSLog(@"single highlight removed %@", s2);
@@ -1075,7 +1076,6 @@
              if ([[appDelegate managedObjectContext] save:&error]) {
                  NSLog(@"deleted highlight");
                  [[appDelegate highlightsArray] removeObject:hl];
-                 //[self ]
              } else {
                  // Handle the error.
                  NSLog(@"Handle the error");
@@ -1342,7 +1342,8 @@
                 Highlight *thl = nil;
                 for (Highlight *hl in [appDelegate highlightsArray]) {
                     NSLog(@"matching %d with %@", [hl annotationID], [s valueForKey:@"id"]);
-                    if ([[NSString stringWithFormat:@"\"%d\"", [hl annotationID]] isEqualToString:[s valueForKey:@"id"]]) {
+                    //if ([[NSString stringWithFormat:@"%d", [hl annotationID]] isEqualToString:[s valueForKey:@"id"]]) {
+                    if ([hl annotationID] == [[s valueForKey:@"id"] intValue]) {
                         NSLog(@"matched!");
                         thl = hl;
                         tv.text = [hl note];
@@ -1351,6 +1352,10 @@
                     } else {
                         NSLog(@"no match");
                     }
+                }
+                if (thl == nil) {
+                    int hi = 0;
+                    hi = 1;
                 }
                 tv.delegate = self;
                 tv.layer.cornerRadius = 8;
@@ -1478,6 +1483,7 @@
         if (y1 == size.height) {
             y1 -= 44.0f;
         }
+        y0 = 64.0f;
         y1 = size.height - 64.0f;
         NSLog(@"y0: %.0f y1: %.0f", y0, y1);
         m_webViewWK.frame = CGRectMake(0, y0, size.width, y1 - y0);
