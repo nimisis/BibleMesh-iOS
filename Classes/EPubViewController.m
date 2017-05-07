@@ -525,8 +525,26 @@
     [highlightbtn addTarget:self action:@selector(onClickAddHighlight) forControlEvents:UIControlEventTouchUpInside];
     [highlightbtn setFrame:CGRectNull];
     
-    [highlightbtn setTitle:@"highlight" forState:UIControlStateNormal];
+    
+    UIFont *f1 = [UIFont fontWithName:kFontAwesomeFamilyName size:24];
+    NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:f1, NSFontAttributeName, nil];
+    NSMutableAttributedString *attString = [[NSMutableAttributedString alloc] init];
+    [attString appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForEnum:FAPencil]    attributes:dict]];
+    [highlightbtn setAttributedTitle:attString forState:UIControlStateNormal];
+    
+    //[highlightbtn setTitle:[NSString fontAwesomeIconStringForEnum:FAPencil] forState:UIControlStateNormal];
     [highlightbtn setExclusiveTouch:YES];
+    
+    /*
+    UIBarButtonItem *logoutButton = [[UIBarButtonItem alloc] initWithTitle:@"logout" style:UIBarButtonItemStylePlain target:self action:@selector(logout)];
+    self.navigationItem.rightBarButtonItem = logoutButton;
+    UIBarButtonItem *refreshButton = [[UIBarButtonItem alloc] initWithTitle:@"refresh" style:UIBarButtonItemStylePlain target:self action:@selector(refresh)];
+    self.navigationItem.leftBarButtonItem = refreshButton;
+    
+    [self.navigationItem.leftBarButtonItem setTitleTextAttributes:dict forState:UIControlStateNormal];
+    self.navigationItem.leftBarButtonItem.title = [NSString fontAwesomeIconStringForEnum:FARefresh];*/
+    
+    
     
     // if you like to add backgroundImage else no need
     //[but setbackgroundImage:[UIImage imageNamed:@"XXX.png"] forState:UIControlStateNormal];
@@ -1476,7 +1494,7 @@
         
         progress.frame = CGRectMake(10, size.height - 10, size.width-20, 10);
         
-        [highlightbtn setFrame:CGRectMake(size.width-80, size.height-35, 80, 20)];
+        [highlightbtn setFrame:CGRectMake(size.width-40, size.height-35, 40, 20)];
     }
 }
 
@@ -1713,8 +1731,11 @@
     }
     if (recognizer.state == UIGestureRecognizerStateEnded) {
         CGPoint velocity = [recognizer velocityInView:self.view];
-        CGFloat magnitude = sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y));
-        CGFloat slideMult = magnitude / 200;
+        //CGFloat magnitude = sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y));
+        CGFloat slideMult = velocity.x / 200;
+        if (velocity.x < 0) {
+            slideMult = -slideMult;
+        }
         
         float slideFactor = 0.1 * slideMult;
         NSLog(@"ended");
@@ -1743,7 +1764,7 @@
 - (void)pagepanned:(UIPanGestureRecognizer *)recognizer {
     CGPoint translation = [recognizer translationInView:m_webViewWK];
     
-    NSLog(@"x: %.0f tran: %.0f width:%.0f", recognizer.view.center.x + translation.x, translation.x, m_webViewWK.frame.size.width);
+    //NSLog(@"x: %.0f tran: %.0f width:%.0f", recognizer.view.center.x + translation.x, translation.x, m_webViewWK.frame.size.width);
     
     /*if (recognizer.view.center.x + translation.x >= 0.5*m_webViewWK.frame.size.width) {
         NSLog(@"a");
@@ -1757,8 +1778,11 @@
     }
     if (recognizer.state == UIGestureRecognizerStateEnded) {
         CGPoint velocity = [recognizer velocityInView:self.view];
-        CGFloat magnitude = sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y));
-        CGFloat slideMult = magnitude / 200;
+        //CGFloat magnitude = sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y));
+        CGFloat slideMult = velocity.x / 200;
+        if (velocity.x < 0) {
+            slideMult = -slideMult;
+        }
         
         float slideFactor = 0.1 * slideMult;
         NSLog(@"ended");
