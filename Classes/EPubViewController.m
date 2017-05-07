@@ -683,9 +683,18 @@
         } else {
             NSDictionary *dict = response;
             //NSLog(@"get selection done %@", s);
-            int r = arc4random() % 1000000 + 1;
             
             AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+            //check for a repeat highlight
+            for (Highlight *chl in [appDelegate highlightsArray]) {
+                if ([chl.idref isEqualToString:[dict valueForKey:@"idref"]] && [chl.cfi isEqualToString:[dict valueForKey:@"cfi"]]) {
+                    NSLog(@"repeat highlight");
+                    return;
+                }
+            }
+            
+            int r = arc4random() % 1000000 + 1;
+            
             Highlight *hl = (Highlight *)[NSEntityDescription insertNewObjectForEntityForName:@"Highlight" inManagedObjectContext:[appDelegate managedObjectContext]];
             [hl setCfi:[dict valueForKey:@"cfi"]];
             [hl setAnnotationID:r];
