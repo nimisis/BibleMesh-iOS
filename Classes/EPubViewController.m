@@ -384,7 +384,7 @@
 		return nil;
 	}
 
-	if (self = [super initWithTitle:package.title navBarHidden:NO]) {
+	if (self = [super initWithTitle:package.title navBarHidden:YES]) {
 		m_container = container;
 		m_navElement = navElement;
 		m_package = package;
@@ -417,7 +417,7 @@
 		return nil;
 	}
 
-	if (self = [super initWithTitle:package.title navBarHidden:NO]) {
+	if (self = [super initWithTitle:package.title navBarHidden:YES]) {
 		m_container = container;
 		m_initialCFI = cfi;
 		m_package = package;
@@ -439,7 +439,8 @@
     
 	self.view = [[UIView alloc] init];
 	self.view.backgroundColor = [UIColor whiteColor];
-
+    //self.edgesForExtendedLayout = UIRectEdgeTop;
+    
     hideTimer = nil;
     
 	// Notifications
@@ -476,6 +477,8 @@
 		m_webViewWK = webView;
 		webView.hidden = YES;
         webView.scrollView.bounces = NO;
+        webView.scrollView.scrollEnabled = NO;
+        //webView.scrollView.layer.masksToBounds = NO;
         [self.view addSubview:webView];
         
         UIProgressView *prog = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar];;
@@ -525,26 +528,13 @@
     [highlightbtn addTarget:self action:@selector(onClickAddHighlight) forControlEvents:UIControlEventTouchUpInside];
     [highlightbtn setFrame:CGRectNull];
     
-    
     UIFont *f1 = [UIFont fontWithName:kFontAwesomeFamilyName size:24];
     NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:f1, NSFontAttributeName, nil];
     NSMutableAttributedString *attString = [[NSMutableAttributedString alloc] init];
     [attString appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForEnum:FAPencil]    attributes:dict]];
     [highlightbtn setAttributedTitle:attString forState:UIControlStateNormal];
     
-    //[highlightbtn setTitle:[NSString fontAwesomeIconStringForEnum:FAPencil] forState:UIControlStateNormal];
     [highlightbtn setExclusiveTouch:YES];
-    
-    /*
-    UIBarButtonItem *logoutButton = [[UIBarButtonItem alloc] initWithTitle:@"logout" style:UIBarButtonItemStylePlain target:self action:@selector(logout)];
-    self.navigationItem.rightBarButtonItem = logoutButton;
-    UIBarButtonItem *refreshButton = [[UIBarButtonItem alloc] initWithTitle:@"refresh" style:UIBarButtonItemStylePlain target:self action:@selector(refresh)];
-    self.navigationItem.leftBarButtonItem = refreshButton;
-    
-    [self.navigationItem.leftBarButtonItem setTitleTextAttributes:dict forState:UIControlStateNormal];
-    self.navigationItem.leftBarButtonItem.title = [NSString fontAwesomeIconStringForEnum:FARefresh];*/
-    
-    
     
     // if you like to add backgroundImage else no need
     //[but setbackgroundImage:[UIImage imageNamed:@"XXX.png"] forState:UIControlStateNormal];
@@ -1477,16 +1467,19 @@
 		m_webViewUI.frame = self.view.bounds;
 	}
 	else if (m_webViewWK != nil) {
-		self.automaticallyAdjustsScrollViewInsets = NO;
+		self.automaticallyAdjustsScrollViewInsets = YES;
 		CGFloat y0 = self.topLayoutGuide.length;
         if (y0 != 64.0f) {
             y0 = 64.0f;
         }
+        //y0 = 74.0f;
         //NSLog(@"y %0.f %0.f", size.height, self.bottomLayoutGuide.length);
         CGFloat y1 = size.height - self.bottomLayoutGuide.length;//seems to be required to prevent scrollview from being dragged upwards
         if (y1 == size.height) {
             y1 -= 44.0f;
         }
+        y1 = size.height - 64.0f;
+        NSLog(@"y0: %.0f y1: %.0f", y0, y1);
         m_webViewWK.frame = CGRectMake(0, y0, size.width, y1 - y0);
         //m_webViewWK.frame = CGRectMake(0, 64, size.width, 568 - 64.0f - 44.0f);//fix ipad the same?
         m_webViewWK.scrollView.contentInset = UIEdgeInsetsZero;
@@ -1509,7 +1502,7 @@
 	[super viewWillAppear:animated];
     
     if (self.navigationController != nil) {
-        [self.navigationController setNavigationBarHidden:NO animated:YES];
+        [self.navigationController setNavigationBarHidden:YES animated:YES];
         [self.navigationController setToolbarHidden:YES animated:YES];
         //[self.navigationController setToolbarHidden:NO animated:YES];
         if (hideTimer != nil) {
@@ -1801,7 +1794,7 @@
             [self executeJavaScript:@"ReadiumSDK.reader.openPagePrev()" completionHandler:^(id response, NSError *error) {
             }];
         } else {
-            NSLog(@"stay");
+            NSLog(@"stay %.0f", self.view.frame.size.height);
             //finalPoint = CGPointMake(self.view.frame.origin.x+0.25*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
         }
         [UIView animateWithDuration: slideFactor
