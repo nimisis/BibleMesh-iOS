@@ -971,6 +971,9 @@
 - (void)updateLocation:(NSNumber *)unixtime highlight:(Highlight *) hl delete:(Boolean)del{
     NSLog(@"update location");
     
+    m_webViewWK.center = CGPointMake(self.view.frame.origin.x+0.5*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
+    m_webViewWK.alpha = 1.0f;
+    
     [self executeJavaScript:@"ReadiumSDK.reader.bookmarkCurrentPage()"
           completionHandler:^(id response, NSError *error)
      {
@@ -1785,32 +1788,27 @@
                                              recognizer.view.center.y);
     }
     if (recognizer.state == UIGestureRecognizerStateEnded) {
-        CGPoint velocity = [recognizer velocityInView:self.view];
-        //CGFloat magnitude = sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y));
-        CGFloat slideMult = velocity.x / 200;
-        if (velocity.x < 0) {
-            slideMult = -slideMult;
-        }
-        
-        float slideFactor = 0.1 * slideMult;
-        NSLog(@"ended");
+        float slideFactor = 0.25;//0.1;//0.1 * slideMult;
+        NSLog(@"ended %f", slideFactor);
         CGPoint finalPoint = CGPointMake(self.view.frame.origin.x+0.5*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
         CGFloat finalAlpha = 1.0f;
-        if (recognizer.view.center.x < 0.15*self.view.frame.size.width) {
+        Boolean stay = true;
+        if (recognizer.view.center.x < 0.25*self.view.frame.size.width) {
             NSLog(@"next");
             finalPoint = CGPointMake(self.view.frame.origin.x-0.5*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
-            finalAlpha = -1.0f;
+            finalAlpha = 0.0f;
+            stay = false;
             [self executeJavaScript:@"ReadiumSDK.reader.openPageNext()" completionHandler:^(id response, NSError *error) {
             }];
-        } else if (recognizer.view.center.x > 0.85*self.view.frame.size.width) {
+        } else if (recognizer.view.center.x > 0.75*self.view.frame.size.width) {
             NSLog(@"prev");
-            finalAlpha = -1.0f;
+            finalAlpha = 0.0f;
             finalPoint = CGPointMake(self.view.frame.origin.x+1.5*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
+            stay = false;
             [self executeJavaScript:@"ReadiumSDK.reader.openPagePrev()" completionHandler:^(id response, NSError *error) {
             }];
         } else {
-            NSLog(@"stay %.0f", self.view.frame.size.height);
-            //finalPoint = CGPointMake(self.view.frame.origin.x+0.25*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
+            NSLog(@"stay %.0f", recognizer.view.center.x);
         }
         [UIView animateWithDuration: slideFactor
                               delay: 0
@@ -1820,14 +1818,13 @@
                              recognizer.view.alpha = finalAlpha;
                          }
                          completion:^(BOOL param){
-                             recognizer.view.center = CGPointMake(self.view.frame.origin.x+0.5*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
-                             recognizer.view.alpha = 1.0f;
+                             if (stay) {
+                                 recognizer.view.center = CGPointMake(self.view.frame.origin.x+0.5*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
+                             }
                          }];
-     
     }
     
     [recognizer setTranslation:CGPointMake(0, 0) inView:m_webViewWK];
-    
 }
 
 @end
