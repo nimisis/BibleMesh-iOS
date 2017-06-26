@@ -384,7 +384,7 @@
 		return nil;
 	}
 
-	if (self = [super initWithTitle:package.title navBarHidden:YES]) {
+	if (self = [super initWithTitle:package.title navBarHidden:NO]) {
 		m_container = container;
 		m_navElement = navElement;
 		m_package = package;
@@ -417,7 +417,7 @@
 		return nil;
 	}
 
-	if (self = [super initWithTitle:package.title navBarHidden:YES]) {
+	if (self = [super initWithTitle:package.title navBarHidden:NO]) {
 		m_container = container;
 		m_initialCFI = cfi;
 		m_package = package;
@@ -971,6 +971,7 @@
 - (void)updateLocation:(NSNumber *)unixtime highlight:(Highlight *) hl delete:(Boolean)del{
     NSLog(@"update location");
     
+    //fix move next two lines to pagedidchange?
     m_webViewWK.center = CGPointMake(self.view.frame.origin.x+0.5*self.view.frame.size.width, self.view.frame.origin.y+0.5*self.view.frame.size.height);
     m_webViewWK.alpha = 1.0f;
     
@@ -1520,7 +1521,7 @@
 	[super viewWillAppear:animated];
     
     if (self.navigationController != nil) {
-        [self.navigationController setNavigationBarHidden:YES animated:YES];
+        [self.navigationController setNavigationBarHidden:NO animated:YES];
         [self.navigationController setToolbarHidden:YES animated:YES];
         //[self.navigationController setToolbarHidden:NO animated:YES];
         if (hideTimer != nil) {

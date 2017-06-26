@@ -174,6 +174,7 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    [self.navigationController setNavigationBarHidden:NO animated:NO];
     [m_table reloadData];
     [self loadContentForVisibleCells];
 }

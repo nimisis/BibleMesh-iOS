@@ -617,7 +617,8 @@
     NSURL *url = [NSURL URLWithString:URLString];
     [AppDelegate downloadDataFromURL:url patch:nil withCompletionHandler:^(NSData *userdata) {
         
-        __block NSInteger serverTime;
+        //__block NSInteger serverTime;
+        __block NSNumber *serverTime;
         //check local data against data returned
         if (userdata == nil) {
             NSLog(@"no data");
@@ -638,9 +639,9 @@
             NSLog(@"unix time is %lld", [unixtime longLongValue]);
             [jsonObject enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
                 if ([(NSString *) key isEqualToString:@"currentServerTime"]) {
-                    serverTime = [(NSNumber *) obj longLongValue];
-                    NSLog(@"servertime %ld diff:%lld", serverTime, (serverTime - [unixtime longLongValue]));
-                    [self setServerTimeOffset:(serverTime - [unixtime longLongValue])];
+                    serverTime = (NSNumber *) obj;// longLongValue];
+                    NSLog(@"servertime %lld diff:%lld", [serverTime longLongValue], ([serverTime longLongValue] - [unixtime longLongValue]));
+                    [self setServerTimeOffset:([serverTime longLongValue] - [unixtime longLongValue])];
                 } else if ([(NSString *) key isEqualToString:@"userInfo"]) {
                     NSDictionary *dic = (NSDictionary *)obj;
                     NSLog(@"userID is %ld", [[dic valueForKey:@"id"] integerValue]);
@@ -731,7 +732,7 @@
         NSString *URLString = [NSString stringWithFormat:@"https://read.biblemesh.com/users/%ld/books/%d.json", (long)[self userid], [[self latestLocation] bookid]];
         NSURL *url = [NSURL URLWithString:URLString];
         [AppDelegate downloadDataFromURL:url patch:nil withCompletionHandler:^(NSData *data) {
-            __block NSInteger last_updated;
+            __block NSNumber *last_updated;
             __block NSString *idref;
             __block NSString *elementCfi;
             //check local data against data returned
@@ -811,7 +812,7 @@
                             }];
                         }
                     } else if ([(NSString *) key isEqualToString:@"updated_at"]) {
-                        last_updated = [(NSNumber *) obj longLongValue];
+                        last_updated = (NSNumber *) obj;// longLongValue];
                     }
                 }];
                 
@@ -993,12 +994,13 @@
                     }*/
                 }
                 
-                if (last_updated > [[self latestLocation] lastUpdated])
+                NSLog(@"lastUpdated %lld", [[self latestLocation] lastUpdated]);
+                if ([last_updated longLongValue] > [[self latestLocation] lastUpdated])
                 {
                     //server's values are more recent
-                    NSLog(@"server more up-to-date server:%ld vs server:%lld", last_updated, [[self latestLocation] lastUpdated]);
+                    NSLog(@"server more up-to-date server:%lld vs server:%lld", [last_updated longLongValue], [[self latestLocation] lastUpdated]);
                     //last updated
-                    [[self latestLocation] setLastUpdated:last_updated];
+                    [[self latestLocation] setLastUpdated:[last_updated longLongValue]];
                     //progress
                     [[self latestLocation] setIdref:idref];
                     [[self latestLocation] setElementCfi:elementCfi];
@@ -1014,6 +1016,7 @@
                 } else {
                     //local values are more recent
                     //fix update server?
+                    NSLog(@"local values more recent");
                 }
             }
             if (clc == nil) {
@@ -1042,6 +1045,8 @@
                         for (int i = 0; i < m_package.spineItems.count; i++) {
                             RDSpineItem *si = [m_package.spineItems objectAtIndex:i];
                             if ([[si idref] isEqualToString:[[self latestLocation] idref]]) {
+                                NSLog(@"idref is %@", [[self latestLocation] idref]);
+                                NSLog(@"cfi is %@", [[self latestLocation] elementCfi]);
                                 c = [[EPubViewController alloc]
                                      initWithContainer:m_container
                                      package:m_package
